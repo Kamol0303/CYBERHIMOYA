@@ -8,7 +8,7 @@ from app import __version__
 from app.config import settings
 from app.models.schemas import HealthResponse
 from app.middleware_security import SecurityHeadersMiddleware
-from app.routers import auth, consents, emergency, feed, scan, scans
+from app.routers import auth, consents, emergency, feed, ops, scan, scans
 from app.services.feed import FEEDS_DIR, ensure_feed_files
 
 TAGS_METADATA = [
@@ -57,6 +57,7 @@ api.include_router(scan.router)
 api.include_router(scans.router)
 api.include_router(feed.router)
 api.include_router(emergency.router)
+api.include_router(ops.router)
 app.mount("/v1", api)
 
 FEEDS_DIR.mkdir(parents=True, exist_ok=True)

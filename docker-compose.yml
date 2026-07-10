@@ -12,6 +12,18 @@ services:
       CGA_PUBLIC_BASE_URL: http://127.0.0.1:8000
     volumes:
       - cga-data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   web:
     build:
@@ -20,7 +32,8 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
   # Optional: docker compose --profile postgres up
   # then set CGA_DATABASE_URL=postgresql://cga:cga@db:5432/cga

@@ -559,6 +559,10 @@ export default function App() {
 
       <footer className="footer">
         <span>Defensive only · No offensive tooling</span>
+        {" · "}
+        <a href="https://github.com/Kamol0303/CYBERHIMOYA/blob/main/docs/privacy-policy-draft.md">
+          Privacy
+        </a>
       </footer>
     </div>
   );
