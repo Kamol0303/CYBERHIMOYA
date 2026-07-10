@@ -171,6 +171,14 @@ class SqliteStore:
               model_version TEXT NOT NULL,
               created_at TEXT NOT NULL
             );
+            CREATE TABLE IF NOT EXISTS domain_allowlist (
+              id TEXT PRIMARY KEY,
+              user_id TEXT NOT NULL REFERENCES users(id),
+              domain TEXT NOT NULL,
+              note TEXT,
+              created_at TEXT NOT NULL,
+              UNIQUE(user_id, domain)
+            );
             """
         )
         self._conn.commit()
@@ -185,6 +193,7 @@ class SqliteStore:
             "notifications",
             "reports",
             "risk_score_history",
+            "domain_allowlist",
             "audit_logs",
             "scan_results",
             "consent_records",
@@ -823,6 +832,74 @@ class SqliteStore:
             )
             for r in rows
         ]
+
+    def add_domain_allowlist(self, user_id: UUID, domain: str, note: str | None = None):
+        from app.services.store_models import DomainAllowlistRow
+
+        existing = self._conn.execute(
+            "SELECT * FROM domain_allowlist WHERE user_id = ? AND domain = ?",
+            (str(user_id), domain),
+        ).fetchone()
+        if existing:
+            return DomainAllowlistRow(
+                id=UUID(existing["id"]),
+                user_id=UUID(existing["user_id"]),
+                domain=existing["domain"],
+                note=existing["note"],
+                created_at=_parse_dt(existing["created_at"]),
+            )
+        row = DomainAllowlistRow(
+            id=uuid4(),
+            user_id=user_id,
+            domain=domain,
+            note=note,
+            created_at=utcnow(),
+        )
+        self._conn.execute(
+            """
+            INSERT INTO domain_allowlist (id, user_id, domain, note, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (str(row.id), str(user_id), domain, note, row.created_at.isoformat()),
+        )
+        self._conn.commit()
+        return row
+
+    def list_domain_allowlist(self, user_id: UUID):
+        from app.services.store_models import DomainAllowlistRow
+
+        rows = self._conn.execute(
+            """
+            SELECT * FROM domain_allowlist WHERE user_id = ?
+            ORDER BY created_at DESC
+            """,
+            (str(user_id),),
+        ).fetchall()
+        return [
+            DomainAllowlistRow(
+                id=UUID(r["id"]),
+                user_id=UUID(r["user_id"]),
+                domain=r["domain"],
+                note=r["note"],
+                created_at=_parse_dt(r["created_at"]),
+            )
+            for r in rows
+        ]
+
+    def is_domain_allowlisted(self, user_id: UUID, domain: str) -> bool:
+        row = self._conn.execute(
+            "SELECT 1 FROM domain_allowlist WHERE user_id = ? AND domain = ?",
+            (str(user_id), domain),
+        ).fetchone()
+        return row is not None
+
+    def remove_domain_allowlist(self, user_id: UUID, entry_id: UUID) -> bool:
+        cur = self._conn.execute(
+            "DELETE FROM domain_allowlist WHERE id = ? AND user_id = ?",
+            (str(entry_id), str(user_id)),
+        )
+        self._conn.commit()
+        return cur.rowcount > 0
 
     # refresh token map compatibility
     @property

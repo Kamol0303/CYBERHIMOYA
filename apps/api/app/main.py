@@ -16,6 +16,7 @@ from app.routers import (
     breach,
     consents,
     devices,
+    dns,
     emergency,
     feed,
     messages,
@@ -46,6 +47,7 @@ TAGS_METADATA = [
     {"name": "notifications", "description": "In-app alerts (no raw PII)"},
     {"name": "reports", "description": "JSON export reports"},
     {"name": "password-health", "description": "Password strength (never stored)"},
+    {"name": "dns", "description": "Domain check + user allowlist (FR-060)"},
 ]
 
 BEARER_SCHEME = {
@@ -180,6 +182,7 @@ api.include_router(threat_events.router)
 api.include_router(notifications.router)
 api.include_router(reports.router)
 api.include_router(password_health.router)
+api.include_router(dns.router)
 app.mount("/v1", api)
 
 FEEDS_DIR.mkdir(parents=True, exist_ok=True)

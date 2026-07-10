@@ -17,6 +17,10 @@ import {
   markNotificationRead,
   passwordHealth,
   fetchRiskHistory,
+  dnsCheck,
+  fetchDnsAllowlist,
+  addDnsAllowlist,
+  removeDnsAllowlist,
   getToken,
   login,
   register,
@@ -129,6 +133,11 @@ export default function App() {
   const [riskHistory, setRiskHistory] = useState<
     { id: string; subject_type: string; score: number; created_at: string }[]
   >([]);
+  const [dnsDomain, setDnsDomain] = useState("");
+  const [dnsResult, setDnsResult] = useState<string | null>(null);
+  const [dnsAllowlist, setDnsAllowlist] = useState<
+    { id: string; domain: string; note: string | null }[]
+  >([]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -167,18 +176,29 @@ export default function App() {
       setConsents([]);
       return;
     }
-    const [scans, consentRows, feedSync, allowlist, emLogs, deviceRows, events, notifs, risks] =
-      await Promise.all([
-        fetchScans(),
-        fetchConsents(),
-        fetchThreatFeedSync(),
-        fetchEmergencyAllowlist(),
-        fetchEmergencyLogs(),
-        fetchDevices().catch(() => []),
-        fetchThreatEvents().catch(() => []),
-        fetchNotifications().catch(() => []),
-        fetchRiskHistory().catch(() => []),
-      ]);
+    const [
+      scans,
+      consentRows,
+      feedSync,
+      allowlist,
+      emLogs,
+      deviceRows,
+      events,
+      notifs,
+      risks,
+      dnsRows,
+    ] = await Promise.all([
+      fetchScans(),
+      fetchConsents(),
+      fetchThreatFeedSync(),
+      fetchEmergencyAllowlist(),
+      fetchEmergencyLogs(),
+      fetchDevices().catch(() => []),
+      fetchThreatEvents().catch(() => []),
+      fetchNotifications().catch(() => []),
+      fetchRiskHistory().catch(() => []),
+      fetchDnsAllowlist().catch(() => []),
+    ]);
     setHistory(scans);
     setConsents(consentRows);
     setFeed(feedSync);
@@ -188,6 +208,7 @@ export default function App() {
     setThreatEvents(events);
     setNotifications(notifs);
     setRiskHistory(risks);
+    setDnsAllowlist(dnsRows);
   }
 
   useEffect(() => {
@@ -693,6 +714,73 @@ export default function App() {
                     <span className="score">{r.score}</span>
                     <span>{r.subject_type}</span>
                     <span className="hash">{r.created_at.slice(0, 19)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "dnsTitle")}</h2>
+            <p className="note">{t(locale, "dnsHint")}</p>
+            <input
+              value={dnsDomain}
+              onChange={(e) => setDnsDomain(e.target.value)}
+              placeholder="example.uz"
+              style={{ width: "100%", marginTop: "0.5rem" }}
+            />
+            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                disabled={!dnsDomain.trim()}
+                onClick={() => {
+                  void dnsCheck(dnsDomain.trim())
+                    .then((r) =>
+                      setDnsResult(
+                        `${r.domain}: ${r.verdict} · score=${r.score}${r.allowlisted ? " · allowlist" : ""}`,
+                      ),
+                    )
+                    .catch(() => setDnsResult(t(locale, "error")));
+                }}
+              >
+                {t(locale, "dnsCheck")}
+              </button>
+              <button
+                type="button"
+                className="secondary"
+                disabled={!dnsDomain.trim()}
+                onClick={() => {
+                  void addDnsAllowlist(dnsDomain.trim())
+                    .then((row) => {
+                      setDnsAllowlist((prev) => [row, ...prev.filter((x) => x.id !== row.id)]);
+                      setDnsDomain("");
+                      setDnsResult(t(locale, "dnsAdded"));
+                    })
+                    .catch(() => setDnsResult(t(locale, "error")));
+                }}
+              >
+                {t(locale, "dnsAllow")}
+              </button>
+            </div>
+            {dnsResult ? <p className="note">{dnsResult}</p> : null}
+            {dnsAllowlist.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {dnsAllowlist.map((d) => (
+                  <li key={d.id}>
+                    <span>{d.domain}</span>
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => {
+                        void removeDnsAllowlist(d.id)
+                          .then(() => setDnsAllowlist((prev) => prev.filter((x) => x.id !== d.id)))
+                          .catch(() => undefined);
+                      }}
+                    >
+                      {t(locale, "dnsRemove")}
+                    </button>
                   </li>
                 ))}
               </ul>

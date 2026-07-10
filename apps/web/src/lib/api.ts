@@ -446,6 +446,33 @@ export async function fetchRiskHistory(limit = 50) {
   >(`/v1/risk-score/history?limit=${limit}`);
 }
 
+export async function dnsCheck(domain: string) {
+  return postJson<{
+    domain: string;
+    verdict: string;
+    score: number;
+    allowlisted: boolean;
+    recommended_action: string;
+  }>("/v1/dns/check", { domain });
+}
+
+export async function fetchDnsAllowlist() {
+  return getJson<{ id: string; domain: string; note: string | null; created_at: string }[]>(
+    "/v1/dns/allowlist",
+  );
+}
+
+export async function addDnsAllowlist(domain: string, note?: string) {
+  return postJson<{ id: string; domain: string; note: string | null; created_at: string }>(
+    "/v1/dns/allowlist",
+    { domain, note },
+  );
+}
+
+export async function removeDnsAllowlist(id: string) {
+  return deleteVoid(`/v1/dns/allowlist/${id}`);
+}
+
 export async function sha256Hex(file: File): Promise<string> {
   const buffer = await file.arrayBuffer();
   const digest = await crypto.subtle.digest("SHA-256", buffer);

@@ -162,3 +162,12 @@ class RiskScoreHistoryRow:
     confidence: float
     model_version: str
     created_at: datetime
+
+
+@dataclass
+class DomainAllowlistRow:
+    id: UUID
+    user_id: UUID
+    domain: str
+    note: str | None
+    created_at: datetime

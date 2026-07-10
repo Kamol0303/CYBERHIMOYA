@@ -580,6 +580,20 @@ class PostgresStore:
     def list_risk_score_history(self, user_id: UUID, limit: int = 50):
         return []
 
+    def add_domain_allowlist(self, user_id: UUID, domain: str, note: str | None = None):
+        raise NotImplementedError(
+            "domain_allowlist: use SQLite store in V1.4 or extend PostgresStore"
+        )
+
+    def list_domain_allowlist(self, user_id: UUID):
+        return []
+
+    def is_domain_allowlisted(self, user_id: UUID, domain: str) -> bool:
+        return False
+
+    def remove_domain_allowlist(self, user_id: UUID, entry_id: UUID) -> bool:
+        return False
+
     @property
     def refresh_tokens(self) -> "_PgRefreshTokenProxy":
         return _PgRefreshTokenProxy(self._conn)

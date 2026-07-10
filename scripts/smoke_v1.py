@@ -161,6 +161,8 @@ def main() -> int:
     ok("risk_history", rh.status_code == 200 and len(rh.json()) >= 1)
     pwd = client.post("/v1/password-health", json={"password": "not-a-secret-demo"})
     ok("password_health", pwd.status_code == 200 and "verdict" in pwd.json())
+    dns = client.post("/v1/dns/check", headers=headers, json={"domain": "pay-click-uz.tk"})
+    ok("dns_check", dns.status_code == 200 and dns.json().get("verdict") == "malicious")
 
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")

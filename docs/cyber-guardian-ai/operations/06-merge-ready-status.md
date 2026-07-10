@@ -1,7 +1,7 @@
 # V1 merge-ready status
 
-**Branch:** `CURSOR/v1-0-3-1-polish-b1ff` (0.4.0)  
-**API version:** 0.4.0  
+**Branch:** `CURSOR/v1-0-3-1-polish-b1ff` (0.4.1)  
+**API version:** 0.4.1  
 **Verified:** 2026-07-10 (agent run)
 
 ## Automated gates
@@ -13,6 +13,10 @@
 | Smoke `scripts/smoke_v1.py` | included in `make test` |
 | Web `npm test` + `npm run build` | included in `make test` |
 | Extension validate | FR-062 content script + background |
+
+## 0.4.1 additions
+
+- DNS domain check + user allowlist (FR-060)
 
 ## 0.4.0 additions
 

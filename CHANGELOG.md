@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1 — 2026-07-10
+
+- `POST/GET/DELETE /v1/dns/*` — FR-060 domain check + user allowlist (audit)
+- Web dashboard DNS allowlist UI
+
 ## 0.4.0 — 2026-07-10
 
 Activity layer: threat events, notifications, JSON reports (FR-090/091/092/093).

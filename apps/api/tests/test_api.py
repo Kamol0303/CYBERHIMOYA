@@ -572,3 +572,29 @@ def test_password_health_and_scan_detail(client: TestClient):
     assert scored.status_code == 200
     hist2 = client.get("/v1/risk-score/history", headers=headers)
     assert len(hist2.json()) >= 2
+
+
+def test_dns_allowlist_and_check(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "dns@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    bad = client.post("/v1/dns/check", headers=headers, json={"domain": "pay-click-uz.tk"})
+    assert bad.status_code == 200
+    assert bad.json()["verdict"] == "malicious"
+    added = client.post(
+        "/v1/dns/allowlist",
+        headers=headers,
+        json={"domain": "pay-click-uz.tk", "note": "lab"},
+    )
+    assert added.status_code == 201
+    ok = client.post("/v1/dns/check", headers=headers, json={"domain": "https://pay-click-uz.tk/x"})
+    assert ok.status_code == 200
+    assert ok.json()["allowlisted"] is True
+    assert ok.json()["verdict"] == "clean"
+    listed = client.get("/v1/dns/allowlist", headers=headers)
+    assert listed.status_code == 200
+    assert len(listed.json()) == 1
+    entry_id = listed.json()[0]["id"]
+    assert client.delete(f"/v1/dns/allowlist/{entry_id}", headers=headers).status_code == 204
