@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import {
   fetchConsents,
+  fetchEmergencyAllowlist,
   fetchMe,
   fetchScans,
   fetchThreatFeedSync,
@@ -10,10 +11,12 @@ import {
   scanFileHash,
   scanQr,
   scanUrl,
+  setEmergencyConsent,
   setToken,
   sha256Hex,
   upsertConsent,
   type ConsentRecord,
+  type EmergencyAllowlist,
   type ScanHistoryItem,
   type ScanReason,
   type ThreatFeedSync,
@@ -57,6 +60,7 @@ export default function App() {
   const [history, setHistory] = useState<ScanHistoryItem[]>([]);
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
   const [feed, setFeed] = useState<ThreatFeedSync | null>(null);
+  const [emergency, setEmergency] = useState<EmergencyAllowlist | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -76,14 +80,16 @@ export default function App() {
       setConsents([]);
       return;
     }
-    const [scans, consentRows, feedSync] = await Promise.all([
+    const [scans, consentRows, feedSync, allowlist] = await Promise.all([
       fetchScans(),
       fetchConsents(),
       fetchThreatFeedSync(),
+      fetchEmergencyAllowlist(),
     ]);
     setHistory(scans);
     setConsents(consentRows);
     setFeed(feedSync);
+    setEmergency(allowlist);
   }
 
   useEffect(() => {
@@ -411,12 +417,24 @@ export default function App() {
               <input
                 type="checkbox"
                 checked={consentGranted("emergency_law_enforcement")}
-                onChange={(e) =>
-                  void toggleConsent("emergency_law_enforcement", e.target.checked)
-                }
+                onChange={(e) => {
+                  void toggleConsent("emergency_law_enforcement", e.target.checked);
+                  void setEmergencyConsent(e.target.checked).catch(() => undefined);
+                }}
               />
               {t(locale, "consentEmergency")}
             </label>
+          </section>
+
+          <section className="history-block">
+            <h2>{t(locale, "emergencyTitle")}</h2>
+            <p className="note">{t(locale, "emergencyHint")}</p>
+            {emergency ? (
+              <p className="note">
+                AQ-039: {emergency.aq039_resolved ? "ok" : "pending"} · dry-run{" "}
+                {emergency.dry_run_forced ? "on" : "off"}
+              </p>
+            ) : null}
           </section>
 
           <section className="history-block">

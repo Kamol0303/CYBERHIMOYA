@@ -7,6 +7,7 @@ from uuid import UUID, uuid4
 
 from app.services.store_models import (
     ConsentRow,
+    EmergencyLogRow,
     ScanRow,
     UserRow,
     hash_email,
@@ -90,6 +91,18 @@ class PostgresStore:
                   token TEXT PRIMARY KEY,
                   user_id TEXT NOT NULL REFERENCES users(id)
                 );
+                CREATE TABLE IF NOT EXISTS emergency_logs (
+                  id TEXT PRIMARY KEY,
+                  user_id TEXT NOT NULL REFERENCES users(id),
+                  status TEXT NOT NULL,
+                  channel TEXT NOT NULL,
+                  evidence_code TEXT NOT NULL,
+                  modules JSONB NOT NULL,
+                  confidence DOUBLE PRECISION NOT NULL,
+                  dry_run BOOLEAN NOT NULL,
+                  meta JSONB NOT NULL,
+                  created_at TIMESTAMPTZ NOT NULL
+                );
                 """
             )
         self._conn.commit()
@@ -98,6 +111,7 @@ class PostgresStore:
         with self._conn.cursor() as cur:
             for table in (
                 "refresh_tokens",
+                "emergency_logs",
                 "audit_logs",
                 "scan_results",
                 "consent_records",
@@ -311,6 +325,70 @@ class PostgresStore:
                 ),
             )
         self._conn.commit()
+
+    def add_emergency_log(self, row: EmergencyLogRow) -> EmergencyLogRow:
+        with self._conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO emergency_logs
+                (id, user_id, status, channel, evidence_code, modules, confidence, dry_run, meta, created_at)
+                VALUES (%s, %s, %s, %s, %s, %s::jsonb, %s, %s, %s::jsonb, %s)
+                """,
+                (
+                    str(row.id),
+                    str(row.user_id),
+                    row.status,
+                    row.channel,
+                    row.evidence_code,
+                    json.dumps(row.modules),
+                    row.confidence,
+                    row.dry_run,
+                    json.dumps(row.meta),
+                    row.created_at.isoformat(),
+                ),
+            )
+        self._conn.commit()
+        return row
+
+    def list_emergency_logs(self, user_id: UUID, limit: int = 20) -> list[EmergencyLogRow]:
+        with self._conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT * FROM emergency_logs WHERE user_id = %s
+                ORDER BY created_at DESC LIMIT %s
+                """,
+                (str(user_id), limit),
+            )
+            rows = cur.fetchall()
+        out: list[EmergencyLogRow] = []
+        for r in rows:
+            modules = r["modules"]
+            meta = r["meta"]
+            if isinstance(modules, str):
+                modules = json.loads(modules)
+            if isinstance(meta, str):
+                meta = json.loads(meta)
+            out.append(
+                EmergencyLogRow(
+                    id=UUID(r["id"]),
+                    user_id=UUID(r["user_id"]),
+                    status=r["status"],
+                    channel=r["channel"],
+                    evidence_code=r["evidence_code"],
+                    modules=modules or [],
+                    confidence=float(r["confidence"]),
+                    dry_run=bool(r["dry_run"]),
+                    meta=meta or {},
+                    created_at=_parse_dt(r["created_at"]),
+                )
+            )
+        return out
+
+    def has_emergency_consent(self, user_id: UUID) -> bool:
+        for row in self.list_consents(user_id):
+            if row.consent_type == "emergency_law_enforcement" and row.granted:
+                return True
+        return False
 
     @property
     def refresh_tokens(self) -> "_PgRefreshTokenProxy":

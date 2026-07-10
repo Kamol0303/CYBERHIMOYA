@@ -8,3 +8,6 @@
 | Emergency report | faqat Critical + prior consent (keyinroq) |
 
 Permission: `RECEIVE_SMS` / `READ_SMS` — minimal, explained in UX. No contact upload.
+
+Receiver shell: `ScamSmsReceiver` → `OnDeviceSmsAnalyzer`.
+`SEND_SMS` only if emergency consent granted (allowlisted destinations only; AQ-039).

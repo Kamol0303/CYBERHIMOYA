@@ -10,6 +10,7 @@ from app.config import settings
 from app.services.store_models import (
     AuditRow,
     ConsentRow,
+    EmergencyLogRow,
     ScanRow,
     UserRow,
     hash_email,
@@ -98,6 +99,18 @@ class SqliteStore:
               token TEXT PRIMARY KEY,
               user_id TEXT NOT NULL REFERENCES users(id)
             );
+            CREATE TABLE IF NOT EXISTS emergency_logs (
+              id TEXT PRIMARY KEY,
+              user_id TEXT NOT NULL REFERENCES users(id),
+              status TEXT NOT NULL,
+              channel TEXT NOT NULL,
+              evidence_code TEXT NOT NULL,
+              modules TEXT NOT NULL,
+              confidence REAL NOT NULL,
+              dry_run INTEGER NOT NULL,
+              meta TEXT NOT NULL,
+              created_at TEXT NOT NULL
+            );
             """
         )
         self._conn.commit()
@@ -105,6 +118,7 @@ class SqliteStore:
     def reset(self) -> None:
         for table in (
             "refresh_tokens",
+            "emergency_logs",
             "audit_logs",
             "scan_results",
             "consent_records",
@@ -307,6 +321,64 @@ class SqliteStore:
             ),
         )
         self._conn.commit()
+
+    def add_emergency_log(self, row: EmergencyLogRow) -> EmergencyLogRow:
+        from app.services.store_models import EmergencyLogRow as EL
+
+        assert isinstance(row, EL)
+        self._conn.execute(
+            """
+            INSERT INTO emergency_logs
+            (id, user_id, status, channel, evidence_code, modules, confidence, dry_run, meta, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(row.id),
+                str(row.user_id),
+                row.status,
+                row.channel,
+                row.evidence_code,
+                json.dumps(row.modules),
+                row.confidence,
+                1 if row.dry_run else 0,
+                json.dumps(row.meta),
+                row.created_at.isoformat(),
+            ),
+        )
+        self._conn.commit()
+        return row
+
+    def list_emergency_logs(self, user_id: UUID, limit: int = 20) -> list:
+        from app.services.store_models import EmergencyLogRow
+
+        rows = self._conn.execute(
+            """
+            SELECT * FROM emergency_logs WHERE user_id = ?
+            ORDER BY created_at DESC LIMIT ?
+            """,
+            (str(user_id), limit),
+        ).fetchall()
+        return [
+            EmergencyLogRow(
+                id=UUID(r["id"]),
+                user_id=UUID(r["user_id"]),
+                status=r["status"],
+                channel=r["channel"],
+                evidence_code=r["evidence_code"],
+                modules=json.loads(r["modules"]),
+                confidence=float(r["confidence"]),
+                dry_run=bool(r["dry_run"]),
+                meta=json.loads(r["meta"] or "{}"),
+                created_at=_parse_dt(r["created_at"]),
+            )
+            for r in rows
+        ]
+
+    def has_emergency_consent(self, user_id: UUID) -> bool:
+        for row in self.list_consents(user_id):
+            if row.consent_type == "emergency_law_enforcement" and row.granted:
+                return True
+        return False
 
     # refresh token map compatibility
     @property

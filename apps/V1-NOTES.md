@@ -8,12 +8,17 @@
 - Docker Compose (api + web)
 - Android/Windows shell docs
 
-### Sprint 1.4 (this update)
-- Real **ed25519** feed signing/verify (`feed_crypto.py`)
-- Dev keypair under `app/data/keys/` + `CGA_FEED_PRIVATE_KEY_B64` override
-- Feed version `20260710.2`, `/v1/threat-feed/public-key`
-- Android Compose UI shell + **on-device SMS** analyzer (raw SMS never uploaded)
-- Windows tray UI shell stub
+### Sprint 1.5 (this update)
+- Emergency API foundation: consent / confirm / dispatch / logs
+- AQ-039 allowlist config (default PENDING → dry-run only)
+- Android `ScamSmsReceiver` + richer UI state
+- Windows `ScanWindow` controller shell
+- Web dashboard emergency status
+
+## Emergency dry-run
+
+Until Legal resolves AQ-039, `CGA_EMERGENCY_*_ALLOWLIST=PENDING_AQ039` and
+`CGA_EMERGENCY_DRY_RUN=true` keep all dispatches as cabinet logs only.
 
 ## Postgres local
 
@@ -33,7 +38,6 @@ python scripts/generate_feed.py
 ## Explicitly out of V1
 
 - Full native apps UI (Compose/WinUI production screens)
-- Cloud SMS upload
-- Emergency SMS to IIV (AQ-039)
+- Cloud SMS upload / live IIV SMS without AQ-039
 - Production private key in git
 - Active probing of any kind

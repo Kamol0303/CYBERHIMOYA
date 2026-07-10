@@ -175,6 +175,24 @@ export async function fetchThreatFeedSync(): Promise<ThreatFeedSync> {
   return getJson("/v1/threat-feed/sync");
 }
 
+export type EmergencyAllowlist = {
+  aq039_resolved: boolean;
+  dry_run_forced: boolean;
+  sms_destinations_configured: number;
+  api_endpoints_configured: number;
+  email_destinations_configured: number;
+  note: string;
+  defensive_only: boolean;
+};
+
+export async function fetchEmergencyAllowlist(): Promise<EmergencyAllowlist> {
+  return getJson("/v1/emergency/allowlist");
+}
+
+export async function setEmergencyConsent(granted: boolean) {
+  return postJson("/v1/emergency/consent", { granted, source: "ui" });
+}
+
 export async function scanUrl(url: string): Promise<UrlScanResponse> {
   return postJson("/v1/scan/url", {
     url,

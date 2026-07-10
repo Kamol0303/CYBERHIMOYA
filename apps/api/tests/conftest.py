@@ -10,12 +10,15 @@ import pytest
 
 from app.services.rate_limit import guest_limiter
 from app.services.store import store
+from app.services.emergency import clear_confirm_tokens
 
 
 @pytest.fixture(autouse=True)
 def reset_state():
     store.reset()
     guest_limiter.reset()
+    clear_confirm_tokens()
     yield
     store.reset()
     guest_limiter.reset()
+    clear_confirm_tokens()

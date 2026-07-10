@@ -185,3 +185,47 @@ class HealthResponse(BaseModel):
     version: str
     defensive_only: bool = True
     storage: str = "sqlite"
+
+
+class EmergencyConsentRequest(BaseModel):
+    granted: bool
+    source: str = "ui"
+
+
+class EmergencyConfirmRequest(BaseModel):
+    modules: list[str] = Field(min_length=1, max_length=20)
+    confidence: float = Field(ge=0.0, le=1.0)
+    incident_ref: str | None = Field(default=None, max_length=128)
+
+
+class EmergencyConfirmResponse(BaseModel):
+    confirm_token: str
+    expires_at: datetime
+    modules: list[str]
+    requires_second_confirm: bool = True
+
+
+class EmergencyDispatchRequest(BaseModel):
+    confirm_token: str
+    channel: str = Field(default="api", pattern="^(sms|api|email)$")
+
+
+class EmergencyLogItem(BaseModel):
+    id: UUID
+    status: str
+    channel: str
+    evidence_code: str
+    modules: list[str]
+    confidence: float
+    dry_run: bool
+    created_at: datetime
+
+
+class EmergencyAllowlistResponse(BaseModel):
+    aq039_resolved: bool
+    dry_run_forced: bool
+    sms_destinations_configured: int
+    api_endpoints_configured: int
+    email_destinations_configured: int
+    note: str
+    defensive_only: bool = True

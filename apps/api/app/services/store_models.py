@@ -77,3 +77,17 @@ class AuditRow:
     action: str
     meta: dict[str, Any]
     at: datetime
+
+
+@dataclass
+class EmergencyLogRow:
+    id: UUID
+    user_id: UUID
+    status: str
+    channel: str
+    evidence_code: str
+    modules: list[str]
+    confidence: float
+    dry_run: bool
+    meta: dict[str, Any]
+    created_at: datetime

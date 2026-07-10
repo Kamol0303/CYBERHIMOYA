@@ -18,6 +18,14 @@ class Settings(BaseSettings):
     public_base_url: str = "http://127.0.0.1:8000"
     # Optional override; otherwise uses app/data/keys/feed_ed25519_private.dev.b64
     feed_private_key_b64: str | None = None
+    # Emergency reporting (FR-EM*). AQ-039 allowlists — empty/PENDING => dry-run only.
+    emergency_dry_run: bool = True
+    emergency_min_modules: int = 3
+    emergency_min_confidence: float = 0.85
+    emergency_confirm_ttl_minutes: int = 10
+    emergency_sms_allowlist: str = "PENDING_AQ039"
+    emergency_api_allowlist: str = "PENDING_AQ039"
+    emergency_email_allowlist: str = "PENDING_AQ039"
 
 
 settings = Settings()

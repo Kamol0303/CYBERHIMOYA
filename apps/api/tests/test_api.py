@@ -214,3 +214,74 @@ def test_create_store_sqlite_factory():
     assert isinstance(s, SqliteStore)
     s.create_user("factory@example.com", "securepass1")
     assert s.authenticate("factory@example.com", "securepass1") is not None
+
+
+def test_emergency_allowlist_pending(client: TestClient):
+    r = client.get("/v1/emergency/allowlist")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["aq039_resolved"] is False
+    assert body["dry_run_forced"] is True
+    assert body["defensive_only"] is True
+
+
+def test_emergency_flow_dry_run(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "em@example.com", "password": "securepass1"},
+    )
+    token = reg.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    denied = client.post(
+        "/v1/emergency/confirm",
+        headers=headers,
+        json={
+            "modules": ["url_scan", "file_hash", "sms_local"],
+            "confidence": 0.95,
+        },
+    )
+    assert denied.status_code == 403
+
+    assert (
+        client.post(
+            "/v1/emergency/consent",
+            headers=headers,
+            json={"granted": True},
+        ).status_code
+        == 200
+    )
+
+    weak = client.post(
+        "/v1/emergency/confirm",
+        headers=headers,
+        json={"modules": ["url_scan"], "confidence": 0.99},
+    )
+    assert weak.status_code == 422
+
+    conf = client.post(
+        "/v1/emergency/confirm",
+        headers=headers,
+        json={
+            "modules": ["url_scan", "file_hash", "sms_local"],
+            "confidence": 0.95,
+            "incident_ref": "demo-1",
+        },
+    )
+    assert conf.status_code == 200
+    confirm_token = conf.json()["confirm_token"]
+
+    disp = client.post(
+        "/v1/emergency/dispatch",
+        headers=headers,
+        json={"confirm_token": confirm_token, "channel": "api"},
+    )
+    assert disp.status_code == 202
+    body = disp.json()
+    assert body["dry_run"] is True
+    assert body["status"] == "dry_run_logged"
+    assert body["evidence_code"].startswith("EV-")
+
+    logs = client.get("/v1/emergency/logs", headers=headers)
+    assert logs.status_code == 200
+    assert len(logs.json()) == 1

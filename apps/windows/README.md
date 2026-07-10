@@ -20,6 +20,7 @@ apps/windows/
   docs/architecture.md
   src/CyberGuardian.Windows/Api/GuardianApiClient.cs
   src/CyberGuardian.Windows/Ui/TrayShell.cs
+  src/CyberGuardian.Windows/Ui/ScanWindow.cs
 ```
 
 Hard rule: defensive monitoring and local response only.

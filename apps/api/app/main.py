@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from app import __version__
 from app.config import settings
 from app.models.schemas import HealthResponse
-from app.routers import auth, consents, feed, scan, scans
+from app.routers import auth, consents, emergency, feed, scan, scans
 from app.services.feed import FEEDS_DIR, ensure_feed_files
 
 app = FastAPI(
@@ -35,6 +35,7 @@ api.include_router(consents.router)
 api.include_router(scan.router)
 api.include_router(scans.router)
 api.include_router(feed.router)
+api.include_router(emergency.router)
 app.mount("/v1", api)
 
 # Local threat-feed CDN stub (signed JSON packs only).
