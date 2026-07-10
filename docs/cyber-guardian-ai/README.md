@@ -1,7 +1,17 @@
 # Cyber Guardian AI — Hujjatlar indeksi
 
-**Joriy nashr:** Apex Master **v5.1.0** (yangilangan rollar, matritsa #24–29, arch oqimi, roadmap)  
+**Joriy nashr:** Apex Master **v5.2.0-defensive-strict** (passive hunting, read-only monitoring, lokal mudofaa response)  
 **Sprint-planning KIRISH NUQTASI:** [`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md)
+
+Ushbu fayl — master spetsifikatsiyaga yo‘l ko‘rsatgich.
+
+---
+
+## Nizom (eng qat’iy)
+
+Faqat **mudofaa**. Active probing, hujum, exploit, C2/payload, boshqa tizimga faol aralashuv — taqiqlangan.  
+Avtomatik javob: lokal bloklash, izolyatsiya, ogohlantirish, rasmiy organlarga xabar.  
+Bitta branch.
 
 Ushbu fayl — master spetsifikatsiyaga yo‘l ko‘rsatgich. Barcha 15 bo‘lim masterda; quyida chuqur satellite hujjatlar.
 

@@ -1,15 +1,18 @@
 # Cyber Guardian AI — APEX MASTER SPECIFICATION
 ## IEEE 830 SRS + SDD (Yagona sprint-planning hujjati)
 
-**Versiya:** 5.1.0-apex-master  
+**Versiya:** 5.2.0-defensive-strict  
 **Sana:** 2026-07-10  
 **Holat:** Professional jamoa sprint-planning uchun tayyor  
 **Til:** O‘zbek (texnik atamalar EN)  
 **Branch siyosati:** Bitta ishchi branch  
 
-**Qat’iy cheklov:** Faqat defensive, intelligence va automated **himoya** response. Hech qanday offensive imkoniyat, ekspluatatsiya yoki zararli kod bo‘lmaydi.
+**Qat’iy cheklov:** Faqat mudofaa. Hech qachon hujum, ekspluatatsiya, C2/payload joylash, faol probing yoki boshqa tizimga faol aralashuv bo‘lmaydi. Monitoring — read-only/passive. Avtomatik javob — faqat lokal bloklash, izolyatsiya, ogohlantirish, rasmiy organlarga xabar.
 
 **Satellite chuqur hujjatlar:** `srs/*`, `sdd/*`, `compliance/*`, `operations/*` — ushbu master ularni birlashtiradi va sprint uchun yetarli o‘zini o‘zi yetarli qiladi.
+
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
@@ -23,7 +26,10 @@
 | Taxminlar/AQ alohida | ✅ §15 + `assumptions-and-open-questions.md` |
 | Savolsiz sprint-planning | ✅ §15 baholash |
 
-**Disruption / zararsizlantirish** = blok, karantin, DNS deny, foydalanuvchi ogohlantirishi, organlarga intelligence paketi. Mustaqil infra buzish/DDoS/hack-back — yo‘q.
+**Mudofaa javobi** = lokal bloklash, izolyatsiya, DNS deny (siyosat), foydalanuvchi ogohlantirishi, organlarga xabar. Active probing / DDoS / hack-back / C2 / payload — yo‘q.
+
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
@@ -33,19 +39,20 @@ Sen quyidagi mutaxassislarning **birlashgan virtual jamoasi** sifatida ishlaysan
 
 | Rol | Mas’uliyat sohasi | Asosiy artefakt |
 |-----|-------------------|-----------------|
-| Principal Security Architect & Hunt Lead | Tizim arxitekturasi, advanced threat modeling va kill chain | §5, §6, `sdd/08` |
-| Senior Malware Researcher & Reverse Engineer | Deep static/dynamic analysis, code similarity, binary fingerprinting | §8 YARA/File/Memory |
-| AI/ML & Data Science Engineer | Graph ML, LLM-based TTP analysis, predictive hunting, anomaly detection | §8, `sdd/04c` |
-| APT & Nation-State Threat Hunter | Persistent threat tracking, infrastructure de-anonymization (attribution) | §4 #24–29, §11 |
-| Mobile & Desktop EDR/XDR Specialist | Low-level telemetry, memory forensics, rootkit/injection **detection** | §3, §8 |
-| Threat Intelligence Fusion & Attribution Expert | Multi-source intel fusion, actor profiling va persona building | §5 Fusion, §8 Attribution |
-| Cyber Forensics & Incident Response Lead | Automated forensics, root cause analysis | Evidence Vault §5/§7 |
-| Senior Secure Full-Stack Engineer | Zero-trust backend, scalable hunting pipeline | §7, Hunting Pipeline |
-| Privacy, Ethics & Legal Officer | Ethical hunting, responsible disclosure, qonuniy muvofiqlik | §10 |
-| QA/DevOps & Adversarial Testing Lead | Red team simulation, security testing | §13 |
+| Principal Security Architect & Defensive Hunt Lead | Advanced defensive architecture, threat modeling | §5, §6, `sdd/08` |
+| Senior Malware Researcher & Defensive Analyst | Deep analysis, similarity search, behavior baselining | §8 |
+| AI/ML & Data Science Engineer | Predictive defense, Graph ML, anomaly detection, attribution | §8, `sdd/04c` |
+| Advanced Threat Hunter (Blue Team) | Proactive detection, campaign tracking, actor profiling | §4 #24–29, §11 |
+| Mobile & Desktop XDR Specialist | Deep telemetry, memory analysis, anomaly detection | §3, §8 |
+| Threat Intelligence & Attribution Lead | Multi-source fusion, actor behavior modeling | §5 Fusion, §8 |
+| Cyber Forensics Lead | Automated evidence collection (**defensive only**, read-only) | Evidence Vault |
+| Senior Secure Full-Stack Engineer | Zero-trust, high-scale defensive systems | §7 |
+| Privacy & Ethics Officer | Strict defensive ethics, compliance | §10 |
 
 ### Threat Hunting & Actor Disruption Strategy
-Jamoa faqat detection / attribution / protective response loyihalaydi. «Infrastructure de-anonymization» = qonuniy korrelyatsiya va attribution (doxing/hack-back emas). Adversarial testing — detektorlarni labda sinash; exploit tarqatish yo‘q.
+Faqat Blue Team / mudofaa. Profiling = passive observation + korrelyatsiya. Evidence = read-only collection.
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
@@ -55,25 +62,28 @@ Jamoa faqat detection / attribution / protective response loyihalaydi. «Infrast
 O‘zbekistonda zararli APK, Telegram/QR fishing, voice scam va boshqa SE hujumlari o‘smoqda; oddiy foydalanuvchi texnik himoyasiz.
 
 ## 2.2 Missiya
-**Cyber Guardian AI** — foydalanuvchilarni proaktiv himoya qilish bilan birga, kiberhujum tayyorlayotgan yoki amalga oshirayotgan threat actorlarni erta bosqichda aniqlaydigan, ularning infratuzilmasi, TTP’lari, kampaniyalari va **shaxsiyatini** (persona/cluster taxallusi) kuzatadigan, atributlashtiradigan va zararsizlantirishga yordam beradigan apex darajadagi mudofaa + threat hunting ekotizimi.
+**Cyber Guardian AI** — foydalanuvchilarni har tomonlama himoya qilish bilan birga, kiberhujum tayyorlayotgan yoki amalga oshirayotgan har qanday threat actorni erta bosqichda aniqlaydigan, kuzatadigan, profiling qiladigan va ularning harakatlarini **to‘liq bloklashga yordam beradigan** eng kuchli mudofaa va proaktiv threat hunting platformasi.
 
-## 2.3 Muhim tamoyil
-Platforma faqat **defensive, intelligence va automated response** funksiyalarini o‘z ichiga oladi. Hech qanday offensive (hujum) imkoniyati, ekspluatatsiya yoki zararli kod bo‘lmaydi.
+## 2.3 Muhim tamoyil (eng qat’iy)
+Platforma **faqat mudofaa (defensive)** funksiyalarini o‘z ichiga oladi. Hech qanday holatda hujum, ekspluatatsiya, zararli ta’sir, C2, payload yoki boshqa tizimga **faol aralashuv** imkoniyati bo‘lmaydi. Har bir modul faqat **aniqlash, monitoring, intellekt yig‘ish va avtomatlashtirilgan mudofaa choralari** bilan cheklanadi.
 
-## 2.4 Asosiy FR/NFR (missiya darajasi)
+## 2.4 Asosiy FR/NFR
 
 | ID | Talab |
 |----|-------|
-| FR-M01 | 3 platformada proaktiv ogohlantirish |
-| FR-M02 | Actor/campaign/TTP attribution (confidence + explainability) |
-| FR-M03 | Automated **defensive** response (playbooks) |
-| FR-M04 | Authority intelligence package (zararsizlantirishga yordam) |
-| FR-M05 | Persona/cluster tracking (taxallus; noqonuniy doxing yo‘q) |
-| NFR-M01 | TLS 1.3, AES-256 PII, consent-gated hunting |
-| NFR-M02 | Offensive capability CI blocklist |
+| FR-M01 | 3 platformada proaktiv himoya ogohlantirishi |
+| FR-M02 | Passive actor profiling (confidence + explainability) |
+| FR-M03 | Automated defensive response: lokal bloklash / izolyatsiya / alert |
+| FR-M04 | Rasmiy organlarga mas’uliyatli xabar (intel pack) |
+| FR-M05 | Passive hunting only — no active probing of third-party networks |
+| NFR-M01 | TLS 1.3, AES-256 PII, consent-gated monitoring |
+| NFR-M02 | CI blocks any offensive/active-intrusion capability |
+| NFR-M03 | All monitoring APIs read-only toward external systems |
 
 ### Threat Hunting & Actor Disruption Strategy
-Erta aniqlash → infra/TTP/kampaniya/persona korrelyatsiyasi → himoya to‘xtatish → organlarga intel.
+Aniqlash → passive korrelyatsiya → lokal bloklash/izolyatsiya → foydalanuvchi + rasmiy organlarga xabar. Faol hujum yo‘q.
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
@@ -91,6 +101,9 @@ Erta aniqlash → infra/TTP/kampaniya/persona korrelyatsiyasi → himoya to‘xt
 
 ### Threat Hunting & Actor Disruption Strategy
 Android — scam/APK signal; Windows — EDR/XDR hunting; Web — attribution dashboard va playbook boshqaruvi.
+
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
@@ -123,12 +136,12 @@ Android — scam/APK signal; Windows — EDR/XDR hunting; Web — attribution da
 | 21 | YARA | ✅ | ✅ | ❌* | *BE upload |
 | 22 | Sigma | ❌ | ✅ | N/A | W+BE |
 | 23 | MITRE Mapping | ✅ | ✅ | ✅ | Tasnif |
-| 24 | Threat Actor Fingerprinting & Profiling | ✅ | ✅ | ✅ | Behavior + infra + code similarity |
-| 25 | Campaign Correlation & Tracking | ✅ | ✅ | ✅ | Multiple incidents linkage |
-| 26 | Predictive Attack Forecasting | ⚠️ | ✅ | ✅ | ML asosida |
-| 27 | Infrastructure Hunting (C2, phishing kit, scam panel) | ✅ | ✅ | ✅ | Domain/IP/ASN analysis — **aniqlash** |
-| 28 | Memory Forensics & Process Ancestry | ❌ | ✅ | ❌ | Windows killer feature (detection-only) |
-| 29 | Graph-based Actor Relationship Analysis | ❌ | ✅ | ✅ | Knowledge Graph |
+| 24 | Advanced Threat Actor Profiling & Behavior Modeling | ✅ | ✅ | ✅ | Passive observation only |
+| 25 | Multi-Incident Campaign Correlation | ✅ | ✅ | ✅ | Defensive tracking |
+| 26 | Predictive Defense Forecasting | ⚠️ | ✅ | ✅ | Future attack probability (defensive) |
+| 27 | Suspicious Infrastructure Passive Detection | ✅ | ✅ | ✅ | Faqat monitoring va ogohlantirish |
+| 28 | Deep Memory & Behavioral Forensics | ❌ | ✅ | ❌ | Read-only analysis |
+| 29 | Graph-based Defensive Relationship Analysis | ❌ | ✅ | ✅ | Actor — IOC — Campaign graph |
 | 30 | Persona/Group OSINT Tracking | ❌ | ✅ | ✅ | Legal OSINT; AQ-030 |
 | 31 | Hunting Pipeline | ⚠️ | ⚠️ | ✅ | BE real-time + scheduled |
 | 32 | Knowledge Graph / TAKB | ❌ | ❌ | ✅ | Analyst Web |
@@ -145,18 +158,31 @@ Android — scam/APK signal; Windows — EDR/XDR hunting; Web — attribution da
 
 **FR-MX01** Har skan natijasida ixtiyoriy: `intent_tags`, `campaign_id`, `actor_hint`, `kill_chain_stage`, `recommended_actions[]` (defensive).
 
-**FR-MX02** #24–29 — hunting asosiy qatlami (ushbu patch majburiy qatorlari); #30–42 — chuqurlashtirish.
+**FR-MX02** #24–29 — passive/defensive hunting qatlami; #30–42 — chuqurlashtirish. Active probing yo‘q.
 
 ### Threat Hunting & Actor Disruption Strategy
 #24–29 orqali actor/kampaniya/infra/graph; disruption #34 playbook + #37 authority intel orqali.
+
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
 # 5. Tizim arxitekturasi
 
+## 5.0 Qat’iy arxitektura qoidalari (mudofaa)
+
+| Qoida | Talab |
+|-------|-------|
+| Passive hunting | Barcha hunting — **passive kuzatish**. Active probing, tashqi tarmoqqa faol skan/ta’sir — **taqiqlangan** |
+| Knowledge Graph | Faqat mudofaa maqsadida (korrelyatsiya/attribution UI) |
+| Automated response | Faqat **lokal** bloklash, izolyatsiya, foydalanuvchi/rasmiy organlarga xabar |
+| No C2/payload | Platforma hech qachon C2 yoki payload joylashtirmaydi |
+
 ## 5.1 Yuqori darajadagi arxitektura (Mermaid)
 
-Qo‘shimcha majburiy komponentlar: **Hunting Pipeline**, **Knowledge Graph**, **Attribution Engine**, **Automated Playbook Orchestrator**.
+Qo‘shimcha majburiy komponentlar: **Hunting Pipeline**, **Knowledge Graph**, **Attribution Engine**, **Defensive Playbook Orchestrator
+(block/isolate/alert only)**.
 
 ```mermaid
 flowchart TB
@@ -176,7 +202,8 @@ flowchart TB
     VDB[(Vector DB)]
     ATTR[Attribution Engine\nGNN + LLM assist]
     SCORE[Risk & Intent]
-    PB[Automated Playbook Orchestrator]
+    PB[Defensive Playbook Orchestrator
+(block/isolate/alert only)]
     EV[(Evidence Vault)]
     NOTIF[Notification]
   end
@@ -231,7 +258,7 @@ flowchart TB
 
 ## 5.3 Ma’lumot oqimi
 
-**Majburiy zanjir:** Telemetry → Local Scan → Cloud Correlation → Actor Attribution → Automated Response
+**Majburiy zanjir (passive→defensive):** Telemetry → Local Scan → Cloud Correlation → Actor Attribution → Automated **Defensive** Response (blok/izolyatsiya/alert/CERT)
 
 ```mermaid
 sequenceDiagram
@@ -260,6 +287,9 @@ sequenceDiagram
 
 ### Threat Hunting & Actor Disruption Strategy
 Oqim oxiri — Automated Response (himoya) + authority intel; offensive sink yo‘q.
+
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
@@ -363,6 +393,9 @@ Graph tugunlari: ActorCluster, Campaign, Observable, Infrastructure, TTP, ToolFa
 ### Threat Hunting & Actor Disruption Strategy
 Diagrammalar faqat himoya oqimini ko‘rsatadi; attacker TTP “how-to” yo‘q.
 
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
 ---
 
 # 7. API va ma’lumotlar bazasi
@@ -461,13 +494,14 @@ type Query {
 ### Threat Hunting & Actor Disruption Strategy
 API da `recommended_actions` faqat defensive enum; offensive qiymatlar validatsiyada rad.
 
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
 ---
 
 # 8. AI / Detection modullari
 
-**Majburiy modullar** (har biri uchun kengaytirilgan shablon). Batafsil: `sdd/04c-apex-ai-modules.md`.
-
-Shablon:
+**Shablon** (har modul):
 ```
 ### [Modul nomi]
 - Kirish ma’lumoti: ...
@@ -478,33 +512,28 @@ Shablon:
 - Ma’lumot manbalari: ...
 - On-device/Edge/Cloud: ...
 - Yangilanish chastotasi: ...
+- Hujumga qarshi choralar: faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish
 ```
 
-> «Evasion bypass» = detektor chidamliligini oshirish (feature mustahkamlash); hujumchini o‘rgatish emas.
-
 ### Threat Hunting & Actor Disruption Strategy
-Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi urg‘u: Attribution & Fingerprinting, Campaign Tracking, Infra/C2 Hunting, Graph Relationship, Predictive Forecasting.
+Majburiy kuchli modullar (passive detection + defensive response only):
 
-**Ro‘yxat:**
-1. Unified Risk & Intent Scoring Engine  
-2. Advanced Behavioral Anomaly & Predictive Detection  
-3. Multi-Vector Reputation & Live Infrastructure Hunting  
-4. SMS/Telegram/Voice Scam + Actor Linking  
-5. QR & Visual Phishing Analysis  
-6. Deepfake Detection  
-7. Memory Forensics & Process Tree Analysis  
-8. Rootkit / Injection / LOTL Detection  
-9. YARA + Sigma + Behavioral Rule Engine  
-10. Threat Actor Attribution & Fingerprinting Engine  
-11. Campaign Detection & Tracking  
-12. Infrastructure & C2 Hunting  
-13. Graph-based Relationship Analysis  
-14. Automated TTP & MITRE Mapping  
-15. Predictive Attack Forecasting  
+1. **Unified Risk & Predictive Intent Scoring**  
+2. **Advanced Multi-Modal Anomaly Detection**  
+3. **Passive Infrastructure & Actor Behavior Monitoring**  
+4. **SMS/Telegram/Voice + Actor Correlation**  
+5. **Deep Memory & Behavioral Forensics (Windows)** — read-only  
+6. **Graph-based Threat Relationship Engine**  
+7. **Predictive Defensive Early Warning**  
+8. **Automated Defensive Playbook Engine** (bloklash, izolyatsiya, alert)  
+
+Qo‘shimcha (to‘liq to‘plam): Multi-Vector Reputation, QR/Visual, Deepfake, Rootkit/Injection/LOTL **detection**, YARA/Sigma, Attribution & Fingerprinting, Campaign Tracking, TTP/MITRE — barchasi xuddi shu chegara ichida. Batafsil: `sdd/04c`.
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
-### Unified Risk & Intent Scoring Engine
+### Unified Risk & Predictive Intent Scoring
 - **Kirish:** Barcha detektor chiqishlari, graph/forecast hint.
 - **Feature extraction & Enrichment:** Weighted aggregates, intent multi-label, stage, source trust.
 - **Model:** Ensemble GBDT + rules + calibrator.
@@ -514,8 +543,9 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Engil device; to‘liq cloud.
 - **Yangilanish / retraining:** Haftalik.
 - **Kill-chain:** Yakuniy qaror (barcha stage).
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
-### Advanced Behavioral Anomaly & Predictive Detection
+### Advanced Multi-Modal Anomaly Detection
 - **Kirish:** Process/app/session sequences, baseline.
 - **Feature extraction & Enrichment:** Embeddings, rare transitions, peer deviation.
 - **Model:** Sequence/Transformer (cloud) + on-device thresholds; predictive head ixtiyoriy.
@@ -525,8 +555,9 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Yengil device; og‘ir cloud.
 - **Yangilanish:** IOA haftalik; model oylik.
 - **Kill-chain:** Installation / C2 ind. / Actions / Pre-delivery (predict).
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
-### Multi-Vector Reputation & Live Infrastructure Hunting
+### Passive Infrastructure & Actor Behavior Monitoring
 - **Kirish:** URL/file/IP/domain/ASN/cert.
 - **Feature extraction & Enrichment:** TI, cert reuse, ASN, CT, passive DNS (licensed).
 - **Model:** Ensemble + graph neighborhood.
@@ -536,8 +567,9 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Cache device; live cloud.
 - **Yangilanish:** IOC soatlik/kunlik.
 - **Kill-chain:** Delivery / C2.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
-### SMS / Telegram / Voice Scam + Actor Linking
+### SMS/Telegram/Voice + Actor Correlation
 - **Kirish:** On-device SMS features; shared messenger; VoIP meta (consent); optional uploaded audio.
 - **Feature extraction & Enrichment:** uz/ru/en slang, money scripts, bot ids.
 - **Model:** TFLite text + cloud linking + optional deepfake.
@@ -547,6 +579,7 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** SMS on-device; link cloud.
 - **Yangilanish:** Lexicon haftalik.
 - **Kill-chain:** Delivery / Actions.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 ### QR & Visual Phishing Analysis
 - **Kirish:** QR / screenshot (consent).
@@ -558,6 +591,7 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Decode device; vision cloud.
 - **Yangilanish:** Haftalik.
 - **Kill-chain:** Delivery.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 ### Deepfake Detection
 - **Kirish:** Consent upload audio/image/video only.
@@ -569,8 +603,9 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Cloud.
 - **Yangilanish:** Oylik.
 - **Kill-chain:** Delivery / SE Actions.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
-### Memory Forensics & Process Tree Analysis
+### Deep Memory & Behavioral Forensics (Windows)
 - **Kirish:** W process tree; memory indicators (full dump default off).
 - **Feature extraction & Enrichment:** Ancestry, unsigned modules, injection indicators.
 - **Model:** IOA/Sigma + forensics scoring.
@@ -580,6 +615,7 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Capture device; vault cloud.
 - **Yangilanish:** IOA haftalik.
 - **Kill-chain:** Installation / Actions.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 ### Rootkit / Injection / LOTL Detection
 - **Kirish:** Agent telemetry; LOLBin patterns.
@@ -591,6 +627,7 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Detect device; correlate cloud.
 - **Yangilanish:** Haftalik.
 - **Kill-chain:** Installation / C2 / Actions.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 ### YARA + Sigma + Behavioral Rule Engine
 - **Kirish:** Files / events.
@@ -602,6 +639,7 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Local A/W; BE web upload.
 - **Yangilanish:** Signed packs.
 - **Kill-chain:** Delivery–Installation.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 ### Threat Actor Attribution & Fingerprinting Engine
 - **Kirish:** Graph+vector, infra, code similarity, OSINT.
@@ -613,6 +651,7 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Cloud.
 - **Yangilanish:** Continuous.
 - **Kill-chain:** Cross-stage.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 ### Campaign Detection & Tracking
 - **Kirish:** Multi-event observables.
@@ -624,6 +663,7 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Cloud; client hint.
 - **Yangilanish:** Streaming.
 - **Kill-chain:** Campaign-level.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 ### Infrastructure & C2 Hunting
 - **Kirish:** Domains/IPs/certs/safe fingerprints.
@@ -635,8 +675,9 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Hint local; confirm cloud.
 - **Yangilanish:** Weekly.
 - **Kill-chain:** Delivery / C2.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
-### Graph-based Relationship Analysis
+### Graph-based Threat Relationship Engine
 - **Kirish:** KG + embeddings.
 - **Feature extraction & Enrichment:** Paths, communities, NN similarity.
 - **Model:** Graph algos + vector + GNN.
@@ -646,6 +687,7 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Cloud.
 - **Yangilanish:** Continuous index.
 - **Kill-chain:** Investigation.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 ### Automated TTP & MITRE Mapping
 - **Kirish:** IOA/rules/scam_family/uz_ttp.
@@ -657,8 +699,9 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Cloud.
 - **Yangilanish:** Framework updates.
 - **Kill-chain:** Stage labeling.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
-### Predictive Attack Forecasting
+### Predictive Defensive Early Warning
 - **Kirish:** Campaign/actor histories, channel shifts.
 - **Feature extraction & Enrichment:** Time-series + graph growth.
 - **Model:** Ensemble + uncertainty.
@@ -668,8 +711,23 @@ Har modul `kill_chain_stage` va defensive `recommended_actions` qaytaradi. Yangi
 - **On-device / Edge / Cloud:** Cloud.
 - **Yangilanish:** Weekly.
 - **Kill-chain:** Pre-Delivery proactive defense.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 ---
+
+
+
+### Automated Defensive Playbook Engine
+- **Kirish ma’lumoti:** Score, actor/campaign hint, kill_chain_stage, policy.
+- **Feature extraction & Enrichment:** Action eligibility, consent, device capability.
+- **Model/Heuristika turi:** Rule/policy engine (no ML required).
+- **Chiqish:** executed defensive actions log + explainability + confidence gate + linked actors + recommended actions.
+- **False positive kamaytirish va evasion bypass:** Human confirm for high-impact isolate; allowlist.
+- **Ma’lumot manbalari:** Policy store, hunt cases.
+- **On-device/Edge/Cloud:** Local block/isolate on device; orchestration cloud.
+- **Yangilanish chastotasi:** Policy packs signed, as needed.
+- **Kill-chain:** Response across stages (defensive only).
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
 
 # 9. UX/UI va Frontend dizayn
 
@@ -713,68 +771,74 @@ Qat’iy, aniq, CTA; dark pattern/timer/qo‘rqitish yo‘q. Overlay taqiqlangan
 ### Threat Hunting & Actor Disruption Strategy
 Foydalanuvchi: himoya CTA. SOC: intel + playbook. Hech kimga «hujum qil» UI yo‘q.
 
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
 ---
 
 # 10. Xavfsizlik, maxfiylik, muvofiqlik
 
-## 10.1 Android ruxsatlar
+## 10.1 Qat’iy Mudofaa Prinsipi
+
+| Qoida | Majburiy |
+|-------|----------|
+| No active attack | Platforma hech qachon faol hujum qila olmaydi |
+| Read-only monitoring | Barcha tashqi/monitoring oqimlari read-only / passive |
+| Response scope | Faqat **bloklash**, **ogohlantirish**, **lokal izolyatsiya**, **rasmiy organlarga mas’uliyatli xabar** |
+| Forbidden | C2, payload, exploit, active probing, hack-back, boshqa tizimga faol aralashuv |
+
+## 10.2 Android ruxsatlar
 - Minimal ruxsat + ko‘rinadigan asos.
 - SMS **on-device**; raw cloudga yo‘q.
 - Yashirin overlay yo‘q; tizim notification.
 - Accessibility default MVP off (AQ-014).
 - Play Restricted declaration + demo video.
 
-## 10.2 Maxfiylik
-- O‘zR PII qonuni + GDPR-uslub tamoyillar (consent, minimize, erasure, purpose limit).
-- Hunting faqat consent + anonim meta.
+## 10.3 Maxfiylik (qat’iy)
+- O‘zR PII qonuni + GDPR-uslub: consent, minimize, erasure, purpose limit.
+- Hunting/monitoring faqat **rozilik** + anonim/pseudonym meta.
 - TLS 1.3; AES-256 at-rest.
-- Sotish yo‘q.
+- Ma’lumot sotish / uchinchi tomon marketing — **mutlaqo yo‘q**.
 
-## 10.3 Responsible Disclosure
-Topilgan uchinchi tomon zaifligi / actor intel → UZCERT / Milliy Kiberxavfsizlik Markazi / tegishli organlar; muddatli ichki qayd; ommaviy doxing yo‘q.
+## 10.4 Responsible Disclosure (qat’iy)
+Actor/tahdid intel — **faqat** UZCERT, Milliy Kiberxavfsizlik Markazi yoki tegishli organlar. Ommaviy doxing yo‘q. Ichki audit majburiy.
 
-## 10.4 Ethical Hunting
-Explainability majburiy; bias monitoring uz/ru/en; immutable audit; offensive lint.
+## 10.5 Ethical Hunting
+Explainability majburiy; bias monitoring; immutable audit; CI offensive lint.
 
 | ID | Talab |
 |----|-------|
-| FR-SEC01 | ConsentRecord har modul |
-| FR-SEC02 | Authority-only actor detail export |
+| FR-SEC01 | ConsentRecord har monitoring moduli |
+| FR-SEC02 | Authority-only detailed actor export |
 | NFR-SEC01 | Immutable audit ≥365k |
-| NFR-SEC02 | CI blocks offensive playbook actions |
+| NFR-SEC02 | CI blocks offensive/active-probe actions |
+| NFR-SEC03 | External network interactions: deny-by-default except TI feed pull + user-initiated scan |
 
 ### Threat Hunting & Actor Disruption Strategy
-Etik chegara: intel tayyorlash ≠ mustaqil take-down.
+Hal qilish yo‘li: lokal mudofaa + rasmiy xabar. Faol hujum arxitekturada mavjud emas.
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
 # 11. Mahalliylashtirish — O‘zbekiston tahdid modeli
 
-Threat Intelligence va Hunting modulini quyidagilarga **ustuvor** moslashtirish:
+Threat hunting moduli mahalliy aktorlarning **behavior pattern**larini chuqur o‘rganishga yo‘naltiriladi, lekin **faqat passive kuzatish** va mudofaa choralari bilan.
 
-| Ustuvor | Aniqlash / hunting | Disruption yordami |
-|---------|-------------------|-------------------|
-| Mahalliy Telegram / QR / Voice scam guruhlari | Scam+bot+QR+deepfake (consent) + campaign link | Ogohlantirish + CERT pack |
-| Zararli APK distributorlari va infratuzilmasi | Similarity, cert, YARA, infra graph | Karantin + authority intel |
-| Davlat xizmatlarini taqlid qiluvchi aktorlar | URL/gov spoof + persona cluster | Block + intel |
-| Lokal phishing kit mualliflari | Panel fingerprint (detect≠build) | Deny + takedown-intel |
-| Mahalliy va xorijiy tillardagi SE patternlari | uz/ru/en + slang (+ AQ-034) | Multi-lang alerts |
+| Ustuvor | Passive detection | Mudofaa choralari |
+|---------|-----------------|-------------------|
+| Mahalliy Telegram/QR/Voice scam guruhlari | Shared content, bot IOC, QR, consent media | Blok/alert + CERT |
+| Zararli APK distributorlari + infra | Similarity, cert, YARA, passive infra intel | Karantin + intel pack |
+| Davlat xizmatlarini taqlid | URL/gov spoof patterns | Block + alert |
+| Lokal phishing kit mualliflari | Panel fingerprint (**detect only**) | Deny-list + organlarga xabar |
+| Mahalliy/xorijiy SE patternlari | uz/ru/en + slang | Multi-lang alerts |
 
-**Qo‘shimcha:** Mahalliy OSINT manbalari (Telegram kanallari, forumlar — ochiq/qonuniy) va **UZCERT** integratsiyasi (FR-M04, AQ-017/031).
-
-| ID | Tahdid kodi | Bog‘liq |
-|----|-------------|---------|
-| UZ-T1 | Soxta bank APK | #15/#24/#27 |
-| UZ-T2 | Telegram money/job scam | #6/#24/#25 |
-| UZ-T3 | Gov/payment phishing | #4/#27 |
-| UZ-T4 | Support/voice SE | #5/#8 |
-| UZ-T5 | QR fraud | #7 |
-| UZ-T6–T10 | Emergency, bots, deepfake, romance, clusters | §4 hunting |
-
-**Tillar:** uz/ru/en to‘liq parallel; madaniy misollar.
+**OSINT:** ochiq Telegram kanallari/forumlar — qonuniy/passive. **UZCERT** integratsiyasi majburiy yo‘nalish.
 
 ### Threat Hunting & Actor Disruption Strategy
-Mahalliy actor/infra cluster → foydalanuvchi himoyasi + UZCERT/Milliy markaz intel.
+Chuqur behavior modeling = mudofaa intellekti; tashqi tarmoqqa faol ta’sir yo‘q.
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
@@ -794,6 +858,9 @@ Mahalliy actor/infra cluster → foydalanuvchi himoyasi + UZCERT/Milliy markaz i
 
 ### Threat Hunting & Actor Disruption Strategy
 Playbook execution = avtomatik himoya; on-call runbook (AQ-009).
+
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
@@ -822,27 +889,36 @@ Unit → Integration → SAST/DAST/SCA → FP/FN benchmark → Adversarial/red-t
 ### Threat Hunting & Actor Disruption Strategy
 Red team sim — detektor chidamliligi; exploit tarqatish taqiqlangan.
 
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
 ---
 
 # 14. Yo‘l xaritasi
 
 | Versiya | Mazmun |
 |---------|--------|
-| **V1 (MVP)** | Asosiy himoya + IOC hunting + basic actor detection |
-| **V2** | Full XDR + Advanced Attribution + Campaign tracking |
-| **V3** | Predictive forecasting + Automated Playbooks + Memory forensics |
-| **V4** | National-level Cyber Sentinel (davlat organlari bilan integratsiya) |
-| **Kelajakda** | Global threat actor database va B2B/SOC monetizatsiya; iOS; autonomous defensive policies (ethics board) |
+| **V1** | Kuchli mudofaa + basic hunting (passive IOC/actor hint) |
+| **V2** | Advanced profiling + predictive defense |
+| **V3** | Full graph analysis + automated **defensive** playbooks |
+| **V4** | Milliy darajadagi proaktiv **mudofaa** tizimi (davlat bilan) |
 
-**FR-RM01** V1 board: Auth, Scan URL/QR/File, Feed sync, basic fingerprint/campaign hint, dashboard.  
-**FR-RM02** V4 faqat AQ-031 (davlat API/shartnoma) yechilgach.
+**FR-RM01** V1: Auth, Scan, Feed, dashboard, basic passive profiling.  
+**FR-RM02** Hech bir versiyada offensive capability roadmapga kirmaydi.
 
 ### Threat Hunting & Actor Disruption Strategy
-V1 dan himoya+IOC; V2 attribution; V3 predictive/playbooks/memory; V4 milliy intel; hech qachon offensive roadmap.
+Har versiya faqat aniqlash + mudofaa choralari kuchayadi.
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 
 # 15. Yakuniy format, taxminlar, qabul
+
+## 15.0 Majburiy mudofaa bandi
+Har bir bo‘lim oxirida quyidagi jumla saqlanadi:
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
 
 ## 15.1 Chiqish tekshiruvi
 - Bo‘limlar to‘liq ✅  
@@ -869,6 +945,9 @@ Asosiy bloklovchilar: auth ID (AQ-002), cloud residency (AQ-005), Neo4j/vector (
 5. Offensive kontent yo‘q — xavfsizlik review osonlashadi.
 
 **Tavsiya etilgan birinchi sprint board:** Auth → Scan URL → Feed sync → Web mehmon skan → Android/Windows shell → Consent/Privacy → CI gates.
+
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ---
 

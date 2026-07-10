@@ -1,31 +1,18 @@
-# Qabul mezonlari — Apex Master Spec
+# Qabul mezonlari — v5.2 Defensive-Strict
 
-**Savol:** Ushbu spetsifikatsiya asosida professional jamoa darhol sprint planning boshlay oladimi?
-
----
-
-## Tekshiruv
+**Savol:** Professional jamoa darhol sprint planning boshlay oladimi?
 
 | # | Mezon | Holat |
 |---|-------|-------|
-| 1 | Yagona master §0–§15 (`APEX-MASTER-SPEC.md`) | ✅ |
-| 2 | FR/NFR format | ✅ |
-| 3 | To‘liq funksiya×platforma matritsasi #1–42 | ✅ |
-| 4 | Mermaid: HLD, sequence, graph relationship, deploy | ✅ |
-| 5 | REST + GraphQL + Knowledge Graph model | ✅ |
-| 6 | 15 AI moduli kengaytirilgan shablon | ✅ |
-| 7 | UX: Dashboard, Hunting View, Actor Profile, Alert Center | ✅ |
-| 8 | Android/Privacy/Ethical hunting/Disclosure | ✅ |
-| 9 | UZ tahdid modeli | ✅ |
-| 10 | Ops + QA/CI + Roadmap V1–V5 | ✅ |
-| 11 | Taxminlar/AQ | ✅ |
-| 12 | Faqat defensive hunting/intelligence/himoya | ✅ |
-| 13 | Threat Hunting & Actor Disruption Strategy har asosiy bo‘limda | ✅ |
+| 1 | Master v5.2.0-defensive-strict | ✅ |
+| 2 | Passive hunting / no active probing | ✅ §5.0 |
+| 3 | Response = block/isolate/alert/authority only | ✅ §10.1 |
+| 4 | Matritsa #24–29 passive/defensive | ✅ |
+| 5 | AI modullarda «Hujumga qarshi choralar» bandi | ✅ |
+| 6 | Har bo‘limda majburiy mudofaa jumlasi | ✅ |
+| 7 | Roadmap V1–V4 defensive only | ✅ |
+| 8 | Offensive capability yo‘q | ✅ |
 
----
+**Ha — sprint planning boshlash mumkin** (V1 kuchli mudofaa + basic passive hunting).
 
-## Javob
-
-**Ha — professional jamoa (dasturchilar + security engineerlar) darhol sprint planning boshlay oladi.**
-
-Kirish: [`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md) §15.3 — birinchi sprint board tavsiyasi bilan.
+Kirish: [`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md)

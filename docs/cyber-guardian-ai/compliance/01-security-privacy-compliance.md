@@ -7,7 +7,18 @@
 
 ---
 
-## 10.1 Android ruxsatlar siyosati (kritik)
+## 10.1 Qat’iy Mudofaa Prinsipi
+
+| Qoida | Majburiy |
+|-------|----------|
+| No active attack | Platforma hech qachon faol hujum qila olmaydi |
+| Read-only monitoring | Barcha monitoring read-only / passive |
+| Response | Faqat bloklash, ogohlantirish, lokal izolyatsiya, rasmiy organlarga xabar |
+| Forbidden | C2, payload, exploit, active probing, hack-back |
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+## 10.2 Android ruxsatlar siyosati (kritik)
 
 ### 10.1.1 Muammo chegarasi
 

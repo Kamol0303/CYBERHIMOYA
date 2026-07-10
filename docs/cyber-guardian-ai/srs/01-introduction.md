@@ -51,15 +51,17 @@ Ko‘pchilik foydalanuvchi texnik bilimga ega emas; hujum **sodir bo‘lishidan 
 
 ### 1.2.3 Missiya
 
-**Cyber Guardian AI** — foydalanuvchilarni proaktiv himoya qilish bilan birga, kiberhujum tayyorlayotgan yoki amalga oshirayotgan threat actorlarni erta bosqichda aniqlaydigan, ularning infratuzilmasi, TTP’lari, kampaniyalari va shaxsiyatini (persona/cluster) kuzatadigan, atributlashtiradigan va zararsizlantirishga yordam beradigan apex mudofaa + threat hunting ekotizimi.
+**Cyber Guardian AI** — foydalanuvchilarni har tomonlama himoya qilish bilan birga, threat actorni erta aniqlash, kuzatish, profiling va harakatlarini **bloklashga yordam** beradigan eng kuchli mudofaa + proaktiv threat hunting platformasi.
 
-### 1.2.4 Asosiy printsip (butun loyiha)
+### 1.2.4 Asosiy printsip (eng qat’iy)
 
-> Faqat **defensive, intelligence va automated response**. Hech qanday offensive imkoniyat, ekspluatatsiya yoki zararli kod bo‘lmaydi.
+> Faqat mudofaa. Hech qanday holatda hujum, ekspluatatsiya, C2, payload yoki boshqa tizimga faol aralashuv yo‘q. Faqat aniqlash, monitoring, intellekt va avtomatlashtirilgan mudofaa (lokal bloklash/izolyatsiya/alert/rasmiy xabar).
 
 ### Threat Hunting & Actor Disruption Strategy (majburiy)
 
-Disruption = blok/karantin/DNS deny/CERT intel. Master: `APEX-MASTER-SPEC.md` v5.1.
+Passive hunting only. Master v5.2: `APEX-MASTER-SPEC.md`.
+
+> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
 ### 1.2.5 Mahsulot chegaralari
 
