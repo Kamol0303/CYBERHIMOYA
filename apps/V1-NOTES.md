@@ -8,10 +8,12 @@
 - Docker Compose (api + web)
 - Android/Windows shell docs
 
-### Sprint 1.8 (this update)
-- `scripts/smoke_v1.py` + `Makefile`
-- Chrome MV3 extension guest scan (`apps/extension`)
-- V1 release/merge checklist
+### Sprint 1.9 (this update)
+- Web PWA manifest + icon
+- Extension uz/ru/en
+- Play / MS Store listing stubs
+- API 0.2.0 OpenAPI tags + guest rate-limit response headers
+- CONTRIBUTING, CHANGELOG, editorconfig
 
 ## Emergency dry-run
 
@@ -35,7 +37,8 @@ python scripts/generate_feed.py
 
 ## Explicitly out of V1
 
-- Full native apps UI (Compose/WinUI production screens)
-- Cloud SMS upload / live IIV SMS without AQ-039
-- Production private key in git
+- Live IIV/UZCERT SMS/API without AQ-039 Legal values
+- Cloud SMS upload
+- Full Play/Microsoft Store submission (listings drafted only)
+- Production private feed key in git
 - Active probing of any kind

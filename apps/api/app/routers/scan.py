@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from app.models.schemas import (
     FileScanRequest,
@@ -19,18 +19,21 @@ from app.services.scoring import combine_risk, scan_file_hash, scan_qr, scan_url
 router = APIRouter(tags=["scan"])
 
 
-def _enforce_guest_limit(request: Request, user) -> None:
+def _enforce_guest_limit(request: Request, response: Response, user) -> None:
     if user is None:
-        guest_limiter.check(client_key(request))
+        headers = guest_limiter.check(client_key(request))
+        for k, v in headers.items():
+            response.headers[k] = v
 
 
 @router.post("/scan/url", response_model=UrlScanResponse)
 def scan_url_endpoint(
     body: UrlScanRequest,
     request: Request,
+    response: Response,
     user=Depends(get_optional_user),
 ) -> UrlScanResponse:
-    _enforce_guest_limit(request, user)
+    _enforce_guest_limit(request, response, user)
     return scan_url(body.url, user_id=user.id if user else None)
 
 
@@ -38,9 +41,10 @@ def scan_url_endpoint(
 def scan_qr_endpoint(
     body: QrScanRequest,
     request: Request,
+    response: Response,
     user=Depends(get_optional_user),
 ) -> QrScanResponse:
-    _enforce_guest_limit(request, user)
+    _enforce_guest_limit(request, response, user)
     return scan_qr(body.payload_text, user_id=user.id if user else None)
 
 
@@ -48,9 +52,10 @@ def scan_qr_endpoint(
 def scan_file_endpoint(
     body: FileScanRequest,
     request: Request,
+    response: Response,
     user=Depends(get_optional_user),
 ) -> FileScanResponse:
-    _enforce_guest_limit(request, user)
+    _enforce_guest_limit(request, response, user)
     _ = body.run_yara
     try:
         return scan_file_hash(
@@ -60,7 +65,7 @@ def scan_file_endpoint(
         )
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=getattr(status, "HTTP_422_UNPROCESSABLE_CONTENT", status.HTTP_422_UNPROCESSABLE_ENTITY),
             detail="Invalid SHA-256",
         ) from exc
 

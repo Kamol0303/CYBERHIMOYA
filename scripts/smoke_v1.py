@@ -27,9 +27,11 @@ def main() -> int:
 
     r = client.get("/health")
     ok("health", r.status_code == 200 and r.json().get("defensive_only") is True)
+    ok("version", r.json().get("version", "").startswith("0."))
 
     r = client.post("/v1/scan/url", json={"url": "http://pay-click-uz.tk/x"})
     ok("scan_url_malicious", r.status_code == 200 and r.json()["score"] >= 50)
+    ok("rate_limit_headers", "X-RateLimit-Limit" in r.headers)
 
     r = client.post(
         "/v1/scan/file",

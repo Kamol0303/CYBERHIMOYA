@@ -20,20 +20,29 @@ class GuestRateLimiter:
         with self._lock:
             self._hits.clear()
 
-    def check(self, key: str, limit: int | None = None, window_seconds: int = 3600) -> None:
+    def check(self, key: str, limit: int | None = None, window_seconds: int = 3600) -> dict[str, str]:
         limit = limit if limit is not None else settings.guest_rate_limit_per_hour
         now = time.time()
         with self._lock:
             bucket = [t for t in self._hits[key] if now - t < window_seconds]
+            remaining = max(0, limit - len(bucket))
             if len(bucket) >= limit:
                 self._hits[key] = bucket
                 raise HTTPException(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                     detail="Guest scan quota exceeded. Sign in or try later.",
-                    headers={"X-RateLimit-Limit": str(limit), "X-RateLimit-Remaining": "0"},
+                    headers={
+                        "X-RateLimit-Limit": str(limit),
+                        "X-RateLimit-Remaining": "0",
+                    },
                 )
             bucket.append(now)
             self._hits[key] = bucket
+            remaining = max(0, limit - len(bucket))
+            return {
+                "X-RateLimit-Limit": str(limit),
+                "X-RateLimit-Remaining": str(remaining),
+            }
 
 
 guest_limiter = GuestRateLimiter()
