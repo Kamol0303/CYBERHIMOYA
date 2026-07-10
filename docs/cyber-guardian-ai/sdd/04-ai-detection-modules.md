@@ -179,13 +179,13 @@ Har bir modul majburiy shablon bo‘yicha.
 ---
 
 ### Process / Registry / Network Monitoring (Windows)
-- **Kirish ma’lumoti:** Jarayon yaratilishi, imzo holati, registry o‘zgarishlari (persistence teglari), tashqi ulanishlar (IP/domen).
-- **Feature extraction:** Parent-child juftlik, imzosiz binar, persistence kalit o‘zgarishi, TI domen hit bilan korrelyatsiya.
-- **Model/heuristika turi:** Sigma qoidalari + heuristika; EDR-uslubidagi defensive monitoring.
+- **Kirish ma’lumoti:** Jarayon yaratilishi, raqamli imzo holati, himoya qoidalari kuzatadigan registry o‘zgarishlari, tashqi ulanishlar (IP/domen).
+- **Feature extraction:** Parent–child bog‘lanish anomaliyasi, imzosiz binar, kuzatuvdagi registry kalit o‘zgarishi, TI domen hit bilan korrelyatsiya.
+- **Model/heuristika turi:** Sigma qoidalari + heuristika; EDR-uslubidagi **defensive** monitoring (faqat aniqlash/ogohlantirish/bloklash).
 - **Chiqish:** ThreatEvent severity + MITRE teg + score; bloklash siyosati (foydalanuvchi/admin sozlamasi).
 - **False positive kamaytirish strategiyasi:** Microsoft/ishonchli publisher allowlist, sigma tuning, quiet hours faqat info uchun.
-- **Ma’lumot manbalari:** Sigma community (litsenziya), ichki qoidalar, TI.
-- **On-device / Cloud:** Monitoring on-device; qoida sync cloud; raw memory dump cloudga default yo‘q.
+- **Ma’lumot manbalari:** Sigma community (litsenziya), ichki himoya qoidalari, TI. Qoidalarda exploit yo‘riqnomasi bo‘lmaydi.
+- **On-device / Cloud:** Monitoring on-device; qoida sync cloud; xotira dump cloudga default yo‘q.
 - **Yangilanish chastotasi:** Sigma/IOC kunlik-haftalik.
 
 ---

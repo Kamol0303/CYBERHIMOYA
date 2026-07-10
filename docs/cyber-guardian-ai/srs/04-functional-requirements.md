@@ -173,8 +173,8 @@ Har bir talab:
 
 ### FR-071 — Registry monitoring
 - **P1** | [W]
-- Persistence bilan bog‘liq kalit o‘zgarishlariga ogohlantirish (himoya qoidalari).
-- **Qabul:** Sigma/qoida asosida; FP kamaytirish allowlist.
+- Himoya qoidalari belgilagan registry kalitlaridagi shubhali o‘zgarishlarga ogohlantirish (aniqlash/bloklash).
+- **Qabul:** Sigma/qoida asosida; FP kamaytirish allowlist; qoidalarda hujum qo‘llanmasi yo‘q.
 
 ### FR-072 — Network monitoring (endpoint)
 - **P1** | [W]

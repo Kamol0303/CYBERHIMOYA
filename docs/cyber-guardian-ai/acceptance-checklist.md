@@ -30,7 +30,8 @@
 
 1. **V1 MVP epiklari** (`operations/03-roadmap.md` §14.5) to‘g‘ridan-to‘g‘ri boardga ko‘chiriladi.  
 2. **AQ-001…AQ-020** grooming da tarqatiladi; bloklovchi AQ lar (domen, auth identifikator, cloud residency, Play Accessibility qarori) birinchi sprintda yopiladi.  
-3. Implementatsiya paytida hech qanday offensive/exploit kontent qo‘shilmaydi — PR checklist.  
-4. Spetsifikatsiya `draft`; birinchi sprint oxirida `review` → `frozen-for-sprint` holatiga o‘tkaziladi.
+3. Implementatsiya paytida hech qanday offensive/exploit kontent qo‘shilmaydi — PR checklist; faqat aniqlash/ogohlantirish/bloklash.  
+4. Spetsifikatsiya `draft`; birinchi sprint oxirida `review` → `frozen-for-sprint` holatiga o‘tkaziladi.  
+5. Ish **bitta** branch/PR oqimida olib boriladi (mahsulotlar bo‘yicha parallel branchlar yo‘q).
 
 **Xulosa:** Hujjatlar to‘plami IEEE 830 uslubidagi SRS + SDD darajasida yetarli aniqlik beradi; qolgan noaniqliklar ongli ravishda `assumptions-and-open-questions.md` da ro‘yxatlangan va «o‘ylab topilgan» emas.

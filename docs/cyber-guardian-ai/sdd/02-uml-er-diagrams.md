@@ -208,7 +208,7 @@ sequenceDiagram
   end
 ```
 
-**Izoh:** SMS tahlili faqat qurilmada. Ogohlantirish yashirin overlay emas — tizim bildirishnomasi. Bu bank-troyan naqshidan ongli farq.
+**Izoh:** SMS tahlili faqat qurilmada. Ogohlantirish yashirin overlay emas — foydalanuvchiga ko‘rinadigan tizim bildirishnomasi (suiiste’molchi overlay naqshidan farq).
 
 ### 2.3.4 Ransomware aniqlanishi (Windows)
 

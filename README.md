@@ -17,7 +17,9 @@ Bosh indeks: [`docs/cyber-guardian-ai/README.md`](docs/cyber-guardian-ai/README.
 
 ## Printsip
 
-Faqat **himoya** (aniqlash, ogohlantirish, bloklash) funksiyalari. Hujum/ekspluatatsiya tavsifi yo‘q.
+Faqat **himoya** (aniqlash, ogohlantirish, bloklash) funksiyalari. Hujum/ekspluatatsiya texnikasi yoki amaliy zararli kod tavsifi yo‘q — tizim shubhali faoliyat belgilari bo‘yicha **topish va himoya** qiladi.
+
+Ish oqimi: **bitta** branch/PR (mahsulotlar bo‘yicha parallel branchlar ochilmaydi).
 
 ## Platformalar
 

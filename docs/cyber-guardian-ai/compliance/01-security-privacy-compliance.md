@@ -11,7 +11,7 @@
 
 ### 10.1.1 Muammo chegarasi
 
-SMS o‘qish + Accessibility Service + overlay kombinatsiyasi ko‘pincha **bank-troyan** naqshiga o‘xshaydi. Cyber Guardian AI shu naqshdan **aniq farqlanishi** shart.
+Ba’zi zararli ilovalar keng ruxsat to‘plamini (SMS + Accessibility + yashirin overlay) suiiste’mol qiladi. Cyber Guardian AI **shu suiiste’mol naqshidan ongli farqlanadi**: minimal ruxsat, SMS faqat on-device, yashirin overlay yo‘q, ogohlantirish faqat ko‘rinadigan tizim UI orqali. Hujjatda suiiste’molni qanday amalga oshirish tavsiflanmaydi — faqat himoya chegarasi belgilanadi.
 
 ### 10.1.2 Qoidalar
 

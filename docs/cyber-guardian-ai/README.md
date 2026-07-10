@@ -4,7 +4,19 @@
 **Sana:** 2026-07-10  
 **Holat:** Sprint-planning uchun tayyor draft  
 **Til:** O‘zbek (texnik atamalar inglizcha saqlanadi)  
-**Printsip:** Faqat himoya (defensive) funksiyalar — hujum/ekspluatatsiya tavsifi yo‘q
+**Branch siyosati:** Bitta ishchi branch (ushbu PR); mahsulotlar bo‘yicha parallel branchlar ochilmaydi  
+
+---
+
+## Himoya-only nizom (majburiy)
+
+Butun spetsifikatsiya va keyingi implementatsiya uchun:
+
+1. **Faqat himoya funksiyalari** — aniqlash, ogohlantirish, bloklash, yo‘riqnoma.
+2. **Maqsad:** shubhali faoliyat **qayerda** va **qanday belgi** bilan ko‘rinishini topish (detection), foydalanuvchini himoya qilish.
+3. **Taqiqlanadi:** hujum/ekspluatatsiya texnikasini bosqichma-bosqich o‘rgatish, amaliy zararli kod, exploit PoC, «qanday buzish mumkin» tavsifi, ruxsatsiz kirish vositalari.
+4. **Yozish qoidasi:** «hujum qanday ishlaydi» o‘rniga «qanday **aniqlanadi / ogohlantiriladi / bloklanadi**».
+5. **Test:** faqat izolyatsiyalangan himoya labi; repoga raw malware/exploit kiritilmaydi.
 
 ---
 
