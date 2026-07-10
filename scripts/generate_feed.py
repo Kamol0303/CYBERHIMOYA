@@ -10,9 +10,11 @@ ROOT = Path(__file__).resolve().parents[1] / "apps" / "api"
 sys.path.insert(0, str(ROOT))
 
 from app.services.feed import ensure_feed_files  # noqa: E402
+from app.services.feed_crypto import clear_key_cache  # noqa: E402
 
 
 def main() -> None:
+    clear_key_cache()
     path = ensure_feed_files()
     print(f"Wrote {path}")
 

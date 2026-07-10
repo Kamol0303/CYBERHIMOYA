@@ -124,6 +124,7 @@ def test_threat_feed_sync(client: TestClient):
     assert r.status_code == 200
     body = r.json()
     assert body["item_counts"]["sha256"] >= 1
+    assert body["algorithm"] == "ed25519"
 
 
 def test_erasure_foundation(client: TestClient):
@@ -177,17 +178,33 @@ def test_threat_feed_has_delta_url_and_cdn(client: TestClient):
     body = r.json()
     assert body["delta_url"]
     assert "/cdn/feeds/" in body["delta_url"]
+    assert body["algorithm"] == "ed25519"
     version = body["version"]
     cdn = client.get(f"/cdn/feeds/{version}.json")
     assert cdn.status_code == 200
     pack = cdn.json()
     assert pack["signature"] == body["signature"]
+    assert pack["algorithm"] == "ed25519"
     assert pack["defensive_only"] is True
+    from app.services.feed import verify_signature
+
+    assert verify_signature(pack["signed_payload"], pack["signature"]) is True
     delta = client.get(f"/v1/threat-feed/delta/{version}")
     assert delta.status_code == 200
     verify = client.get("/v1/threat-feed/verify")
     assert verify.status_code == 200
     assert verify.json()["valid"] is True
+    pubkey = client.get("/v1/threat-feed/public-key")
+    assert pubkey.status_code == 200
+    assert pubkey.json()["algorithm"] == "ed25519"
+
+
+def test_ed25519_reject_tampered_feed():
+    from app.services.feed import build_feed_pack, verify_signature
+
+    pack = build_feed_pack("test-tamper")
+    assert verify_signature(pack["signed_payload"], pack["signature"]) is True
+    assert verify_signature(pack["signed_payload"] + "x", pack["signature"]) is False
 
 
 def test_create_store_sqlite_factory():

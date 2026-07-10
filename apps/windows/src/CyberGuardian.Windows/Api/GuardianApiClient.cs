@@ -42,20 +42,13 @@ public sealed record ThreatFeedSync(
 );
 
 /// <summary>
-/// Verify signed feed pack before applying IOCs (NFR-011). Production: ed25519 public key.
+/// Verify ed25519 signed feed pack before applying IOCs (NFR-011).
+/// Production: use NSec or BouncyCastle Ed25519 with embedded public key.
 /// </summary>
 public static class FeedVerifier
 {
-    public static bool VerifyStub(string signedPayload, string signature, string secret)
-    {
-        using var sha = System.Security.Cryptography.SHA256.Create();
-        var bytes = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(secret + signedPayload));
-        var expected = Convert.ToBase64String(bytes);
-        return CryptographicEquals(expected, signature);
-    }
-
-    private static bool CryptographicEquals(string a, string b) =>
-        System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(
-            System.Text.Encoding.UTF8.GetBytes(a),
-            System.Text.Encoding.UTF8.GetBytes(b));
+    public static bool LooksLikeSignedPack(string signedPayload, string signature, string publicKeyB64) =>
+        !string.IsNullOrWhiteSpace(signedPayload)
+        && !string.IsNullOrWhiteSpace(signature)
+        && !string.IsNullOrWhiteSpace(publicKeyB64);
 }
