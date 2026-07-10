@@ -1,46 +1,48 @@
-# Cyber Guardian AI — SRS + SDD
-## Apex Edition (v4.0.0)
+# Cyber Guardian AI — Hujjatlar indeksi
 
-**Holat:** Professional jamoa darhol ish boshlashi mumkin (V1)  
-**Branch:** bitta  
-**Cheklov:** Faqat mudofaa, hunting, intelligence, avtomatlashtirilgan **himoya**. Hujum vositasi/texnikasi yo‘q.
+**Joriy nashr:** Apex Master **v5.0.0**  
+**Sprint-planning KIRISH NUQTASI:** [`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md)
+
+Ushbu fayl — master spetsifikatsiyaga yo‘l ko‘rsatgich. Barcha 15 bo‘lim masterda; quyida chuqur satellite hujjatlar.
 
 ---
 
 ## Nizom
 
-1. Defensive hunting + intelligence + protective response.  
-2. Offensive / exploit / weaponization / hack-back — taqiqlangan.  
-3. Actor intel — faqat rasmiy organlar.  
-4. «Disruption» / «take-down» = himoya chorasi yoki organlarga **intelligence**.  
-5. Har bo‘limda **Threat Hunting & Actor Disruption Strategy**.
+Faqat mudofaa, threat hunting, intelligence, avtomatlashtirilgan **himoya**.  
+Hujum / ekspluatatsiya / exploit / payload / weaponization / hack-back — taqiqlangan.  
+Bitta branch.
 
 ---
 
-## Indeks
+## Master
 
 | Hujjat | Mazmun |
 |--------|--------|
+| **[`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md)** | IEEE 830 SRS+SDD — §0…§15 to‘liq |
+| [`acceptance-checklist.md`](acceptance-checklist.md) | «Sprint planning boshlay oladimi?» |
+| [`assumptions-and-open-questions.md`](assumptions-and-open-questions.md) | AQ-001…038 |
+
+---
+
+## Satellite (chuqurlashtirish)
+
+| Papka | Mazmun |
+|-------|--------|
 | `srs/01`…`05` | Asosiy SRS |
-| `srs/06` | Scam universe |
-| `srs/07` | Threat hunting |
+| `srs/06` | Universal scam |
+| `srs/07` | Threat hunting FR-200 |
 | `srs/08` | Killer Edition |
-| **`srs/09`** | **Apex FR-400…, #36–42, kill-chain disruption** |
-| `sdd/01`, `06`, `07` | HLD, hunting, fusion/playbooks |
-| **`sdd/08`** | **Apex XDR arch, Evidence Vault, Edge/Cloud** |
-| `sdd/04`, `04b`, **`04c`** | AI modullar (Apex kengaytirilgan shablon) |
-| `compliance/*` | Etika, Ethical AI, UZ model |
-| `operations/03` | **Roadmap V1–V5** |
-| `acceptance-checklist.md` | Sifat tekshiruvi |
+| `srs/09` | Apex FR-400 |
+| `sdd/01`…`03` | Arch, UML, API/DB |
+| `sdd/04` + `04b` + `04c` | AI modullar |
+| `sdd/05` | UX |
+| `sdd/06`…`08` | Hunting / Fusion / Apex arch |
+| `compliance/` | Privacy, UZ model |
+| `operations/` | Ops, QA, roadmap V1–V5 |
 
 ---
 
-## Elite jamoa
+## Jamoa (qisqa)
 
-Principal Hunt Lead · Malware RE · AI/ML & Data Science · APT Hunter · EDR/XDR · TI Fusion · Forensics/IR · Secure Full-Stack · Privacy/Ethics/Legal · (+UX/QA)
-
----
-
-## Baholash
-
-→ [`acceptance-checklist.md`](acceptance-checklist.md)
+Hunt Lead · Malware RE · AI/ML · APT Hunter · EDR/XDR · TI Fusion · Forensics · Secure Full-Stack · Privacy/Legal · QA/Red-Team Sim

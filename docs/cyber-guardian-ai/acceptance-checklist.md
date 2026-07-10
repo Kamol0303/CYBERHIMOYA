@@ -1,6 +1,6 @@
-# Qabul mezonlari — Apex Edition
+# Qabul mezonlari — Apex Master Spec
 
-**Savol:** Ushbu spetsifikatsiya asosida professional jamoa darhol ish boshlay oladimi?
+**Savol:** Ushbu spetsifikatsiya asosida professional jamoa darhol sprint planning boshlay oladimi?
 
 ---
 
@@ -8,31 +8,24 @@
 
 | # | Mezon | Holat |
 |---|-------|-------|
-| 1 | Bo‘limlar chuqur, IEEE 830 uslubida | ✅ |
-| 2 | FR/NFR (FR-400…, NFR-300…) | ✅ |
-| 3 | Mermaid diagrammalar | ✅ |
-| 4 | Matritsa #36–42 Apex + oldingi #24–35 | ✅ |
-| 5 | Apex AI modullar kengaytirilgan shablon (`sdd/04c`) | ✅ |
-| 6 | Telemetry → Hunt → Graph/Vector → Playbook → Vault | ✅ `sdd/08` |
-| 7 | On-device / Edge / Cloud jadvali | ✅ |
-| 8 | Disruption = defensive only; take-down = intel for authorities | ✅ |
-| 9 | Ethical AI, immutable audit, UZCERT/Milliy markaz | ✅ |
-| 10 | UZ + uz/ru/en (+ RU/CN SE) model | ✅ |
-| 11 | Roadmap V1–V5 | ✅ |
-| 12 | Threat Hunting & Actor Disruption Strategy bo‘limlari | ✅ |
-| 13 | Offensive kontent yo‘q | ✅ |
-| 14 | AQ ochiq savollar | ✅ |
+| 1 | Yagona master §0–§15 (`APEX-MASTER-SPEC.md`) | ✅ |
+| 2 | FR/NFR format | ✅ |
+| 3 | To‘liq funksiya×platforma matritsasi #1–42 | ✅ |
+| 4 | Mermaid: HLD, sequence, graph relationship, deploy | ✅ |
+| 5 | REST + GraphQL + Knowledge Graph model | ✅ |
+| 6 | 15 AI moduli kengaytirilgan shablon | ✅ |
+| 7 | UX: Dashboard, Hunting View, Actor Profile, Alert Center | ✅ |
+| 8 | Android/Privacy/Ethical hunting/Disclosure | ✅ |
+| 9 | UZ tahdid modeli | ✅ |
+| 10 | Ops + QA/CI + Roadmap V1–V5 | ✅ |
+| 11 | Taxminlar/AQ | ✅ |
+| 12 | Faqat defensive hunting/intelligence/himoya | ✅ |
+| 13 | Threat Hunting & Actor Disruption Strategy har asosiy bo‘limda | ✅ |
 
 ---
 
 ## Javob
 
-**Ha — professional jamoa darhol ish boshlay oladi.**
+**Ha — professional jamoa (dasturchilar + security engineerlar) darhol sprint planning boshlay oladi.**
 
-1. **V1** epiklari hoziroq sprint-planningga.  
-2. **V2–V3** XDR/predictive/playbooks backlog.  
-3. **V4–V5** milliy/avtonom himoya — AQ-031 va ethics board dan keyin.  
-4. CI offensive lint + explainability gate.  
-5. Bitta branch.
-
-**Xulosa:** Apex SRS+SDD V1 implementatsiya va butun dastur yo‘l xaritasi uchun yetarli aniqlikda; noaniqliklar AQ da qayd etilgan.
+Kirish: [`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md) §15.3 — birinchi sprint board tavsiyasi bilan.
