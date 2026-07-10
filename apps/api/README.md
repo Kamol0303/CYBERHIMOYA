@@ -39,6 +39,14 @@ Token `chrome-extension://*` expands to `allow_origin_regex` so the MV3 popup ca
 | POST | `/v1/emergency/dispatch` | Bearer |
 | GET | `/v1/emergency/logs` | Bearer |
 | GET | `/v1/metrics` | — |
+| POST | `/v1/messages/suspicious` | optional |
+| POST | `/v1/breach-check` | optional |
+| POST | `/v1/devices/register` | Bearer |
+| GET | `/v1/devices` | Bearer |
+| DELETE | `/v1/devices/{id}` | Bearer |
+
+Scan responses may include hunting fields: `intent_tags`, `campaign_id`, `kill_chain_stage`.
+`POST /v1/scan/file` accepts `run_yara` (V1 stub heuristics, no yara-python).
 
 Emergency dispatch stays **dry-run** until AQ-039 allowlists are set (env only).
 

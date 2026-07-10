@@ -174,6 +174,14 @@ async function deleteJson<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+async function deleteVoid(path: string): Promise<void> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  await raiseForStatus(res);
+}
+
 export async function register(
   email: string,
   password: string,
@@ -361,6 +369,10 @@ export async function fetchDevices() {
       last_seen_at: string;
     }[]
   >("/v1/devices");
+}
+
+export async function revokeDevice(deviceId: string): Promise<void> {
+  await deleteVoid(`/v1/devices/${deviceId}`);
 }
 
 export async function sha256Hex(file: File): Promise<string> {

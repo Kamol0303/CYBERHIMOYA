@@ -16,6 +16,7 @@ import {
   register,
   registerDevice,
   reportSuspiciousMessage,
+  revokeDevice,
   breachCheck,
   scanFileHash,
   scanQr,
@@ -34,6 +35,12 @@ import {
   type Verdict,
 } from "./lib/api";
 import { locales, t, tCode, type Locale } from "./i18n/messages";
+import {
+  clearGuestHistory,
+  loadGuestHistory,
+  pushGuestScan,
+  type GuestScanItem,
+} from "./lib/guestHistory";
 import "./App.css";
 
 type ScanMode = "url" | "qr" | "file";
@@ -102,6 +109,8 @@ export default function App() {
   const [devices, setDevices] = useState<{ id: string; platform: string; app_version: string }[]>(
     [],
   );
+  const [guestHistory, setGuestHistory] = useState<GuestScanItem[]>([]);
+  const [deviceBusy, setDeviceBusy] = useState<string | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -120,9 +129,17 @@ export default function App() {
 
   useEffect(() => {
     const token = getToken();
-    if (!token) return;
+    if (!token) {
+      setGuestHistory(loadGuestHistory());
+      return;
+    }
     void fetchMe()
-      .then(setUser)
+      .then(async (me) => {
+        setUser(me);
+        clearGuestHistory();
+        setGuestHistory([]);
+        await registerDevice("web").catch(() => undefined);
+      })
       .catch(() => setToken(null));
   }, []);
 
@@ -175,6 +192,17 @@ export default function App() {
           campaign_id: data.campaign_id,
           actor_hint: data.actor_hint,
         });
+        if (!getToken()) {
+          setGuestHistory(
+            pushGuestScan({
+              mode: "url",
+              title: data.url_normalized,
+              score: data.score,
+              verdict: data.verdict,
+              scanned_at: new Date().toISOString(),
+            }),
+          );
+        }
       } else if (mode === "qr") {
         const data = await scanQr(qrPayload.trim());
         setResult({
@@ -189,6 +217,17 @@ export default function App() {
           campaign_id: data.campaign_id,
           actor_hint: data.actor_hint,
         });
+        if (!getToken()) {
+          setGuestHistory(
+            pushGuestScan({
+              mode: "qr",
+              title: data.url_normalized ?? data.payload_preview,
+              score: data.score,
+              verdict: data.verdict,
+              scanned_at: new Date().toISOString(),
+            }),
+          );
+        }
       }
     } catch (err) {
       setError(scanErrorMessage(locale, err));
@@ -214,7 +253,20 @@ export default function App() {
         scam_family: data.scam_family,
         mitre_tags: data.mitre_tags,
         reasons: data.reasons,
+        intent_tags: data.intent_tags,
+        campaign_id: data.campaign_id,
       });
+      if (!getToken()) {
+        setGuestHistory(
+          pushGuestScan({
+            mode: "file",
+            title: file.name,
+            score: data.score,
+            verdict: data.verdict,
+            scanned_at: new Date().toISOString(),
+          }),
+        );
+      }
     } catch (err) {
       setError(scanErrorMessage(locale, err));
       setResult(null);
@@ -233,6 +285,8 @@ export default function App() {
       setToken(tokens.access_token);
       const me = await fetchMe();
       setUser(me);
+      clearGuestHistory();
+      setGuestHistory([]);
       void registerDevice("web").catch(() => undefined);
       setPassword("");
       setView("dashboard");
@@ -421,6 +475,21 @@ export default function App() {
             )}
 
             <p className="note">{t(locale, "guestNote")}</p>
+            {!user && guestHistory.length > 0 ? (
+              <section className="history-block" style={{ marginTop: "1rem" }}>
+                <h2 style={{ fontSize: "1rem" }}>{t(locale, "guestHistoryTitle")}</h2>
+                <p className="note">{t(locale, "guestHistoryHint")}</p>
+                <ul className="history-list">
+                  {guestHistory.map((item) => (
+                    <li key={`${item.scanned_at}-${item.title}`}>
+                      <span className={`score score-${item.verdict}`}>{item.score}</span>
+                      <span>{item.title}</span>
+                      <span className="hash">{item.mode}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
             <p className="privacy">{t(locale, "privacy")}</p>
             {notice ? <p className="note">{notice}</p> : null}
             {error ? <p className="error">{error}</p> : null}
@@ -633,10 +702,13 @@ export default function App() {
                       setBreachResult(t(locale, "breachClean"));
                       return;
                     }
+                    const recs = r.recommendations
+                      .map((code) => tCode(locale, `breach.rec.${code}`))
+                      .join(", ");
                     setBreachResult(
                       `${t(locale, "breachFound")}: ${r.breach_count} · ${r.breaches
                         .map((b) => b.name)
-                        .join(", ")} · ${r.recommendations.join(", ")}`,
+                        .join(", ")} · ${recs}`,
                     );
                   })
                   .catch(() => setBreachResult(t(locale, "error")));
@@ -657,7 +729,20 @@ export default function App() {
                   <li key={d.id}>
                     <span className="score">{d.platform}</span>
                     <span>{d.app_version}</span>
-                    <span className="hash">{d.id.slice(0, 8)}…</span>
+                    <button
+                      type="button"
+                      className="secondary"
+                      disabled={deviceBusy === d.id}
+                      onClick={() => {
+                        setDeviceBusy(d.id);
+                        void revokeDevice(d.id)
+                          .then(() => setDevices((prev) => prev.filter((x) => x.id !== d.id)))
+                          .catch(() => undefined)
+                          .finally(() => setDeviceBusy(null));
+                      }}
+                    >
+                      {t(locale, "deviceRevoke")}
+                    </button>
                   </li>
                 ))}
               </ul>

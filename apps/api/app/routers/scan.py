@@ -57,12 +57,12 @@ def scan_file_endpoint(
     user=Depends(get_optional_user),
 ) -> FileScanResponse:
     _enforce_guest_limit(request, response, user)
-    _ = body.run_yara
     try:
         return scan_file_hash(
             body.sha256,
             file_name=body.file_name,
             user_id=user.id if user else None,
+            run_yara=body.run_yara,
         )
     except ValueError as exc:
         raise HTTPException(

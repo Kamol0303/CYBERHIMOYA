@@ -9,8 +9,8 @@
 | Gate | Result |
 |------|--------|
 | Defensive lint | PASS |
-| API pytest | 33 passed |
-| Smoke `scripts/smoke_v1.py` | 22/22 |
+| API pytest | 35 passed |
+| Smoke `scripts/smoke_v1.py` | 24/24 |
 | Web `npm test` + `npm run build` | PASS |
 | Extension validate | PASS |
 
