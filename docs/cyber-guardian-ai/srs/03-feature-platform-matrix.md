@@ -52,8 +52,15 @@ N/A Platformaga tegishli emas
 | 33 | Intelligence Fusion Engine | ❌ | ❌ | ✅ | OSINT + feeds + telemetry |
 | 34 | Automated Playbook Engine (defensive) | ⚠️ | ✅ | ✅ | Blok/karantin/xabar; hack-back yo‘q |
 | 35 | Attacker Intent / LOLBin-Injection Detection | ⚠️ | ✅ | ⚠️ | Windows IOA; exploit qo‘llanma yo‘q |
+| 36 | Predictive Threat Actor Behavior Modeling | ⚠️ | ⚠️ | ✅ | ML forecast; client hint |
+| 37 | Automated Infrastructure Take-down Intelligence | ⚠️ | ⚠️ | ✅ | Organlarga IOC paket; o‘zimiz take-down yo‘q |
+| 38 | Deep Memory & Behavioral Forensics | ❌ | ✅ | ⚠️ | W agent; Web case UI |
+| 39 | Graph-based Relationship Analysis | ⚠️ | ⚠️ | ✅ | actor–tool–victimPattern–campaign |
+| 40 | Multi-Language Scam & SE (uz/ru/en + slang) | ✅ | ✅ | ✅ | + ixtiyoriy RU/CN pattern lib |
+| 41 | Live Phishing Kit & Scam Panel Hunting | ✅ | ✅ | ✅ | Detection only |
+| 42 | Zero-Day Behavior Anomaly Detection | ⚠️ | ✅ | ⚠️ | Signature’siz; W kuchli |
 
-> **Killer matritsa #24–30** asosiy; #31–35 arxitektura/EDR kengaytmasi. Batafsil: `srs/08-killer-edition-requirements.md`.
+> **Apex #36–42** — `srs/09-apex-edition-requirements.md`. Killer #24–35 saqlanadi.
 
 ---
 
@@ -198,7 +205,11 @@ BE markaziy; playbook faqat defensive.
 
 Windows IOA; «qanday qilish» yo‘q.
 
-> Scam classifier, deepfake, APK similarity — alohida FR/modullarda saqlanadi (`srs/06`, `sdd/04b`).
+### 36–42. Apex kengaytmalar
+
+Predictive modeling, take-down **intelligence** (organlarga), memory forensics, graph relationships, multi-lang SE, live panel hunting, zero-day anomaly — batafsil `srs/09`. Disruption faqat defensive.
+
+> Scam classifier, deepfake, APK similarity — `srs/06`, `sdd/04b`/`04c`.
 
 ---
 

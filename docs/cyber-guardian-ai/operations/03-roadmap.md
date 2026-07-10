@@ -1,53 +1,48 @@
-# Operations 03 — Roadmap (Killer Edition)
+# Operations 03 — Roadmap (Apex Edition)
 
-**Versiya:** 3.0.0-killer  
-**Rol:** Product + Architect + APT Hunter  
-
----
-
-## Threat Hunting & Actor Detection (majburiy)
-
-V1 dan boshlab asosiy IOC hunting; V2 EDR+fingerprint; V3 attribution+playbooks; V4 milliy early-warning.
+**Versiya:** 4.0.0-apex  
 
 ---
 
-## V1 — Core protection + basic hunting + IOC
+## Threat Hunting & Actor Disruption Strategy (majburiy)
 
-- Auth, consent, URL/QR/File, scam skeleti  
-- IOC sync + sweep (FR-307 asos)  
-- Basic campaign hint / actor IOC  
-- 3 platforma dashboard  
-
-## V2 — Full EDR + Behavior + Actor fingerprinting
-
-- Windows ancestry, IOA, LOLBin/injection **detection**, ransomware  
-- Behavior & anomaly, SMS/Telegram, APK similarity  
-- Fingerprinting (FR-303), Fusion asos, TAKB/Graph asos  
-- Hunting pipeline real-time + scheduled  
-
-## V3 — Advanced Attribution + Campaign + Playbooks + B2B
-
-- Full Attribution Engine (+ optional GNN)  
-- Campaign tracking to‘liq  
-- C2/phishing/scam panel detection  
-- Automated **defensive** Playbooks  
-- Deepfake  
-- B2B Threat Intel Platform  
-- OSINT persona/group tracking (qonuniy)  
-
-## V4 — National-level early warning
-
-- Davlat bilan hamkorlikda early-warning (FR-310, AQ-031)  
-- Milliy feed exchange (UZCERT / Milliy Kiberxavfsizlik Markazi)  
-- Kengaytirilgan playbook siyosatlari (kelishilgan)  
+Har versiyada disruption = defensive controls + authority intelligence. V5 «autonomous defense» = avtomatik **himoya** siyosatlari (blok/karantin), avtonom hujum emas.
 
 ---
 
-## Sprint tartibi (qisqa)
+## V1 — Core protection + basic hunting
+- URL/QR/File, scam skeleti, IOC sweep, asosiy risk/MITRE  
+- 3 platforma himoya UX  
 
-1. V1 core (mavjud SRS 04 + feed + sweep)  
-2. V2 EDR + fingerprint board  
-3. V3 graph + playbooks + B2B  
-4. V4 faqat shartnoma/legal tayyor bo‘lgach  
+## V2 — Full XDR + Advanced Attribution
+- Windows XDR telemetry, memory/process tree, LOTL/injection **detection**  
+- Behavior anomaly, SMS/Telegram, fingerprinting, graph asos, Evidence Vault  
+- Fusion + hunting engine  
 
-Hujjatlar: `srs/08`, `sdd/07`, `sdd/04b`.
+## V3 — Predictive + Automated Playbooks
+- Predictive forecasting  
+- Full campaign/infra hunting  
+- Defensive playbooks / kill-chain disruption  
+- Deepfake; GNN/LLM assist  
+- B2B intel  
+
+## V4 — National Cyber Sentinel Platform
+- Davlat integratsiyasi (UZCERT / Milliy Kiberxavfsizlik Markazi)  
+- National early-warning dashboard  
+- Take-down **intelligence** packages at scale  
+
+## V5 — AI-driven autonomous defense ecosystem
+- Kengaytirilgan avtomatik himoya siyosatlari (guardrailed)  
+- Continuous self-tuning detectors (human oversight)  
+- Cross-org defensive intel mesh (shartnomalar)  
+
+---
+
+## Ishga tushish tartibi
+1. V1 board — darhol  
+2. V2 XDR — keyingi epik  
+3. V3 predictive/playbooks  
+4. V4 — faqat AQ-031 yechilgach  
+5. V5 — V4 barqaror + ethics board  
+
+Hujjatlar: `srs/09`, `sdd/08`, `sdd/04c`.

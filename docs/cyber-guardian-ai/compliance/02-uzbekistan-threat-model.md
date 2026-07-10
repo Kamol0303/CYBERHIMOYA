@@ -131,6 +131,17 @@ Threat feed: mahalliy (UZCERT, Kiberxavfsizlik markazi) + xalqaro ochiq TI (ToS)
 
 **Qo‘shimcha:** Mahalliy forumlar, Telegram kanallari va ochiq manbalardan real-time OSINT monitoring (Fusion Engine). Dark web — faqat qonuniy/litsenziyalangan kanal (AQ-030).
 
-### Threat Hunting & Actor Detection (majburiy)
+## 11.10 Apex mahalliy tahdid + tillar
 
-Persona/group tracking — ochiq manba asosida taxallus/cluster; noqonuniy yashirin kirish yo‘q.
+| Ustuvor | Izoh |
+|---------|------|
+| Mahalliy scam guruhlari / Telegram | Bot + slang (uz/ru) |
+| Lokal phishing operatorlari | Panel hunting + gov spoof |
+| Bank troyan oilalari | APK similarity + YARA |
+| QR va voice phishing | QR + deepfake consent |
+| Davlat xizmatlarini taqlid | my.gov / to‘lov spoof |
+| RU/CN tilidagi SE patternlari | Kutubxona (AQ-034); bias nazorati |
+
+### Threat Hunting & Actor Disruption Strategy (majburiy)
+
+Mahalliy aktorlar graph da klasterlanadi; disruption — foydalanuvchi himoyasi + organlarga intel.

@@ -1,6 +1,6 @@
-# Qabul mezonlari — Killer Edition
+# Qabul mezonlari — Apex Edition
 
-**Savol:** Ushbu spetsifikatsiya asosida jamoa darhol ishga tushishi mumkinmi?
+**Savol:** Ushbu spetsifikatsiya asosida professional jamoa darhol ish boshlay oladimi?
 
 ---
 
@@ -8,29 +8,31 @@
 
 | # | Mezon | Holat |
 |---|-------|-------|
-| 1 | IEEE 830 uslubida bo‘limlar to‘liq | ✅ |
-| 2 | FR/NFR raqamlangan (shu jumladan FR-200…, FR-300…) | ✅ |
+| 1 | Bo‘limlar chuqur, IEEE 830 uslubida | ✅ |
+| 2 | FR/NFR (FR-400…, NFR-300…) | ✅ |
 | 3 | Mermaid diagrammalar | ✅ |
-| 4 | Matritsa #24–30 Killer + #31–35 kengaytma | ✅ |
-| 5 | Killer AI modullar shablon bo‘yicha (`sdd/04b`) | ✅ |
-| 6 | Knowledge Graph + Fusion + Defensive Playbooks (`sdd/07`) | ✅ |
-| 7 | Etika: UZCERT/Milliy markaz; sotish yo‘q | ✅ |
-| 8 | UZ mahalliy hunting + OSINT chegarasi | ✅ |
-| 9 | Roadmap V1–V4 | ✅ |
-| 10 | Har asosiy bo‘limda Threat Hunting & Actor Detection | ✅ |
-| 11 | Exploit/weaponization/hujum vositasi yo‘q | ✅ |
-| 12 | Ochiq savollar alohida (AQ) | ✅ |
+| 4 | Matritsa #36–42 Apex + oldingi #24–35 | ✅ |
+| 5 | Apex AI modullar kengaytirilgan shablon (`sdd/04c`) | ✅ |
+| 6 | Telemetry → Hunt → Graph/Vector → Playbook → Vault | ✅ `sdd/08` |
+| 7 | On-device / Edge / Cloud jadvali | ✅ |
+| 8 | Disruption = defensive only; take-down = intel for authorities | ✅ |
+| 9 | Ethical AI, immutable audit, UZCERT/Milliy markaz | ✅ |
+| 10 | UZ + uz/ru/en (+ RU/CN SE) model | ✅ |
+| 11 | Roadmap V1–V5 | ✅ |
+| 12 | Threat Hunting & Actor Disruption Strategy bo‘limlari | ✅ |
+| 13 | Offensive kontent yo‘q | ✅ |
+| 14 | AQ ochiq savollar | ✅ |
 
 ---
 
-## Baholash javobi
+## Javob
 
-**Ha — jamoa darhol ishga tushishi mumkin**, quyidagicha:
+**Ha — professional jamoa darhol ish boshlay oladi.**
 
-1. **V1 sprintlari** hoziroq boardga: core protection + IOC sweep + basic hunting.  
-2. **V2–V4** epiklari backlogda (`operations/03-roadmap.md`); V4 faqat davlat kelishuvi (AQ-031) dan keyin.  
-3. Bloklovchi AQ lar (graph DB tanlovi AQ-027, dark web OSINT AQ-030, playbook izolyatsiya AQ-032) groomingda yopiladi.  
-4. CI da offensive playbook lint (NFR-202) majburiy.  
-5. Bitta branch/PR oqimi.
+1. **V1** epiklari hoziroq sprint-planningga.  
+2. **V2–V3** XDR/predictive/playbooks backlog.  
+3. **V4–V5** milliy/avtonom himoya — AQ-031 va ethics board dan keyin.  
+4. CI offensive lint + explainability gate.  
+5. Bitta branch.
 
-**Xulosa:** Killer Edition SRS+SDD sprint-planning va V1 implementatsiya uchun yetarli; elite imkoniyatlar V2–V4 da bosqichma-bosqich.
+**Xulosa:** Apex SRS+SDD V1 implementatsiya va butun dastur yo‘l xaritasi uchun yetarli aniqlikda; noaniqliklar AQ da qayd etilgan.

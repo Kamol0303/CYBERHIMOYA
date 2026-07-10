@@ -56,6 +56,12 @@
 | AQ-030 | Dark web OSINT: litsenziyalangan provayder bormi yoki faqat clearnet? | FR-308 | Legal + TI |
 | AQ-031 | V4 national early-warning: qaysi davlat API/shartnoma? | FR-310 | Legal + Product |
 | AQ-032 | Playbook `isolate_device`: majburiy agent izolyatsiya yoki faqat tavsiya? | FR-302 | Product + Privacy |
+| AQ-033 | Stream bus: Kafka vs Pulsar vs cloud-native? | FR-400 | Infra |
+| AQ-034 | RU/CN SE pattern kutubxonasi manbasi va litsenziya? | FR-408 | TI + Legal |
+| AQ-035 | Immutable audit: hash-chain vs WORM storage? | FR-411 | Infra + Compliance |
+| AQ-036 | Regional Edge PoP kerakmi (MVP da yo‘q)? | SDD-08 | Infra |
+| AQ-037 | Vector DB tanlovi (pgvector / milvus / other)? | SDD-08 | Eng |
+| AQ-038 | V5 autonomous defense: human-in-the-loop majburiy darajasi? | Roadmap V5 | Ethics |
 
 ---
 

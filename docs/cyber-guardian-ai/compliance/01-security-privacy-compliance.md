@@ -149,6 +149,19 @@ Namuna manbalar (integratsiya sharti ochiq): ochiq URL reputation ro‘yxatlari,
 | OSINT | Ochiq/qonuniy manbalar; noqonuniy kirish yo‘q |
 | Weaponization | Kod bazasi va hujjatlarda taqiqlangan |
 
-### Threat Hunting & Actor Detection (majburiy)
+## 10.9 Apex etika va Ethical AI
 
-Elite hunting — himoya intellekti. «Zararsizlantirish» = blok/karantin/ogohlantirish/rasmiy xabar; qarshi hujum emas.
+| Qoida | Amal |
+|-------|------|
+| Rozilik | Har qanday hunting — foydalanuvchi roziligi |
+| Disclosure | Actor ma’lumoti faqat UZCERT, Milliy Kiberxavfsizlik Markazi va tegishli organlar |
+| Sotish | Yo‘q |
+| Audit | Full immutable trail (FR-411) |
+| Explainability | Score/attribution uchun majburiy |
+| Bias | uz/ru/en SE detektorlarida monitoring (NFR-310) |
+| Take-down | Faqat intelligence paketi; ijro — organlar |
+| Autonomous defense (V5) | Faqat himoya siyosatlari; human oversight |
+
+### Threat Hunting & Actor Disruption Strategy (majburiy)
+
+Apex «de-anonimizatsiya» = infratuzilma/kampaniya attribution; fuqarolarni noqonuniy doxing qilish emas.

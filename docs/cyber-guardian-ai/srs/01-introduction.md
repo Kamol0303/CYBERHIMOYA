@@ -51,15 +51,15 @@ Ko‘pchilik foydalanuvchi texnik bilimga ega emas; hujum **sodir bo‘lishidan 
 
 ### 1.2.3 Missiya
 
-**Killer missiya:** Cyber Guardian AI — O‘zbekiston foydalanuvchilarini himoya qilish bilan birga, kiberhujum tayyorlayotgan yoki amalga oshirayotgan threat actorlarni erta bosqichda aniqlaydigan, ularning infratuzilmasi, TTP, IOC/IOA larini kuzatadigan va **zararsizlantiradigan** (bloklash, karantin, rasmiy xabar) elite mudofaa va threat hunting platformasi.
+**Apex missiya:** oddiy foydalanuvchilarni kundalik himoya qilish bilan birga, kiberhujum tayyorlayotgan/amalga oshirayotgan/rejalashtirayotgan threat actorlarni erta aniqlash, real-time kuzatish, infratuzilma attribution (qonuniy korrelyatsiya), kampaniyalarni **himoya choralar**i bilan to‘xtatish va milliy intellekt ta’minlash.
 
 ### 1.2.4 Asosiy printsip (butun loyiha)
 
-> Faqat **defensive + intelligence**. Hech qanday active exploitation, weaponization yoki hujum vositasi bo‘lmaydi. Barcha harakatlar — aniqlash, monitoring, correlation, attribution va bloklashga qaratilgan.
+> Faqat defensive hunting, intelligence va automated **himoya** response. Offensive capability, exploit, C2-as-weapon, payload, weaponization — yo‘q. Qonuniy, rozilik asosida, faqat himoya.
 
-### Threat Hunting & Actor Detection (majburiy)
+### Threat Hunting & Actor Disruption Strategy (majburiy)
 
-Markaziy talablar: `srs/07`, `srs/08` (Killer), arxitektura: `sdd/06`, `sdd/07`.
+Disruption = blok/karantin/DNS deny/CERT intel. Hack-back yo‘q. Talablar: `srs/09` (Apex), `srs/08`, `srs/07`.
 
 ### 1.2.5 Mahsulot chegaralari
 
