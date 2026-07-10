@@ -198,6 +198,17 @@ export async function fetchMe(): Promise<UserProfile> {
   return getJson("/v1/me");
 }
 
+export async function fetchMeStats() {
+  return getJson<{
+    scans: number;
+    threat_events: number;
+    unread_notifications: number;
+    domain_allowlist: number;
+    risk_history: number;
+    devices: number;
+  }>("/v1/me/stats");
+}
+
 export async function eraseAccount(): Promise<{ status: string }> {
   return deleteJson("/v1/me");
 }

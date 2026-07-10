@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, status
 
 from app.config import settings
-from app.models.schemas import LoginRequest, RegisterRequest, TokenResponse, UserProfile
+from app.models.schemas import LoginRequest, MeStatsResponse, RegisterRequest, TokenResponse, UserProfile
 from app.services.auth import create_access_token, create_refresh_token, get_current_user
 from app.services.store import store
 from fastapi import Depends
@@ -53,6 +53,20 @@ def me(user=Depends(get_current_user)) -> UserProfile:
         role=user.role,
         locale=user.locale,
         created_at=user.created_at,
+    )
+
+
+@me_router.get("/me/stats", response_model=MeStatsResponse)
+def me_stats(user=Depends(get_current_user)) -> MeStatsResponse:
+    return MeStatsResponse(
+        scans=len(store.list_scans(user_id=user.id, limit=10_000)),
+        threat_events=len(store.list_threat_events(user.id, limit=10_000)),
+        unread_notifications=len(
+            store.list_notifications(user.id, unread_only=True, limit=10_000)
+        ),
+        domain_allowlist=len(store.list_domain_allowlist(user.id)),
+        risk_history=len(store.list_risk_score_history(user.id, limit=10_000)),
+        devices=len(store.list_devices(user.id)),
     )
 
 

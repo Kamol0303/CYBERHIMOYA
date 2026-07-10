@@ -575,6 +575,11 @@ def test_password_health_and_scan_detail(client: TestClient):
     hist2 = client.get("/v1/risk-score/history", headers=headers)
     assert len(hist2.json()) >= 2
 
+    stats = client.get("/v1/me/stats", headers=headers)
+    assert stats.status_code == 200
+    assert stats.json()["scans"] >= 1
+    assert stats.json()["risk_history"] >= 1
+
 
 def test_dns_allowlist_and_check(client: TestClient):
     reg = client.post(

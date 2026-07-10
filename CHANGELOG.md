@@ -7,6 +7,7 @@
 - Extension: local IOC cache from threat-feed sync (+ offline seed) for faster FR-062 warnings
 - Password health: local pwned seed (`pwned_local`, never logged)
 - Metrics: threat_event / notification / domain_allowlist counts
+- `GET /v1/me/stats` — dashboard counters; extension popup IOC sync status
 
 ## 0.4.0 — 2026-07-10
 

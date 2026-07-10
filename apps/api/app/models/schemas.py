@@ -202,6 +202,16 @@ class UserProfile(BaseModel):
     created_at: datetime
 
 
+class MeStatsResponse(BaseModel):
+    scans: int
+    threat_events: int
+    unread_notifications: int
+    domain_allowlist: int
+    risk_history: int
+    devices: int
+    defensive_only: bool = True
+
+
 class HealthResponse(BaseModel):
     status: str
     version: str

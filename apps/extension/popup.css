@@ -46,3 +46,17 @@ pre {
   min-height: 4rem;
   font-size: 12px;
 }
+
+button.secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: var(--foam);
+  font-weight: 600;
+  margin-top: 0;
+}
+
+.feed-status {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+}

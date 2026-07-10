@@ -9,6 +9,7 @@ import {
   fetchEmergencyAllowlist,
   fetchEmergencyLogs,
   fetchMe,
+  fetchMeStats,
   fetchNotifications,
   fetchScans,
   fetchThreatEvents,
@@ -138,6 +139,14 @@ export default function App() {
   const [dnsAllowlist, setDnsAllowlist] = useState<
     { id: string; domain: string; note: string | null }[]
   >([]);
+  const [meStats, setMeStats] = useState<{
+    scans: number;
+    threat_events: number;
+    unread_notifications: number;
+    domain_allowlist: number;
+    risk_history: number;
+    devices: number;
+  } | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -187,6 +196,7 @@ export default function App() {
       notifs,
       risks,
       dnsRows,
+      stats,
     ] = await Promise.all([
       fetchScans(),
       fetchConsents(),
@@ -198,6 +208,7 @@ export default function App() {
       fetchNotifications().catch(() => []),
       fetchRiskHistory().catch(() => []),
       fetchDnsAllowlist().catch(() => []),
+      fetchMeStats().catch(() => null),
     ]);
     setHistory(scans);
     setConsents(consentRows);
@@ -209,6 +220,7 @@ export default function App() {
     setNotifications(notifs);
     setRiskHistory(risks);
     setDnsAllowlist(dnsRows);
+    setMeStats(stats);
   }
 
   useEffect(() => {
@@ -652,6 +664,15 @@ export default function App() {
           <p className="support">
             {t(locale, "signedInAs")}: {user.email}
           </p>
+          {meStats ? (
+            <p className="note">
+              {t(locale, "statsLine")
+                .replace("{scans}", String(meStats.scans))
+                .replace("{events}", String(meStats.threat_events))
+                .replace("{unread}", String(meStats.unread_notifications))
+                .replace("{devices}", String(meStats.devices))}
+            </p>
+          ) : null}
 
           <section className="consent-block">
             <h2>{t(locale, "consentTitle")}</h2>
