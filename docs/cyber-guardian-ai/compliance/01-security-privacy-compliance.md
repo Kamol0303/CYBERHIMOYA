@@ -1,0 +1,129 @@
+# Compliance 01 — Xavfsizlik, maxfiylik va muvofiqlik
+
+**Hujjat:** Cyber Guardian AI  
+**Bo‘lim:** Security, Privacy, Compliance  
+**Versiya:** 1.0.0-draft  
+**Rol:** Privacy & Compliance Officer + Mobile Security + Security Architect
+
+---
+
+## 10.1 Android ruxsatlar siyosati (kritik)
+
+### 10.1.1 Muammo chegarasi
+
+SMS o‘qish + Accessibility Service + overlay kombinatsiyasi ko‘pincha **bank-troyan** naqshiga o‘xshaydi. Cyber Guardian AI shu naqshdan **aniq farqlanishi** shart.
+
+### 10.1.2 Qoidalar
+
+| # | Qoida | Talab ID |
+|---|-------|----------|
+| 1 | Minimal ruxsat — har bir ruxsat uchun foydalanuvchiga ko‘rinadigan asos | FR-004, FR-103, NFR-026 |
+| 2 | SMS tahlili **faqat qurilmada**; xom matn serverga **hech qachon** | FR-040, NFR-030 |
+| 3 | Yashirin overlay **ishlatilmaydi** | FR-091, NFR-026 |
+| 4 | Ogohlantirish — yopib bo‘lmaydigan **tizim bildirishnomasi** / in-app UI | FR-091 |
+| 5 | Accessibility Service — faqat agar himoya uchun muqobil yo‘q va Play siyosatiga mos; default MVP da **o‘chiq/no-use** (AQ-014) | — |
+| 6 | VpnService — faqat DNS/filtr; marketing «VPN» deb chalg‘itilmasin; consent | FR-060 |
+
+### 10.1.3 Ruxsat → foyda jadvali (foydalanuvchi matni)
+
+| Ruxsat | Foyda (ko‘rsatiladi) | Nima qilinMAYDI |
+|--------|----------------------|-----------------|
+| SMS | Firibgar SMS larni telefonda aniqlash | Matnni bulutga yuborish |
+| Kamera | QR tekshirish | Fon rejimida kuzatish |
+| Bildirishnoma | Xavf haqida ogohlantirish | Spam marketing |
+| VpnService (ixtiyoriy) | Zararli domenlarni DNS da to‘xtatish | Trafikni sotish / yashirin tunnel marketing |
+| Fayl (ixtiyoriy) | Tanlangan faylni tekshirish | Butun xotirani skanlash (keraksiz) |
+
+### 10.1.4 Google Play Restricted Permissions
+
+**Reja:**
+
+1. Play Console da Restricted Permissions Declaration.  
+2. Namoyish videosi: onboarding → SMS consent → scam SMS simulyatsiyasi → **on-device** ogohlantirish → sozlamalarda o‘chirish.  
+3. Privacy Policy URL (uz/ru/en).  
+4. Data safety form: SMS processed on-device; not shared.
+
+---
+
+## 10.2 Ma’lumotlar maxfiyligi
+
+### 10.2.1 O‘zbekiston qonunchiligi
+
+O‘zR «Shaxsga doir ma’lumotlar to‘g‘risida»gi qonuniga muvofiqlik:
+
+| Printsip | Amal |
+|----------|------|
+| Qonuniylik | Privacy Policy + consent |
+| Maqsad cheklovi | Faqat himoya xizmati |
+| Minimallashtirish | SMS cloudga yo‘q; hash afzal |
+| Saqlash muddati | NFR-040…043 |
+| Subyekt huquqlari | Ko‘rish/o‘chirish (FR-005) |
+| Xavfsizlik | TLS 1.3, AES-256 at-rest |
+
+### 10.2.2 Deepfake / ovoz
+
+- Aniq rozilik oqimi (FR-042).  
+- Faqat foydalanuvchi yuklagan audio.  
+- Jonli qo‘ng‘iroqni yashirincha yozib olish — **YO‘Q**.  
+- Qisqa retention (AQ-013).
+
+### 10.2.3 Uchinchi tomon
+
+- PII/telemetry **sotilmaydi** (NFR-033).  
+- Breach/TI provayderlar — ToS va DPA (AQ-015).
+
+### 10.2.4 Shifrlash standartlari
+
+| Qatlam | Standart |
+|--------|----------|
+| Transport | TLS 1.3 |
+| At-rest PII | AES-256-GCM + KMS |
+| Qurilma | Android Keystore / Windows DPAPI |
+| Yangilanish | ed25519 (yoki ekvivalent) imzo |
+
+---
+
+## 10.3 Mas’uliyatli oshkor qilish (Responsible Disclosure)
+
+Agar tahlil jarayonida **boshqa tizimda** zaiflik/xavf ko‘rinsa (masalan, foydalanuvchi yuborgan sahifa orqali):
+
+| Qadam | Muddat | Amal |
+|-------|--------|------|
+| 1. Ichki qayd | 24 soat | Severity baholash; exploit yo‘riqnomasi yozilmaydi |
+| 2. Vendor/egaga xabar | 72 soat (imkon qadar) | Maxfiy kanal; minimal tasdiqlovchi ma’lumot |
+| 3. Muvofiqlashtirilgan oshkor | Vendor bilan kelishilgan muddat | Ommaviy blog — faqat himoya maslahati |
+| 4. Foydalanuvchi | Darhol | Faqat o‘z xavfini ogohlantirish |
+
+**Ichki:** `security@` manzili (AQ-016), PGP ixtiyoriy.  
+**Tashqi tadqiqotchilar** uchun alohida policy sahifasi (Web).
+
+---
+
+## 10.4 Threat feed litsenziyalash
+
+| Talab | Tavsif |
+|-------|--------|
+| Inventar | Har bir `ThreatFeedSource` uchun ToS/litsenziya holati |
+| `license_status` | `ok` / `review` / `blocked` |
+| Qayta tarqatish | Client cache — shartnoma ruxsat bersa; qayta sotish yo‘q |
+| Attribution | Kerak bo‘lsa UI/Docs da manba |
+| Tekshiruv | Huquqiy review har yangi manba oldidan |
+
+Namuna manbalar (integratsiya sharti ochiq): ochiq URL reputation ro‘yxatlari, UZCERT ogohlantirishlari, breach API.
+
+---
+
+## 10.5 Windows agent xavfsizligi
+
+- Code signing majburiy (NFR-027).  
+- Least privilege qayerda mumkin; admin kerak bo‘lsa onboarding da tushuntirish.  
+- Self-protection: agent o‘chirishga urinishda ogohlantirish (foydalanuvchi paroli bilan).  
+- Exploit/offensive tooling agentga kiritilmaydi.
+
+---
+
+## 10.6 Web maxfiyligi
+
+- Mehmon skan: IP asosida rate limit; uzoq muddatli profil yaratilmaydi.  
+- Extension: minimal ruxsat (`<all_urls>` faqat kerak bo‘lsa va store review uchun asos).  
+- CSP, secure cookies, no third-party tracker (marketing pixel default yo‘q).
