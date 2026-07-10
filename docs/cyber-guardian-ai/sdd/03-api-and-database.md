@@ -186,7 +186,7 @@ Yoki `multipart` rasm. Server/client avval decode (client afzal), keyin URL pipe
 
 ## 3.6 Threat feed sync
 
-### `GET /v1/threat-feed/sync?since_version=20260710.1`
+### `GET /v1/threat-feed/sync?since_version=20260710.2`
 
 **Response**
 ```json

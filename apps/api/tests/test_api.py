@@ -339,6 +339,33 @@ def test_openapi_has_bearer(client: TestClient):
     assert schemes["HTTPBearer"]["scheme"] == "bearer"
 
 
+def test_openapi_metrics_schema(client: TestClient):
+    r = client.get("/v1/openapi.json")
+    assert r.status_code == 200
+    schemas = r.json().get("components", {}).get("schemas", {})
+    assert "MetricsResponse" in schemas
+    props = schemas["MetricsResponse"]["properties"]
+    for key in (
+        "version",
+        "environment",
+        "defensive_only",
+        "emergency_dry_run",
+        "scan_rows",
+        "feed_version",
+    ):
+        assert key in props
+
+
+def test_unauthorized_problem_detail(client: TestClient):
+    r = client.get("/v1/me")
+    assert r.status_code == 401
+    assert r.headers["content-type"].startswith("application/problem+json")
+    body = r.json()
+    assert body["type"] == "https://api.cyberguardian.uz/errors/unauthorized"
+    assert body["status"] == 401
+    assert body["instance"] == "/v1/me"
+
+
 def test_cors_web_origin_preflight(client: TestClient):
     origin = "http://localhost:5173"
     r = client.options(

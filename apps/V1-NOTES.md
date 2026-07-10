@@ -20,6 +20,7 @@
 - PWA shell service worker
 - Extension validate + Docker CI smoke
 - Client shell README accuracy
+- PR #3 follow-up: ProblemDetail 401/429, web offline banner + erasure UI
 
 ## Emergency dry-run
 

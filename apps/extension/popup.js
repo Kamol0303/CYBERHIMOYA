@@ -58,6 +58,17 @@ async function scanUrl(url) {
   if (!res.ok) {
     const err = new Error(`scan_failed_${res.status}`);
     err.status = res.status;
+    const ct = res.headers.get("content-type") || "";
+    if (ct.includes("json")) {
+      try {
+        const body = await res.json();
+        if (typeof body.detail === "string" && body.detail.trim()) {
+          err.detail = body.detail.trim();
+        }
+      } catch {
+        /* ignore parse errors */
+      }
+    }
     throw err;
   }
   return res.json();
@@ -87,7 +98,7 @@ document.getElementById("scan").addEventListener("click", async () => {
       .join("\n");
   } catch (err) {
     if (err && err.status === 429) {
-      out.textContent = t.rateLimited;
+      out.textContent = err.detail || t.rateLimited;
     } else {
       out.textContent = t.scanFailed;
     }

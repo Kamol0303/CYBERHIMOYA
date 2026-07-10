@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
@@ -112,6 +112,34 @@ async def guest_rate_limit_handler(
             "X-RateLimit-Limit": str(exc.limit),
             "X-RateLimit-Remaining": "0",
         },
+    )
+
+
+@api.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+    if exc.status_code == 401:
+        detail = exc.detail if isinstance(exc.detail, str) else "Unauthorized"
+        path = request.url.path
+        if not path.startswith("/v1"):
+            path = f"/v1{path}" if path.startswith("/") else f"/v1/{path}"
+        body = ProblemDetail(
+            type="https://api.cyberguardian.uz/errors/unauthorized",
+            title="Unauthorized",
+            status=401,
+            detail=detail,
+            instance=path,
+        ).model_dump()
+        return JSONResponse(
+            status_code=401,
+            content=body,
+            media_type="application/problem+json",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    content = exc.detail if isinstance(exc.detail, (dict, list)) else {"detail": exc.detail}
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=content if isinstance(exc.detail, (dict, list)) else {"detail": exc.detail},
+        headers=dict(exc.headers) if exc.headers else None,
     )
 
 
