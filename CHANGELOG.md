@@ -5,6 +5,8 @@
 - `POST/GET/DELETE /v1/dns/*` — FR-060 domain check + user allowlist (audit)
 - Web dashboard DNS allowlist UI
 - Extension: local IOC cache from threat-feed sync (+ offline seed) for faster FR-062 warnings
+- Password health: local pwned seed (`pwned_local`, never logged)
+- Metrics: threat_event / notification / domain_allowlist counts
 
 ## 0.4.0 — 2026-07-10
 

@@ -864,7 +864,8 @@ export default function App() {
               onClick={() => {
                 void passwordHealth(pwdInput)
                   .then((r) => {
-                    setPwdResult(`${r.verdict} · score=${r.score}`);
+                    const pwned = r.pwned_local ? " · pwned_local" : "";
+                    setPwdResult(`${r.verdict} · score=${r.score}${pwned}`);
                     setPwdInput("");
                   })
                   .catch(() => setPwdResult(t(locale, "error")));

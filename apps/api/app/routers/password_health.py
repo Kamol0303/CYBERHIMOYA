@@ -15,6 +15,7 @@ class PasswordHealthRequest(BaseModel):
 class PasswordHealthResponse(BaseModel):
     score: int
     verdict: str
+    pwned_local: bool = False
     reasons: list[dict[str, str]]
     recommendations: list[str]
     defensive_only: bool = True

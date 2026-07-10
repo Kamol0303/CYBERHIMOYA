@@ -260,6 +260,9 @@ class MetricsResponse(BaseModel):
     emergency_dry_run: bool
     scan_rows: int
     feed_version: str
+    threat_event_rows: int = 0
+    notification_rows: int = 0
+    domain_allowlist_rows: int = 0
 
 
 class MessageEntities(BaseModel):

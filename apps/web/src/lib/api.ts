@@ -427,6 +427,7 @@ export async function passwordHealth(password: string) {
   return postJson<{
     score: number;
     verdict: string;
+    pwned_local: boolean;
     reasons: { code: string; message_key: string }[];
     recommendations: string[];
   }>("/v1/password-health", { password }, false);

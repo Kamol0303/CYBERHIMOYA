@@ -541,9 +541,11 @@ def test_password_health_and_scan_detail(client: TestClient):
     weak = client.post("/v1/password-health", json={"password": "123456"})
     assert weak.status_code == 200
     assert weak.json()["verdict"] == "weak"
+    assert weak.json()["pwned_local"] is True
     strong = client.post("/v1/password-health", json={"password": "Tr0ub4dor&3-long!"})
     assert strong.status_code == 200
     assert strong.json()["score"] >= 50
+    assert strong.json()["pwned_local"] is False
 
     reg = client.post(
         "/v1/auth/register",
