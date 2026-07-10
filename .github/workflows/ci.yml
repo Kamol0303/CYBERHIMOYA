@@ -20,15 +20,11 @@ jobs:
       - name: Install
         run: pip install -r requirements.txt
       - name: Defensive-only lint
-        run: |
-          if grep -RIn -E 'exploit.?poc|hack.?back|ddos.?tool|metasploit|reverse.?shell|c2.?implant' \
-            --include='*.py' app; then
-            echo "Offensive capability keywords found in API source"
-            exit 1
-          fi
-          echo "Defensive-only lint passed"
+        run: bash ../../scripts/defensive-lint.sh
       - name: Test
         run: PYTHONPATH=. pytest -q
+      - name: Feed verify
+        run: PYTHONPATH=. python -c "from app.services.feed import load_feed_pack, verify_signature; p=load_feed_pack(); assert verify_signature(p['signed_payload'], p['signature'])"
 
   web:
     runs-on: ubuntu-latest

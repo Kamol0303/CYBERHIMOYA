@@ -8,12 +8,12 @@
 - Docker Compose (api + web)
 - Android/Windows shell docs
 
-### Sprint 1.5 (this update)
-- Emergency API foundation: consent / confirm / dispatch / logs
-- AQ-039 allowlist config (default PENDING → dry-run only)
-- Android `ScamSmsReceiver` + richer UI state
-- Windows `ScanWindow` controller shell
-- Web dashboard emergency status
+### Sprint 1.6 (this update)
+- Web emergency double-confirm dry-run UI + logs
+- Android Gradle/manifest/BroadcastReceiver shell
+- Windows `.csproj` + build docs
+- AQ-039 allowlist runbook (no invented numbers)
+- CI feed signature verify step
 
 ## Emergency dry-run
 

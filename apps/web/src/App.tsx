@@ -1,7 +1,10 @@
 import { useEffect, useState, type FormEvent } from "react";
 import {
+  confirmEmergency,
+  dispatchEmergency,
   fetchConsents,
   fetchEmergencyAllowlist,
+  fetchEmergencyLogs,
   fetchMe,
   fetchScans,
   fetchThreatFeedSync,
@@ -17,6 +20,7 @@ import {
   upsertConsent,
   type ConsentRecord,
   type EmergencyAllowlist,
+  type EmergencyLogItem,
   type ScanHistoryItem,
   type ScanReason,
   type ThreatFeedSync,
@@ -61,6 +65,10 @@ export default function App() {
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
   const [feed, setFeed] = useState<ThreatFeedSync | null>(null);
   const [emergency, setEmergency] = useState<EmergencyAllowlist | null>(null);
+  const [emergencyLogs, setEmergencyLogs] = useState<EmergencyLogItem[]>([]);
+  const [confirmToken, setConfirmToken] = useState<string | null>(null);
+  const [emergencyMsg, setEmergencyMsg] = useState<string | null>(null);
+  const [emergencyBusy, setEmergencyBusy] = useState(false);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -80,16 +88,18 @@ export default function App() {
       setConsents([]);
       return;
     }
-    const [scans, consentRows, feedSync, allowlist] = await Promise.all([
+    const [scans, consentRows, feedSync, allowlist, emLogs] = await Promise.all([
       fetchScans(),
       fetchConsents(),
       fetchThreatFeedSync(),
       fetchEmergencyAllowlist(),
+      fetchEmergencyLogs(),
     ]);
     setHistory(scans);
     setConsents(consentRows);
     setFeed(feedSync);
     setEmergency(allowlist);
+    setEmergencyLogs(emLogs);
   }
 
   useEffect(() => {
@@ -192,6 +202,45 @@ export default function App() {
       const rest = prev.filter((c) => c.consent_type !== type);
       return [...rest, row];
     });
+  }
+
+  async function onEmergencyConfirm() {
+    if (!consentGranted("emergency_law_enforcement")) {
+      setEmergencyMsg(t(locale, "emergencyNeedConsent"));
+      return;
+    }
+    setEmergencyBusy(true);
+    setEmergencyMsg(null);
+    try {
+      const res = await confirmEmergency(
+        ["url_scan", "file_hash", "sms_local"],
+        0.95,
+        "web-dry-run",
+      );
+      setConfirmToken(res.confirm_token);
+      setEmergencyMsg(`${t(locale, "emergencyConfirm")}: OK`);
+    } catch {
+      setEmergencyMsg(t(locale, "emergencyFail"));
+    } finally {
+      setEmergencyBusy(false);
+    }
+  }
+
+  async function onEmergencyDispatch() {
+    if (!confirmToken) return;
+    setEmergencyBusy(true);
+    setEmergencyMsg(null);
+    try {
+      const row = await dispatchEmergency(confirmToken, "api");
+      setConfirmToken(null);
+      setEmergencyMsg(`${t(locale, "emergencyOk")} ${row.evidence_code}`);
+      const logs = await fetchEmergencyLogs();
+      setEmergencyLogs(logs);
+    } catch {
+      setEmergencyMsg(t(locale, "emergencyFail"));
+    } finally {
+      setEmergencyBusy(false);
+    }
   }
 
   function consentGranted(type: string): boolean {
@@ -435,6 +484,45 @@ export default function App() {
                 {emergency.dry_run_forced ? "on" : "off"}
               </p>
             ) : null}
+            <div className="auth-actions" style={{ marginTop: "0.75rem" }}>
+              <button
+                type="button"
+                disabled={emergencyBusy}
+                onClick={() => void onEmergencyConfirm()}
+              >
+                {t(locale, "emergencyConfirm")}
+              </button>
+              <button
+                type="button"
+                className="secondary"
+                disabled={emergencyBusy || !confirmToken}
+                onClick={() => void onEmergencyDispatch()}
+              >
+                {t(locale, "emergencyDispatch")}
+              </button>
+            </div>
+            {confirmToken ? (
+              <p className="note">token: {confirmToken.slice(0, 12)}…</p>
+            ) : null}
+            {emergencyMsg ? <p className="note">{emergencyMsg}</p> : null}
+            <h3 style={{ marginTop: "1rem", fontSize: "0.95rem" }}>
+              {t(locale, "emergencyLogs")}
+            </h3>
+            {emergencyLogs.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {emergencyLogs.map((item) => (
+                  <li key={item.id}>
+                    <span className="score">{item.dry_run ? "DR" : "LV"}</span>
+                    <span>
+                      {item.status} · {item.channel}
+                    </span>
+                    <span className="hash">{item.evidence_code}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
 
           <section className="history-block">

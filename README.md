@@ -9,7 +9,8 @@ Mudofaa-only xavfsizlik ekotizimi (Android + Windows + Web). **Hujum / exploit /
 | Spec (APEX v5.3) | `docs/cyber-guardian-ai/` |
 | V1 API | `apps/api` — Auth, scan URL/QR/file, feed CDN, SQLite/Postgres |
 | V1 Web | `apps/web` — URL/QR/file skan, login, tarix, rozilik, feed, uz/ru/en |
-| Client shells | `apps/android`, `apps/windows` — API client stubs |
+| Client shells | `apps/android`, `apps/windows` — Gradle/csproj + API/UI stubs |
+| Ops | `docs/.../04-aq039-allowlist-runbook.md` |
 
 ## Tezkor ishga tushirish
 
@@ -72,3 +73,4 @@ Keyingi: AQ-039 rasmiy allowlist (Legal), Compose/WinUI production, SMS runtime 
 1. [`docs/cyber-guardian-ai/APEX-MASTER-SPEC.md`](docs/cyber-guardian-ai/APEX-MASTER-SPEC.md)  
 2. [`docs/cyber-guardian-ai/acceptance-checklist.md`](docs/cyber-guardian-ai/acceptance-checklist.md)  
 3. [`docs/cyber-guardian-ai/README.md`](docs/cyber-guardian-ai/README.md)  
+4. [`docs/cyber-guardian-ai/operations/04-aq039-allowlist-runbook.md`](docs/cyber-guardian-ai/operations/04-aq039-allowlist-runbook.md)  

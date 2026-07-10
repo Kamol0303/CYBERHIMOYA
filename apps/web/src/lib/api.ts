@@ -193,6 +193,50 @@ export async function setEmergencyConsent(granted: boolean) {
   return postJson("/v1/emergency/consent", { granted, source: "ui" });
 }
 
+export type EmergencyConfirmResponse = {
+  confirm_token: string;
+  expires_at: string;
+  modules: string[];
+  requires_second_confirm: boolean;
+};
+
+export type EmergencyLogItem = {
+  id: string;
+  status: string;
+  channel: string;
+  evidence_code: string;
+  modules: string[];
+  confidence: number;
+  dry_run: boolean;
+  created_at: string;
+};
+
+export async function confirmEmergency(
+  modules: string[],
+  confidence: number,
+  incidentRef?: string,
+): Promise<EmergencyConfirmResponse> {
+  return postJson("/v1/emergency/confirm", {
+    modules,
+    confidence,
+    incident_ref: incidentRef ?? null,
+  });
+}
+
+export async function dispatchEmergency(
+  confirmToken: string,
+  channel: "sms" | "api" | "email" = "api",
+): Promise<EmergencyLogItem> {
+  return postJson("/v1/emergency/dispatch", {
+    confirm_token: confirmToken,
+    channel,
+  });
+}
+
+export async function fetchEmergencyLogs(): Promise<EmergencyLogItem[]> {
+  return getJson("/v1/emergency/logs");
+}
+
 export async function scanUrl(url: string): Promise<UrlScanResponse> {
   return postJson("/v1/scan/url", {
     url,

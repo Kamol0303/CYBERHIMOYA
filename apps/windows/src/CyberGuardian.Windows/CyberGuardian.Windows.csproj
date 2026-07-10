@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>CyberGuardian.Windows</RootNamespace>
+    <AssemblyName>CyberGuardian.Windows</AssemblyName>
+    <Description>Cyber Guardian AI Windows shell — defensive scan/feed only</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
+  </ItemGroup>
+</Project>
