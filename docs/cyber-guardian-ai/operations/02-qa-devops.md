@@ -34,6 +34,16 @@ flowchart LR
 - Repoga exploit PoC / raw malware **kiritilmaydi**.  
 - Testlar defensive detektorlarni mashq qildiradi; payload tarqatilmaydi.
 
+### 13.1.1b Red team simulation (defensive)
+
+- Maqsad: hunting/IOA/scam detektorlarini stress-test qilish.  
+- Faqat lab; natija — FP/FN hisobot.  
+- «Qanday hujum qilish» hujjati prod docs ga kiritilmaydi.
+
+### Threat Hunting va Actor Detection (majburiy)
+
+QA hunting gold set: kampaniya bog‘lanishi, APK similarity, intent tag to‘g‘riligi (NFR-103).
+
 ### 13.1.2 FP/FN benchmark (NFR-072)
 
 | To‘plam | Maqsad |

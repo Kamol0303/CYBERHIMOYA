@@ -127,3 +127,17 @@ Namuna manbalar (integratsiya sharti ochiq): ochiq URL reputation ro‘yxatlari,
 - Mehmon skan: IP asosida rate limit; uzoq muddatli profil yaratilmaydi.  
 - Extension: minimal ruxsat (`<all_urls>` faqat kerak bo‘lsa va store review uchun asos).  
 - CSP, secure cookies, no third-party tracker (marketing pixel default yo‘q).
+
+## 10.7 Threat Hunting maxfiyligi (Threat Hunter Edition)
+
+| Qoida | Tavsif |
+|-------|--------|
+| Anonimlashtirish | Hunting ma’lumotlari faqat anonim/pseudonym meta (FR-209) |
+| Rozilik | Hunting telemetry opt-in; rad etilsa local himoya ishlayveradi |
+| Actor ma’lumoti | Potensial actor/cluster haqidagi batafsil ma’lumot **faqat** rasmiy organlarga responsible disclosure orqali (FR-210); ommaviy doxing yo‘q |
+| TAKB | Analyst RBAC + audit; oddiy foydalanuvchiga to‘liq ochilmaydi |
+| Taqiqlangan | Hack-back, ruxsatsiz kuzatuv, exploit saqlash |
+
+### Threat Hunting va Actor Detection (majburiy)
+
+Hunting — himoya intellekti. Topilgan infratuzilma belgilari foydalanuvchini ogohlantirish va UZCERT kanaliga xizmat qiladi, hujum qilish uchun emas.

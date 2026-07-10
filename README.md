@@ -23,4 +23,6 @@ Ish oqimi: **bitta** branch/PR (mahsulotlar bo‘yicha parallel branchlar ochilm
 
 ## Platformalar
 
-Android ilova · Windows Desktop · Web Platforma (tekshiruv + panel; OS monitoring emas)
+Android ilova · Windows Desktop (EDR + Threat Hunting) · Web (tekshiruv + intel/actor dashboard)
+
+**Edition:** Threat Hunter — batafsil `docs/cyber-guardian-ai/` (SRS 07 + SDD 06).

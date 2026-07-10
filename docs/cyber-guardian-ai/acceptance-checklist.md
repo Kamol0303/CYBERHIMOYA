@@ -22,17 +22,19 @@
 | 11 | Taxminlar va ochiq savollar alohida | ✅ |
 | 12 | Faqat defensive funksiyalar | ✅ |
 | 13 | Universal scam + bot/pul + deepfake + kampaniya/actor (himoya) | ✅ `srs/06-…` |
+| 14 | Threat Hunter Edition: Pipeline, TAKB, FR-200…, Intent/APK/Ancestry | ✅ `srs/07`, `sdd/06` |
+| 15 | Har asosiy bo‘limda Threat Hunting qismi | ✅ |
 
 ---
 
 ## Javob
 
-**Ha — jamoa sprint-planningni boshlay oladi**, quyidagi shartlar bilan:
+**Ha — jamoa sprint-planningni boshlay oladi** (Threat Hunter Edition), quyidagi shartlar bilan:
 
-1. **V1 MVP epiklari** (`operations/03-roadmap.md` §14.5) to‘g‘ridan-to‘g‘ri boardga ko‘chiriladi.  
-2. **AQ-001…AQ-020** grooming da tarqatiladi; bloklovchi AQ lar (domen, auth identifikator, cloud residency, Play Accessibility qarori) birinchi sprintda yopiladi.  
-3. Implementatsiya paytida hech qanday offensive/exploit kontent qo‘shilmaydi — PR checklist; faqat aniqlash/ogohlantirish/bloklash.  
-4. Spetsifikatsiya `draft`; birinchi sprint oxirida `review` → `frozen-for-sprint` holatiga o‘tkaziladi.  
-5. Ish **bitta** branch/PR oqimida olib boriladi (mahsulotlar bo‘yicha parallel branchlar yo‘q).
+1. **V1** epiklari: asosiy himoya + basic actor IOC (`operations/03-roadmap.md`).  
+2. **V2** board alohida: Hunting Pipeline, TAKB, Intent, APK similarity.  
+3. **AQ** lar groomingda (ayniqsa AQ-021…024, residency, auth).  
+4. Faqat mudofaa/aniqlash/kuzatish; hack-back yo‘q.  
+5. Bitta branch/PR oqimi.
 
 **Xulosa:** Hujjatlar to‘plami IEEE 830 uslubidagi SRS + SDD darajasida yetarli aniqlik beradi; qolgan noaniqliklar ongli ravishda `assumptions-and-open-questions.md` da ro‘yxatlangan va «o‘ylab topilgan» emas.

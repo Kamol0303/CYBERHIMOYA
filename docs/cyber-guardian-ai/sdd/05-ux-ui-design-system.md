@@ -186,4 +186,22 @@ Til: qat’iy, aniq, harakatga undovchi; qo‘rqitib noto‘g‘ri qaror qildiru
 
 1. **Skan progress** — chiziqli indeterminate → score count-up (300–500 ms).  
 2. **Holat badge** — safe↔warn rang crossfade.  
-3. **Critical alert** — pastdan/yuqoridan slide + subtle shake **yo‘q** (reduced motion).
+3. **Critical alert** — pastdan/yuqoridan slide (`prefers-reduced-motion` da o‘chiq).
+
+---
+
+## 5.8 Threat Hunting UX (majburiy qism)
+
+### Oddiy foydalanuvchi
+- Skan natijasida ixtiyoriy: «Bu ma’lum firibgarlik kampaniyasiga o‘xshaydi» (yumshoq til).  
+- Actor taxallusini qo‘rqitmasdan ko‘rsatish (AQ-022).  
+- CTA: bloklash / ulashmaslik / hisobot.
+
+### Analyst (Web)
+- TAKB: actor cluster, kampaniyalar, IOC jadvali.  
+- Hunt cases: hypothesis, evidence, status.  
+- Authority report eksport (FR-210).  
+- Kartochka faqat interaktiv jadval/konteyner sifatida.
+
+### Threat Hunting va Actor Detection
+UX hech qachon «hujum qilish» CTA bermaydi — faqat himoya va rasmiy xabar.

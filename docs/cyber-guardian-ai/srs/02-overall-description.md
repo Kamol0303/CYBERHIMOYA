@@ -38,9 +38,16 @@ flowchart LR
 
 | Mahsulot | Asosiy maqsad | Foydalanuvchi profili | Texnik xususiyat |
 |----------|---------------|----------------------|------------------|
-| **Android ilova** | Kundalik himoya — SMS/Telegram/QR/qo‘ng‘iroq darajasida real-vaqt ogohlantirish | Oddiy foydalanuvchi | OS sandbox; minimal ruxsat |
-| **Windows Desktop** | Chuqur tizim himoyasi — EDR-uslubidagi monitoring | Uy + kichik biznes | Yuqori imtiyoz; fayl/registry/jarayon |
-| **Web Platforma** | Ta’lim + tezkor tekshiruv + boshqaruv paneli | Har qanday qurilma; qisman mehmon rejim | Brauzer cheklovi — monitoring emas |
+| **Android ilova** | Kundalik himoya + real-time scam/actor detection | Oddiy foydalanuvchi | Minimal ruxsatlar; local-first |
+| **Windows Desktop** | Chuqur EDR + Threat Hunting (process ancestry, anomaly/IOA) | Uy + kichik biznes | Yuqori imtiyozlar; defensive only |
+| **Web Platforma** | Ta’lim, tezkor tekshiruv, global threat intel dashboard + actor tracking | Har qanday qurilma | Brauzer cheklovi; TAKB analyst UI |
+
+### Threat Hunting va Actor Detection (majburiy)
+
+- Android: scam/APK signal → cloud attribution hint.  
+- Windows: EDR signal → hunting pipeline.  
+- Web: intel dashboard + campaign/actor (rolga qarab).  
+Batafsil: `srs/07-threat-hunting-requirements.md`, `sdd/06-threat-hunting-architecture.md`.
 
 ### 2.1.2 Web Platforma aniqligi (kritik)
 

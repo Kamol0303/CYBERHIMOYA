@@ -2,26 +2,30 @@
 
 **Hujjat:** Cyber Guardian AI Software Requirements Specification  
 **Bo‘lim:** 1 — Introduction (IEEE 830)  
-**Versiya:** 1.0.0-draft  
-**Rol:** Principal Security Architect + Privacy Officer
+**Versiya:** 2.0.0-threat-hunter  
+**Rol:** Principal Security Architect + Privacy Officer + Proactive Threat Hunter
 
 ---
 
 ## 1.1 Maqsad (Purpose)
 
-Ushbu SRS «Cyber Guardian AI» ekotizimining funksional va nofunksional talablarini belgilaydi. Maqsad — dasturchilar, QA, DevOps, dizayn va xavfsizlik jamoalari **savol bermasdan** sprint-planning va implementatsiyani boshlashi uchun yetarli aniqlik berish.
+Ushbu SRS «Cyber Guardian AI» (**Threat Hunter Edition**) ekotizimining funksional va nofunksional talablarini belgilaydi. Maqsad — jamoa **savol bermasdan** sprint-planningni boshlashi.
 
 Hujjat quyidagilarni qamrab oladi:
 
-- Uchta mustaqil mahsulot: Android ilova, Windows Desktop dastur, Web Platforma.
-- Markaziy cloud backend (API Gateway + mikroservislar).
-- Faqat **himoya** (aniqlash, ogohlantirish, bloklash) funksiyalari.
+- Uchta mustaqil mahsulot: Android, Windows Desktop, Web Platforma.
+- Markaziy cloud + **Threat Hunting Pipeline** + **Threat Actor Knowledge Base**.
+- Faqat **mudofaa va intellektual aniqlash**: aniqlash, monitoring, ogohlantirish, bloklash, threat actor kuzatish.
 
 Hujjat quyidagilarni **qamrab olmaydi**:
 
-- Hujum, ekspluatatsiya, ruxsatsiz kirish yoki zararli kod namunalari.
-- Konkret vendor shartnomalari (litsenziya narxlari — ochiq savol).
-- iOS mahsuloti (faqat roadmapda «kelajakda»).
+- Hujum, ekspluatatsiya, ruxsatsiz kirish, zararli kod namunalari, «qanday buzish» tavsifi.
+- Hack-back yoki ruxsatsiz kuzatuv.
+- iOS (faqat roadmap «kelajakda»).
+
+### Threat Hunting va Actor Detection (majburiy)
+
+Har bir asosiy bo‘limda hunting/actor qismi bor. Markaziy talablar: `srs/07-threat-hunting-requirements.md`.
 
 ---
 
@@ -47,11 +51,11 @@ Ko‘pchilik foydalanuvchi texnik bilimga ega emas; hujum **sodir bo‘lishidan 
 
 ### 1.2.3 Missiya
 
-Foydalanuvchini **proaktiv** tarzda (hujumdan OLDIN) ogohlantiradigan, kibergigiyenani kundalik odatga aylantiruvchi, 3 platformada ishlaydigan yagona himoya ekotizimini yaratish.
+Foydalanuvchilarni **proaktiv** himoya qiladigan, kibergigiyenani odatga aylantiradigan va **potensial threat actor** larni erta aniqlash, kuzatish va bloklash (himoya siyosati) qobiliyatiga ega kiberxavfsizlik ekotizimi. Oddiy himoyadan tashqari: **threat hunting**, behavior-based attacker profiling va mahalliy tahdid intellekti.
 
 ### 1.2.4 Asosiy printsip (butun loyiha)
 
-> Platforma **faqat himoya (defensive)** funksiyalarni o‘z ichiga oladi. Hujum, ekspluatatsiya yoki boshqa tizimga ruxsatsiz kirish imkonini beruvchi hech qanday funksiya, kod namunasi yoki «qanday buzish mumkin» tavsifi kiritilmaydi. Har bir modul faqat **aniqlash, ogohlantirish va bloklashga** xizmat qiladi.
+> Platforma **faqat mudofaa va intellektual aniqlash** funksiyalarini o‘z ichiga oladi. Hech qanday hujum, ekspluatatsiya, zararli kod yoki «qanday buzish» tavsifi bo‘lmaydi. Barcha funksiyalar — **aniqlash, monitoring, ogohlantirish, bloklash va threat actor kuzatish**ga xizmat qiladi.
 
 ### 1.2.5 Mahsulot chegaralari
 

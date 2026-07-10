@@ -214,6 +214,56 @@ Har bir modul majburiy shablon bo‘yicha.
 
 ---
 
+## Threat Hunter Edition — qo‘shimcha modullar
+
+### Threat Actor Attribution Engine
+- **Kirish ma’lumoti:** IOC to‘plami (domen, hash, APK cert, bot username, telefon hash), IOA hitlari, kampaniya bog‘lanishlari, vaqt oralig‘i, scam_family. Xom PII/chat yo‘q.
+- **Feature extraction:** Graf featurelar (shared IOC count, temporal overlap), cert/package similarity, TTP teg chastotasi, geo-proxy (noaniq), confidence prior.
+- **Model/heuristika turi:** Graph clustering + qoida asosidagi attribution + ixtiyoriy supervised ranker; avtomatik «jinoyatchi F.I.Sh.» yo‘q — faqat `actor_cluster` taxallusi.
+- **Chiqish:** attribution score (0–100) + `actor_cluster_id` + confidence + explainability (qaysi IOC/IOA birlashtirdi).
+- **False positive kamaytirish strategiyasi:** Past confidence da bog‘lamaslik; analyst tasdiq; shared hosting/CDN allowlist.
+- **Ma’lumot manbalari:** Ichki skanlar, UZCERT, ochiq TI (ToS), foydalanuvchi hisobotlari (anonim).
+- **On-device / Cloud:** Faqat cloud (TAKB).
+- **Yangilanish chastotasi:** Real-time ingest; klaster qayta hisoblash soatlik/kunlik.
+
+---
+
+### Campaign Correlation Engine
+- **Kirish ma’lumoti:** ScanResult/ThreatEvent/IOA hitlar; bir xil yoki o‘xshash IOC lar; vaqt oynasi.
+- **Feature extraction:** Exact IOC match, fuzzy URL/APK similarity, bot/script fingerprint, multi-channel overlap.
+- **Model/heuristika turi:** Union-find / graph connected components + time-decay; analyst merge/split.
+- **Chiqish:** `campaign_id` + scam_family + linked event count + reasons + ixtiyoriy actor link.
+- **False positive kamaytirish strategiyasi:** Mashhur domenlarni kampaniya markazi qilmaslik; minimal IOC threshold; inson merge.
+- **Ma’lumot manbalari:** Hunting pipeline, TI feeds, similarity index.
+- **On-device / Cloud:** Cloud; clientga faqat natija hint.
+- **Yangilanish chastotasi:** Streaming + kunlik recompute.
+
+---
+
+### Behavioral Anomaly & Intent Detection
+- **Kirish ma’lumoti:** Windows process ancestry/network/registry meta; Android app/DNS events; Web extension session; scam/URL scorelar.
+- **Feature extraction:** Ancestry depth/rare parent, bursty connections, IOA hits, TTP-mapped counters, cross-signal korrelyatsiya.
+- **Model/heuristika turi:** Sigma/IOA qoidalari + engil anomaly + intent tagger (`intent_tags` → ATT&CK). **TTP ni aniqlash**; bajarishni o‘rgatish emas.
+- **Chiqish:** anomaly_score (0–100) + `intent_tags[]` + MITRE + tushuntirish + recommended_action.
+- **False positive kamaytirish strategiyasi:** Baseline, publisher allowlist, korrelyatsiyalangan critical, quiet mode.
+- **Ma’lumot manbalari:** Defensive lab, Sigma (litsenziya), ichki IOA.
+- **On-device / Cloud:** Signal on-device (W kuchli); korrelyatsiya cloud.
+- **Yangilanish chastotasi:** IOA/Sigma haftalik; baseline oylik.
+
+---
+
+### Suspicious APK Similarity Search
+- **Kirish ma’lumoti:** APK/hash, signing cert, package name, permission set, ixtiyoriy fuzzy hash.
+- **Feature extraction:** Cert hash, package token similarity, permission vector, fuzzy distance, YARA oila.
+- **Model/heuristika turi:** Exact TI + nearest-neighbor similarity index + qoida.
+- **Chiqish:** similarity_score + matched_family/campaign + reasons.
+- **False positive kamaytirish strategiyasi:** Rasmiy paket allowlist; threshold; unknown ≠ clean.
+- **Ma’lumot manbalari:** Ichki APK oilalar indeksi, TI hash, UZCERT.
+- **On-device / Cloud:** Hash local; similarity cloud.
+- **Yangilanish chastotasi:** Indeks kunlik.
+
+---
+
 ## Modul × Roadmap
 
 | Modul | V1 | V2 | V3 |
@@ -226,16 +276,18 @@ Har bir modul majburiy shablon bo‘yicha.
 | File Reputation | ✅ hash/TI | +YARA | ✅ |
 | MITRE mapping | ✅ oddiy | ✅ | ✅ |
 | Universal Scam Classifier | ✅ qisman | ✅ to‘liq | ✅ |
+| Basic actor IOC detection | ✅ | ✅ | ✅ |
 | Money-Offer Bot Detector | — | ✅ | ✅ |
-| SMS Scam | — | ✅ | ✅ |
-| Telegram Scam | — | ✅ | ✅ |
-| Campaign & Actor Attribution | — | ✅ kampaniya | ✅ actor cluster |
-| Behavior | — | ✅ | ✅ |
-| Browser Protection | ⚠️ asos | ✅ | ✅ |
-| DNS / Wi-Fi | — | ✅ | ✅ |
+| SMS / Telegram Scam | — | ✅ | ✅ |
+| Campaign Correlation Engine | ⚠️ asos | ✅ | ✅ |
+| Behavioral Anomaly & Intent | — | ✅ | ✅ |
+| APK Similarity Search | — | ✅ | ✅ |
+| Process Ancestry (W) | — | ✅ | ✅ |
+| Threat Actor Attribution Engine | — | ⚠️ | ✅ advanced |
+| Threat Hunting Pipeline / TAKB | ⚠️ | ✅ | ✅ |
+| Browser / DNS / Wi-Fi | ⚠️ | ✅ | ✅ |
 | USB / Ransomware / Process | — | ✅ W | ✅ |
-| YARA/Sigma | — | qisman | ✅ |
-| Deepfake Voice | — | — | ✅ |
-| Deepfake Face/Video | — | — | ✅ |
+| YARA/Sigma | — | qisman | ✅ to‘liq |
+| Deepfake Voice/Face/Video | — | — | ✅ |
 
-> Yangi modullar tavsifi: `srs/06-universal-scam-and-attribution.md` §6.
+> Hunting: `sdd/06-threat-hunting-architecture.md`. Scam: `srs/06-universal-scam-and-attribution.md`.

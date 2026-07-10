@@ -44,6 +44,16 @@ N/A Platformaga tegishli emas
 | 25 | Money-Offer / Scam Bot Detection | ✅ | ✅ | ✅ | Faqat ulashilgan/ommaviy bot; shaxsiy chat yo‘q |
 | 26 | Deepfake Face/Video | ✅ | ✅ | ✅ | Faqat consent + user upload |
 | 27 | Campaign / Actor Attribution | ⚠️ | ⚠️ | ✅ | Client: natija ko‘rsatish; klasterlash — BE/analyst |
+| 28 | Threat Actor Profiling (IOC/IOA+behavior) | ⚠️ | ⚠️ | ✅ | Profil BE; client signal |
+| 29 | Campaign Tracking | ⚠️ | ⚠️ | ✅ | Multi-event bog‘lanish |
+| 30 | Anomaly Detection Network/Process | ⚠️ | ✅ | ⚠️ | Windows kuchli |
+| 31 | Suspicious APK Similarity Search | ✅ | ⚠️ | ✅ | Fuzzy/cert/package |
+| 32 | Process Ancestry Tracking | ❌ | ✅ | ❌ | Windows-only |
+| 33 | Threat Hunting Pipeline | ⚠️ | ⚠️ | ✅ | Orchestration BE |
+| 34 | Threat Actor Knowledge Base | ❌ | ❌ | ✅ | Analyst Web |
+| 35 | Attacker Intent (TTP/IOA) Detection | ⚠️ | ✅ | ⚠️ | ATT&CK map; exploit yo‘q |
+
+> **Attacker intent detection elementi:** #1–27 natijalarida ixtiyoriy `intent_tags[]` / MITRE + `campaign_id` (V2+).
 
 ---
 
@@ -167,6 +177,34 @@ Faqat foydalanuvchi rozilik bilan yuklagan media. Jonli yashirin yozib olish yo�
 ### 27. Campaign / Actor Attribution — ⚠️⚠️✅
 
 Backend klasterlash; clientga «shu kampaniya» tushuntirishi. Hack-back yo‘q; rasmiy hisobot FR-122.
+
+### 28. Threat Actor Profiling — ⚠️⚠️✅
+
+IOC/IOA + behavior korrelyatsiyasi → actor cluster (TAKB). Client faqat signal/hint.
+
+### 29. Campaign Tracking — ⚠️⚠️✅
+
+Ko‘p hodisani bitta kampaniyaga bog‘lash (FR-203).
+
+### 30. Anomaly Detection Network/Process — ⚠️✅⚠️
+
+Windows eng kuchli; Android/Web cheklangan. Intent/IOA bilan birga.
+
+### 31. Suspicious APK Similarity — ✅⚠️✅
+
+Cert/package/fuzzy o‘xshashlik → oila/kampaniya.
+
+### 32. Process Ancestry Tracking — ❌✅❌
+
+Faqat Windows EDR agent.
+
+### 33–34. Hunting Pipeline / TAKB — ⚠️⚠️✅
+
+Orchestration va bilim bazasi cloudda; Web analyst UI.
+
+### 35. Attacker Intent (TTP/IOA) — ⚠️✅⚠️
+
+ATT&CK teglari orqali niyat **aniqlash**; texnikani o‘rgatish emas.
 
 ---
 

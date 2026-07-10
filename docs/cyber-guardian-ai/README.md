@@ -1,6 +1,7 @@
 # Cyber Guardian AI — Texnik Spetsifikatsiya (SRS + SDD)
+## Threat Hunter Edition
 
-**Versiya:** 1.0.0-draft  
+**Versiya:** 2.0.0-threat-hunter  
 **Sana:** 2026-07-10  
 **Holat:** Sprint-planning uchun tayyor draft  
 **Til:** O‘zbek (texnik atamalar inglizcha saqlanadi)  
@@ -10,13 +11,12 @@
 
 ## Himoya-only nizom (majburiy)
 
-Butun spetsifikatsiya va keyingi implementatsiya uchun:
-
-1. **Faqat himoya funksiyalari** — aniqlash, ogohlantirish, bloklash, yo‘riqnoma.
-2. **Maqsad:** shubhali faoliyat **qayerda** va **qanday belgi** bilan ko‘rinishini topish (detection), foydalanuvchini himoya qilish.
-3. **Taqiqlanadi:** hujum/ekspluatatsiya texnikasini bosqichma-bosqich o‘rgatish, amaliy zararli kod, exploit PoC, «qanday buzish mumkin» tavsifi, ruxsatsiz kirish vositalari.
-4. **Yozish qoidasi:** «hujum qanday ishlaydi» o‘rniga «qanday **aniqlanadi / ogohlantiriladi / bloklanadi**».
-5. **Test:** faqat izolyatsiyalangan himoya labi; repoga raw malware/exploit kiritilmaydi.
+1. **Faqat mudofaa va intellektual aniqlash** — aniqlash, monitoring, ogohlantirish, bloklash, threat actor kuzatish.  
+2. **Maqsad:** shubhali faoliyat va potensial actor/kampaniyani **belgilari** bo‘yicha topish.  
+3. **Taqiqlanadi:** hujum/ekspluatatsiya qo‘llanmasi, zararli kod, exploit PoC, hack-back, ruxsatsiz kuzatuv.  
+4. **Yozish qoidasi:** «qanday buziladi» emas — «qanday **aniqlanadi / kuzatiladi / bloklanadi**».  
+5. **Hunting ma’lumoti:** anonim + consent; actor batafsili — rasmiy organlarga disclosure.  
+6. **Test:** himoya labi; red team **simulation** (detektor mashqi); repoga malware/exploit yo‘q.
 
 ---
 
@@ -24,57 +24,52 @@ Butun spetsifikatsiya va keyingi implementatsiya uchun:
 
 | # | Hujjat | Joylashuv | Mazmun |
 |---|--------|-----------|--------|
-| 0 | Ushbu indeks | `README.md` | Navigatsiya, qabul mezonlari |
-| 1 | SRS — Kirish | [`srs/01-introduction.md`](srs/01-introduction.md) | Maqsad, doira, ta'riflar, printsiplar |
-| 2 | SRS — Umumiy tavsif | [`srs/02-overall-description.md`](srs/02-overall-description.md) | Mahsulot portfeli, foydalanuvchilar, cheklovlar |
-| 3 | SRS — Funksiya × Platforma | [`srs/03-feature-platform-matrix.md`](srs/03-feature-platform-matrix.md) | Majburiy matritsa + asoslash |
-| 4 | SRS — Funksional talablar | [`srs/04-functional-requirements.md`](srs/04-functional-requirements.md) | FR-001… raqamlangan talablar |
-| 4b | SRS — Scam + hujumchi aniqlash | [`srs/06-universal-scam-and-attribution.md`](srs/06-universal-scam-and-attribution.md) | Barcha scam oilalari, bot/pul taklifi, deepfake, kampaniya/actor (himoya) |
-| 5 | SRS — Nofunksional talablar | [`srs/05-non-functional-requirements.md`](srs/05-non-functional-requirements.md) | NFR-001… |
-| 6 | SDD — Tizim arxitekturasi | [`sdd/01-system-architecture.md`](sdd/01-system-architecture.md) | HLD, on-device vs cloud, trust boundaries |
-| 7 | SDD — UML va ER diagrammalar | [`sdd/02-uml-er-diagrams.md`](sdd/02-uml-er-diagrams.md) | Use Case, Class, Sequence, Component, Deployment, ER |
-| 8 | SDD — API va ma'lumotlar bazasi | [`sdd/03-api-and-database.md`](sdd/03-api-and-database.md) | REST `/v1`, sxemalar, retention |
-| 9 | SDD — AI/Detection modullari | [`sdd/04-ai-detection-modules.md`](sdd/04-ai-detection-modules.md) | 15+ modul shablon bo‘yicha |
-| 10 | SDD — UX/UI dizayn tizimi | [`sdd/05-ux-ui-design-system.md`](sdd/05-ux-ui-design-system.md) | Dizayn tizimi, wireframe, a11y |
-| 11 | Compliance | [`compliance/01-security-privacy-compliance.md`](compliance/01-security-privacy-compliance.md) | Android ruxsatlar, maxfiylik, disclosure |
-| 12 | Mahalliy tahdid modeli | [`compliance/02-uzbekistan-threat-model.md`](compliance/02-uzbekistan-threat-model.md) | UZCERT, mahalliy firibgarlik toifalari |
-| 13 | Operatsion talablar | [`operations/01-operational-requirements.md`](operations/01-operational-requirements.md) | Notification, offline, update, audit |
-| 14 | QA va DevOps | [`operations/02-qa-devops.md`](operations/02-qa-devops.md) | Test, CI/CD, performance |
-| 15 | Yo‘l xaritasi | [`operations/03-roadmap.md`](operations/03-roadmap.md) | V1/V2/V3 |
-| 16 | Taxminlar va ochiq savollar | [`assumptions-and-open-questions.md`](assumptions-and-open-questions.md) | Hallucinate qilinmagan ochiq nuqtalar |
-| 17 | Sifat tekshiruvi | [`acceptance-checklist.md`](acceptance-checklist.md) | Sprint-planning tayyorligi |
+| 0 | Ushbu indeks | `README.md` | Navigatsiya |
+| 1 | SRS — Kirish | [`srs/01-introduction.md`](srs/01-introduction.md) | Missiya (Threat Hunter) |
+| 2 | SRS — Umumiy tavsif | [`srs/02-overall-description.md`](srs/02-overall-description.md) | 3 mahsulot + hunting |
+| 3 | SRS — Funksiya × Platforma | [`srs/03-feature-platform-matrix.md`](srs/03-feature-platform-matrix.md) | #1–35 matritsa |
+| 4 | SRS — Funksional talablar | [`srs/04-functional-requirements.md`](srs/04-functional-requirements.md) | FR-001… |
+| 4b | SRS — Scam + attribution | [`srs/06-universal-scam-and-attribution.md`](srs/06-universal-scam-and-attribution.md) | Scam oilalari |
+| 4c | **SRS — Threat Hunting** | [`srs/07-threat-hunting-requirements.md`](srs/07-threat-hunting-requirements.md) | FR-200…210, NFR-100… |
+| 5 | SRS — Nofunksional | [`srs/05-non-functional-requirements.md`](srs/05-non-functional-requirements.md) | NFR-001… |
+| 6 | SDD — Arxitektura | [`sdd/01-system-architecture.md`](sdd/01-system-architecture.md) | HLD + Hunt/TAKB |
+| 6b | **SDD — Hunting Architecture** | [`sdd/06-threat-hunting-architecture.md`](sdd/06-threat-hunting-architecture.md) | Pipeline, TAKB, oqim |
+| 7 | SDD — UML/ER | [`sdd/02-uml-er-diagrams.md`](sdd/02-uml-er-diagrams.md) | Diagrammalar |
+| 8 | SDD — API/DB | [`sdd/03-api-and-database.md`](sdd/03-api-and-database.md) | REST `/v1` |
+| 9 | SDD — AI/Detection | [`sdd/04-ai-detection-modules.md`](sdd/04-ai-detection-modules.md) | Attribution/Campaign/Intent/APK |
+| 10 | SDD — UX/UI | [`sdd/05-ux-ui-design-system.md`](sdd/05-ux-ui-design-system.md) | Dizayn + hunt UX |
+| 11 | Compliance | [`compliance/01-security-privacy-compliance.md`](compliance/01-security-privacy-compliance.md) | Maxfiylik + hunting |
+| 12 | UZ tahdid modeli | [`compliance/02-uzbekistan-threat-model.md`](compliance/02-uzbekistan-threat-model.md) | Actor patternlari |
+| 13–15 | Operations | `operations/` | Ops, QA (red team sim), roadmap |
+| 16 | Ochiq savollar | [`assumptions-and-open-questions.md`](assumptions-and-open-questions.md) | AQ |
+| 17 | Qabul | [`acceptance-checklist.md`](acceptance-checklist.md) | Sprint-ready |
 
 ---
 
-## Virtual ekspert jamoa (rol → hujjat)
+## Virtual ekspert jamoa
 
 | Rol | Asosiy hujjatlar |
 |-----|------------------|
-| Principal Security Architect | `sdd/01`, `compliance/01`, `compliance/02` |
-| Senior Malware Researcher | `sdd/04` (YARA/File/URL), `srs/03` |
-| AI/ML Engineer | `sdd/04`, `sdd/01` (on-device vs cloud) |
-| Mobile Security Specialist | `compliance/01`, `srs/03` (Android) |
-| Windows Security Engineer | `sdd/04` (Process/Registry/USB/Ransomware) |
-| SOC / Threat Intel Lead | `compliance/02`, MITRE mapping |
-| Senior Full-Stack Developer | `sdd/03`, `sdd/01` |
+| Principal Security Architect | `sdd/01`, `sdd/06`, `srs/07` |
+| **Proactive Threat Hunter** | `srs/07`, `sdd/06`, `sdd/04` (Attribution) |
+| Senior Malware Researcher & Threat Hunter | `sdd/04`, APK similarity, YARA |
+| AI/ML Engineer | Attribution, Intent, Scoring |
+| Mobile Security Specialist | Android hunting signals |
+| Windows Security Engineer | Ancestry, IOA, anomaly |
+| SOC / Threat Intel & Hunting Lead | TAKB, MITRE, UZ model |
+| Senior Full-Stack Developer | API, hunt cases |
 | UX/UI Product Designer | `sdd/05` |
-| Privacy & Compliance Officer | `compliance/01` |
-| QA/DevOps Lead | `operations/02` |
-
----
-
-## Modul arxitekturasi
-
-Batafsil: `sdd/03-api-and-database.md` va `srs/06-universal-scam-and-attribution.md` (scam/bot/deepfake/kampaniya API).
+| Privacy & Compliance Officer | Hunting anonimlik, FR-210 |
+| QA/DevOps Lead | Red team simulation (defensive) |
 
 ---
 
 ## Qabul mezonlari (qisqa)
 
-1. Har bir bo‘lim to‘liq — `...` yoki bo‘sh joylar yo‘q.
-2. Talablar `FR-xxx` / `NFR-xxx` formatida.
-3. Diagrammalar ishlaydigan Mermaid kodida.
-4. Noaniqliklar faqat `assumptions-and-open-questions.md` da.
-5. Faqat defensive funksiyalar tasvirlangan.
+1. Bo‘limlar to‘liq; Threat Hunting qismi majburiy joylarda bor.  
+2. `FR-xxx` / `NFR-xxx` + hunting FR-200…  
+3. Mermaid diagrammalar ishlaydi.  
+4. Ochiq savollar alohida.  
+5. Faqat mudofaa / aniqlash / kuzatish.
 
-**Yakuniy savol:** jamoa ushbu spetsifikatsiya asosida darhol sprint-planning boshlay oladimi? → javob: [`acceptance-checklist.md`](acceptance-checklist.md).
+**Sprint-planning?** → [`acceptance-checklist.md`](acceptance-checklist.md).

@@ -34,6 +34,8 @@ flowchart TB
     NOTIF["Notification Service"]
     RPT["Reports Service"]
     RULE["Rules Service\nYARA/Sigma"]
+    HUNT["Threat Hunting Pipeline"]
+    TAKB["Threat Actor KB"]
   end
 
   subgraph Data["Ma’lumot"]
@@ -60,6 +62,11 @@ flowchart TB
   GW --> NOTIF
   GW --> RPT
   GW --> RULE
+  GW --> HUNT
+  SCAN --> HUNT
+  HUNT --> TAKB
+  HUNT --> SCORE
+  TAKB --> RPT
   TI --> FEEDS
   SCAN --> OBJ
   SCAN --> SCORE
@@ -72,9 +79,14 @@ flowchart TB
   NOTIF --> Q
   RPT --> PG
   SCAN --> BREACH
+  HUNT --> PG
 ```
 
-**Izoh:** Web «to‘liq monitoring» qilmaydi — faqat skan, ta’lim, hisobot, extension boshqaruvi. Windows agent chuqur OS signalini beradi. Android sandbox ichida local-first ishlaydi.
+**Izoh:** Web «to‘liq monitoring» qilmaydi — skan, ta’lim, hisobot, extension, **threat intel/actor dashboard**. Windows agent chuqur OS signalini hunting pipeline ga beradi. Batafsil: `sdd/06-threat-hunting-architecture.md`.
+
+### Threat Hunting va Actor Detection (majburiy)
+
+Oqim: foydalanuvchi signali → local scan → cloud correlation → possible actor attribution → ogohlantirish.
 
 ### 5.1.2 Modul bog‘liqliklari
 
@@ -84,9 +96,11 @@ flowchart TB
 | local-scan-engine | Client | cache IOC, on-device ML, YARA (A/W) |
 | sync-manager | Client | Threat Intel sync, imzo tekshiruvi |
 | threat-intel-core | BE | feed adapterlar, normalizer |
-| scoring-engine | BE | TI, scan features |
+| scoring-engine | BE | TI, scan features, attribution features |
 | notification-dispatcher | BE | FCM/WNS/WebPush, preferenslar |
 | scan-orchestrator | BE | URL/file/QR/breach pipeline |
+| threat-hunting-pipeline | BE | correlate, hunt cases, IOA |
+| threat-actor-kb | BE | actor/campaign ombori |
 
 ---
 

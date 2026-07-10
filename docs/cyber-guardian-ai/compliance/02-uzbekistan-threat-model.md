@@ -108,10 +108,17 @@ Har bir teg `reasons[].code`, `scam_family` va MITRE/kampaniya map ga bog‘lana
 
 ---
 
-## 11.7 Muvaffaqiyat o‘lchovi (mahalliy)
+## 11.8 Threat Actor Profiling (mahalliy)
 
-| Metrika | Tavsif |
-|---------|--------|
-| UZ-T* coverage | Gold setda har toifa uchun aniqlash darajasi |
-| Localization QA | Uch tilda kritik ogohlantirishlar review |
-| Feed freshness | UZCERT import kechikishi (kelishuvga qarab) |
+| Actor pattern (himoya kuzatuvi) | Aniqlash belgilari | Chiqish |
+|---------------------------------|--------------------|---------|
+| Telegram-based scam groups | Bot username, money-offer skript, ulashilgan URL | `SCAM_BOT_MONEY` + campaign |
+| Lokal phishing kampaniyalari | Bir xil domen oilasi, gov/bank spoof | campaign_id + UZ-T3 |
+| APK distributor patternlari | Bir xil signing cert / package o‘xshashlik | APK similarity + actor cluster |
+| Soxta support chaqiruv tarmoqlari | SMS shortcode + deepfake (V3) + bir xil skript | cross-channel FR-047 |
+
+Threat feed: mahalliy (UZCERT, Kiberxavfsizlik markazi) + xalqaro ochiq TI (ToS).
+
+### Threat Hunting va Actor Detection (majburiy)
+
+Mahalliy actorlar **infratuzilma va xatti-harakat** bo‘yicha klasterlanadi; shaxsni noqonuniy aniqlash/doxing maqsad qilinmaydi. Rasmiy xabar — FR-210.
