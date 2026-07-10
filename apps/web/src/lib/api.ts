@@ -106,6 +106,15 @@ function authHeaders(): HeadersInit {
     : { Accept: "application/json" };
 }
 
+export class ApiError extends Error {
+  status: number;
+  constructor(status: number, message = `request_failed_${status}`) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 async function postJson<T>(path: string, body: unknown, withAuth = true): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -121,14 +130,14 @@ async function postJson<T>(path: string, body: unknown, withAuth = true): Promis
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    throw new Error(`request_failed_${res.status}`);
+    throw new ApiError(res.status);
   }
   return res.json() as Promise<T>;
 }
 
 async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, { headers: authHeaders() });
-  if (!res.ok) throw new Error(`request_failed_${res.status}`);
+  if (!res.ok) throw new ApiError(res.status);
   return res.json() as Promise<T>;
 }
 
@@ -189,8 +198,8 @@ export async function fetchEmergencyAllowlist(): Promise<EmergencyAllowlist> {
   return getJson("/v1/emergency/allowlist");
 }
 
-export async function setEmergencyConsent(granted: boolean) {
-  return postJson("/v1/emergency/consent", { granted, source: "ui" });
+export async function setEmergencyConsent(granted: boolean): Promise<ConsentRecord> {
+  return postJson<ConsentRecord>("/v1/emergency/consent", { granted, source: "ui" });
 }
 
 export type EmergencyConfirmResponse = {

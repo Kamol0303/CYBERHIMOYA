@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import {
+  ApiError,
   confirmEmergency,
   dispatchEmergency,
   fetchConsents,
@@ -27,7 +28,7 @@ import {
   type UserProfile,
   type Verdict,
 } from "./lib/api";
-import { locales, t, type Locale } from "./i18n/messages";
+import { locales, t, tCode, type Locale } from "./i18n/messages";
 import "./App.css";
 
 type ScanMode = "url" | "qr" | "file";
@@ -45,6 +46,13 @@ type ResultView = {
 
 function verdictLabel(locale: Locale, verdict: Verdict): string {
   return t(locale, verdict);
+}
+
+function scanErrorMessage(locale: Locale, err: unknown): string {
+  if (err instanceof ApiError && err.status === 429) {
+    return t(locale, "rateLimited");
+  }
+  return t(locale, "error");
 }
 
 export default function App() {
@@ -138,8 +146,8 @@ export default function App() {
           reasons: data.reasons,
         });
       }
-    } catch {
-      setError(t(locale, "error"));
+    } catch (err) {
+      setError(scanErrorMessage(locale, err));
       setResult(null);
     } finally {
       setLoading(false);
@@ -163,8 +171,8 @@ export default function App() {
         mitre_tags: data.mitre_tags,
         reasons: data.reasons,
       });
-    } catch {
-      setError(t(locale, "error"));
+    } catch (err) {
+      setError(scanErrorMessage(locale, err));
       setResult(null);
     } finally {
       setLoading(false);
@@ -367,7 +375,7 @@ export default function App() {
                   </div>
                   <div>
                     <dt>{t(locale, "action")}</dt>
-                    <dd>{result.recommended_action}</dd>
+                    <dd>{tCode(locale, result.recommended_action)}</dd>
                   </div>
                   {result.scam_family ? (
                     <div>
@@ -384,7 +392,7 @@ export default function App() {
                 <ul className="reasons">
                   <li className="reasons-title">{t(locale, "reasons")}</li>
                   {result.reasons.map((r) => (
-                    <li key={r.code}>{r.code}</li>
+                    <li key={r.code}>{tCode(locale, r.message_key)}</li>
                   ))}
                 </ul>
               </section>
@@ -404,6 +412,7 @@ export default function App() {
         <main className="dashboard auth-panel">
           <p className="brand">{t(locale, "brand")}</p>
           <h1>{t(locale, "auth")}</h1>
+          <p className="support">{t(locale, "dashboardHint")}</p>
           <form
             className="auth-form"
             onSubmit={(e) => {
@@ -467,8 +476,13 @@ export default function App() {
                 type="checkbox"
                 checked={consentGranted("emergency_law_enforcement")}
                 onChange={(e) => {
-                  void toggleConsent("emergency_law_enforcement", e.target.checked);
-                  void setEmergencyConsent(e.target.checked).catch(() => undefined);
+                  void (async () => {
+                    const row = await setEmergencyConsent(e.target.checked);
+                    setConsents((prev) => {
+                      const rest = prev.filter((c) => c.consent_type !== row.consent_type);
+                      return [...rest, row];
+                    });
+                  })().catch(() => undefined);
                 }}
               />
               {t(locale, "consentEmergency")}
@@ -478,10 +492,11 @@ export default function App() {
           <section className="history-block">
             <h2>{t(locale, "emergencyTitle")}</h2>
             <p className="note">{t(locale, "emergencyHint")}</p>
+            <p className="note">{t(locale, "emergencySimulate")}</p>
             {emergency ? (
               <p className="note">
-                AQ-039: {emergency.aq039_resolved ? "ok" : "pending"} · dry-run{" "}
-                {emergency.dry_run_forced ? "on" : "off"}
+                {emergency.aq039_resolved ? t(locale, "aq039Ok") : t(locale, "aq039Pending")} ·{" "}
+                {emergency.dry_run_forced ? t(locale, "dryRunOn") : t(locale, "dryRunOff")}
               </p>
             ) : null}
             <div className="auth-actions" style={{ marginTop: "0.75rem" }}>

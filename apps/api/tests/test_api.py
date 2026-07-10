@@ -300,6 +300,21 @@ def test_emergency_flow_dry_run(client: TestClient):
     assert len(logs.json()) == 1
 
 
+def test_metrics(client: TestClient):
+    r = client.get("/v1/metrics")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["defensive_only"] is True
+    assert body["version"].startswith("0.")
+    assert "feed_version" in body
+    assert "scan_rows" in body
+
+
+def test_scan_file_bad_hash(client: TestClient):
+    r = client.post("/v1/scan/file", json={"sha256": "not-a-hash", "file_name": "x.bin"})
+    assert r.status_code == 422
+
+
 def test_security_headers(client: TestClient):
     r = client.get("/health")
     assert r.headers.get("X-CGA-Defensive-Only") == "1"

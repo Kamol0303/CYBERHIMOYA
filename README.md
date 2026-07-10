@@ -39,6 +39,15 @@ npm run dev
 
 Brauzer: `http://127.0.0.1:5173` (Vite `/v1` ni API ga proxy qiladi).
 
+### Extension (Chrome MV3)
+
+```bash
+# API ishlayotgan bo‘lsin (:8000)
+# chrome://extensions → Load unpacked → apps/extension
+```
+
+Batafsil: [`apps/extension/README.md`](apps/extension/README.md).
+
 ### Docker
 
 ```bash
@@ -49,6 +58,7 @@ docker compose --profile postgres up -d db
 ```
 
 API `:8000`, Web `:8080`. Feed CDN: `http://127.0.0.1:8000/cdn/feeds/`.
+Docker CORS includes `chrome-extension://*` for the MV3 popup.
 
 ### Testlar
 

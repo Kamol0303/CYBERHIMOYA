@@ -1,4 +1,4 @@
-.PHONY: test api-test web-test smoke lint feed docker-up
+.PHONY: test api-test web-test smoke lint feed feed-keys docker-up api-dev
 
 api-test:
 	cd apps/api && PYTHONPATH=. pytest -q
@@ -14,6 +14,12 @@ smoke:
 
 feed:
 	python scripts/generate_feed.py
+
+feed-keys:
+	python scripts/generate_feed_keys.py
+
+api-dev:
+	cd apps/api && PYTHONPATH=. uvicorn app.main:app --reload --port 8000
 
 test: lint api-test web-test smoke
 

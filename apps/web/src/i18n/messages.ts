@@ -56,6 +56,30 @@ const messages = {
     suspicious: "Shubhali",
     malicious: "Zararli",
     unknown: "Noma’lum",
+    rateLimited: "Mehmon limitti tugadi. Hisob bilan kiring yoki keyinroq urinib ko‘ring.",
+    aq039Pending: "AQ-039: kutilmoqda",
+    aq039Ok: "AQ-039: tayyor",
+    dryRunOn: "dry-run yoqilgan",
+    dryRunOff: "dry-run o‘chirilgan",
+    "reason.ti_domain_hit": "Tahdid bazasida domen topildi",
+    "reason.suspicious_tld": "Shubhali TLD",
+    "reason.punycode": "Punycode / IDN domen",
+    "reason.long_domain": "Juda uzun yoki ko‘p tireli domen",
+    "reason.uz_fake_payment": "Soxta to‘lov / bank lure",
+    "reason.uz_fake_gov": "Soxta davlat / xizmat lure",
+    "reason.emergency_lure": "Favqulodda / shoshilinch lure",
+    "reason.credential_in_url": "URL ichida login ma’lumoti",
+    "reason.no_ti_hit": "TI hit yo‘q — past ball",
+    "reason.qr_non_url": "QR URL emas",
+    "reason.qr_payment": "QR to‘lov payload",
+    "reason.ti_hash_hit": "Tahdid bazasida hash topildi",
+    "reason.apk_name": "APK nomi heuristikasi",
+    "reason.combined": "Birlashtirilgan risk balli",
+    "action.block_and_warn": "Bloklang va ogohlantiring",
+    "action.warn_and_review": "Ogohlantiring va tekshiring",
+    "action.caution": "Ehtiyot bo‘ling",
+    "action.allow": "Ruxsat (past xavf)",
+    "action.do_not_open": "Ochmang",
   },
   ru: {
     brand: "Cyber Guardian AI",
@@ -112,6 +136,30 @@ const messages = {
     suspicious: "Подозрительный",
     malicious: "Вредоносный",
     unknown: "Неизвестно",
+    rateLimited: "Гостевой лимит исчерпан. Войдите или попробуйте позже.",
+    aq039Pending: "AQ-039: ожидание",
+    aq039Ok: "AQ-039: готово",
+    dryRunOn: "dry-run включён",
+    dryRunOff: "dry-run выключен",
+    "reason.ti_domain_hit": "Домен найден в базе угроз",
+    "reason.suspicious_tld": "Подозрительный TLD",
+    "reason.punycode": "Punycode / IDN домен",
+    "reason.long_domain": "Слишком длинный или с дефисами домен",
+    "reason.uz_fake_payment": "Поддельный платёж / банк",
+    "reason.uz_fake_gov": "Поддельный госуслуги lure",
+    "reason.emergency_lure": "Экстренный / срочный lure",
+    "reason.credential_in_url": "Учётные данные в URL",
+    "reason.no_ti_hit": "Нет TI hit — низкий балл",
+    "reason.qr_non_url": "QR не является URL",
+    "reason.qr_payment": "QR платёжный payload",
+    "reason.ti_hash_hit": "Хеш найден в базе угроз",
+    "reason.apk_name": "Эвристика имени APK",
+    "reason.combined": "Комбинированный риск",
+    "action.block_and_warn": "Блокировать и предупредить",
+    "action.warn_and_review": "Предупредить и проверить",
+    "action.caution": "Осторожность",
+    "action.allow": "Разрешить (низкий риск)",
+    "action.do_not_open": "Не открывать",
   },
   en: {
     brand: "Cyber Guardian AI",
@@ -168,6 +216,30 @@ const messages = {
     suspicious: "Suspicious",
     malicious: "Malicious",
     unknown: "Unknown",
+    rateLimited: "Guest quota exceeded. Sign in or try again later.",
+    aq039Pending: "AQ-039: pending",
+    aq039Ok: "AQ-039: ready",
+    dryRunOn: "dry-run on",
+    dryRunOff: "dry-run off",
+    "reason.ti_domain_hit": "Domain found in threat intel",
+    "reason.suspicious_tld": "Suspicious TLD",
+    "reason.punycode": "Punycode / IDN domain",
+    "reason.long_domain": "Very long or hyphen-heavy domain",
+    "reason.uz_fake_payment": "Fake payment / bank lure",
+    "reason.uz_fake_gov": "Fake government / service lure",
+    "reason.emergency_lure": "Emergency / urgency lure",
+    "reason.credential_in_url": "Credentials embedded in URL",
+    "reason.no_ti_hit": "No TI hit — low score",
+    "reason.qr_non_url": "QR is not a URL",
+    "reason.qr_payment": "QR payment payload",
+    "reason.ti_hash_hit": "Hash found in threat intel",
+    "reason.apk_name": "APK name heuristic",
+    "reason.combined": "Combined risk score",
+    "action.block_and_warn": "Block and warn",
+    "action.warn_and_review": "Warn and review",
+    "action.caution": "Proceed with caution",
+    "action.allow": "Allow (low risk)",
+    "action.do_not_open": "Do not open",
   },
 } as const;
 
@@ -175,6 +247,19 @@ export type MessageKey = keyof (typeof messages)["uz"];
 
 export function t(locale: Locale, key: MessageKey): string {
   return messages[locale][key] ?? messages.en[key];
+}
+
+/** Resolve API message_key / action codes; fall back to raw code. */
+export function tCode(locale: Locale, code: string): string {
+  const key = code as MessageKey;
+  if (key in messages.uz) {
+    return t(locale, key);
+  }
+  const actionKey = `action.${code}` as MessageKey;
+  if (actionKey in messages.uz) {
+    return t(locale, actionKey);
+  }
+  return code;
 }
 
 export const locales: Locale[] = ["uz", "ru", "en"];

@@ -7,7 +7,7 @@ services:
       - "8000:8000"
     environment:
       CGA_DATABASE_URL: ${CGA_DATABASE_URL:-sqlite:////data/cga.db}
-      CGA_CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080
+      CGA_CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080,chrome-extension://*
       CGA_SECRET_KEY: ${CGA_SECRET_KEY:-docker-dev-change-me}
       CGA_PUBLIC_BASE_URL: http://127.0.0.1:8000
     volumes:

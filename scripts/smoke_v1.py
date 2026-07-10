@@ -69,6 +69,14 @@ def main() -> int:
     )
     ok("emergency_dispatch_dry_run", disp.status_code == 202 and disp.json().get("dry_run") is True)
 
+    r = client.get("/v1/metrics")
+    ok(
+        "metrics",
+        r.status_code == 200
+        and r.json().get("defensive_only") is True
+        and r.json().get("version", "").startswith("0."),
+    )
+
     r = client.get("/health")
     ok("security_header", r.headers.get("X-CGA-Defensive-Only") == "1")
 

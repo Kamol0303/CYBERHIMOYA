@@ -9,8 +9,8 @@
 | Gate | Result |
 |------|--------|
 | Defensive lint | PASS |
-| API pytest | 24 passed |
-| Smoke `scripts/smoke_v1.py` | 11/11 |
+| API pytest | 26 passed |
+| Smoke `scripts/smoke_v1.py` | 12/12 |
 | Web `npm test` + `npm run build` | PASS |
 
 ## Checklist mapping (`05-v1-release-checklist.md`)
