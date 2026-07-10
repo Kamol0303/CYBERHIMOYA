@@ -1,0 +1,51 @@
+#cga-guardian-banner-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2147483646;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  padding: 0.65rem 1rem;
+  font: 14px/1.35 "Segoe UI", system-ui, sans-serif;
+  color: #1a1a1a;
+  background: #fff4e5;
+  border-bottom: 2px solid #b54708;
+  box-sizing: border-box;
+}
+
+#cga-guardian-banner-root[data-verdict="malicious"] {
+  background: #fef3f2;
+  border-bottom-color: #b42318;
+}
+
+#cga-guardian-banner-root .cga-title {
+  font-weight: 700;
+}
+
+#cga-guardian-banner-root .cga-meta {
+  opacity: 0.9;
+}
+
+#cga-guardian-banner-root .cga-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
+#cga-guardian-banner-root button {
+  appearance: none;
+  border: 1px solid #344054;
+  background: #fff;
+  color: #1a1a1a;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font: inherit;
+}
+
+#cga-guardian-banner-root button:hover {
+  background: #f2f4f7;
+}

@@ -535,3 +535,40 @@ def test_report_export(client: TestClient):
     assert "sections" in body["payload"]
     got = client.get(f"/v1/reports/{body['report_id']}", headers=headers)
     assert got.status_code == 200
+
+
+def test_password_health_and_scan_detail(client: TestClient):
+    weak = client.post("/v1/password-health", json={"password": "123456"})
+    assert weak.status_code == 200
+    assert weak.json()["verdict"] == "weak"
+    strong = client.post("/v1/password-health", json={"password": "Tr0ub4dor&3-long!"})
+    assert strong.status_code == 200
+    assert strong.json()["score"] >= 50
+
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "detail@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    scan = client.post(
+        "/v1/scan/url", headers=headers, json={"url": "https://example.com/detail"}
+    )
+    scan_id = scan.json()["scan_id"]
+    detail = client.get(f"/v1/scans/{scan_id}", headers=headers)
+    assert detail.status_code == 200
+    assert detail.json()["scan_id"] == scan_id
+    assert "reasons" in detail.json()
+
+    hist = client.get("/v1/risk-score/history", headers=headers)
+    assert hist.status_code == 200
+    assert len(hist.json()) >= 1
+    assert hist.json()[0]["score"] == scan.json()["score"]
+
+    scored = client.post(
+        "/v1/risk-score",
+        headers=headers,
+        json={"features": {"url_score": 70, "ti_hits": 1}, "subject_type": "url"},
+    )
+    assert scored.status_code == 200
+    hist2 = client.get("/v1/risk-score/history", headers=headers)
+    assert len(hist2.json()) >= 2

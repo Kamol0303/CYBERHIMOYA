@@ -174,6 +174,16 @@ class RiskScoreResponse(BaseModel):
     model_version: str = "score-2026.07.1"
 
 
+class RiskScoreHistoryItem(BaseModel):
+    id: UUID
+    subject_type: str
+    subject_hash: str
+    score: int
+    confidence: float
+    model_version: str
+    created_at: datetime
+
+
 class ThreatFeedSyncResponse(BaseModel):
     version: str
     generated_at: datetime

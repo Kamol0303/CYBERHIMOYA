@@ -157,6 +157,10 @@ def main() -> int:
     ok("threat_events", ev.status_code == 200 and len(ev.json()) >= 1)
     nf = client.get("/v1/notifications", headers=headers)
     ok("notifications", nf.status_code == 200 and len(nf.json()) >= 1)
+    rh = client.get("/v1/risk-score/history", headers=headers)
+    ok("risk_history", rh.status_code == 200 and len(rh.json()) >= 1)
+    pwd = client.post("/v1/password-health", json={"password": "not-a-secret-demo"})
+    ok("password_health", pwd.status_code == 200 and "verdict" in pwd.json())
 
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")

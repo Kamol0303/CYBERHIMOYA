@@ -423,6 +423,29 @@ export async function createReport(fromIso: string, toIso: string) {
   });
 }
 
+export async function passwordHealth(password: string) {
+  return postJson<{
+    score: number;
+    verdict: string;
+    reasons: { code: string; message_key: string }[];
+    recommendations: string[];
+  }>("/v1/password-health", { password }, false);
+}
+
+export async function fetchRiskHistory(limit = 50) {
+  return getJson<
+    {
+      id: string;
+      subject_type: string;
+      subject_hash: string;
+      score: number;
+      confidence: number;
+      model_version: string;
+      created_at: string;
+    }[]
+  >(`/v1/risk-score/history?limit=${limit}`);
+}
+
 export async function sha256Hex(file: File): Promise<string> {
   const buffer = await file.arrayBuffer();
   const digest = await crypto.subtle.digest("SHA-256", buffer);

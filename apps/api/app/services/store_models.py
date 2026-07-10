@@ -150,3 +150,15 @@ class ReportRow:
     status: str
     payload: dict[str, Any]
     created_at: datetime
+
+
+@dataclass
+class RiskScoreHistoryRow:
+    id: UUID
+    user_id: UUID
+    subject_type: str
+    subject_hash: str
+    score: int
+    confidence: float
+    model_version: str
+    created_at: datetime

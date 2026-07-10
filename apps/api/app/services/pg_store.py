@@ -572,6 +572,14 @@ class PostgresStore:
     def get_scan(self, user_id: UUID, scan_id: UUID):
         return None
 
+    def add_risk_score_history(self, row) -> None:
+        raise NotImplementedError(
+            "risk_score_history: use SQLite store in V1.4 or extend PostgresStore"
+        )
+
+    def list_risk_score_history(self, user_id: UUID, limit: int = 50):
+        return []
+
     @property
     def refresh_tokens(self) -> "_PgRefreshTokenProxy":
         return _PgRefreshTokenProxy(self._conn)

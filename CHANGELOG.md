@@ -7,7 +7,11 @@ Activity layer: threat events, notifications, JSON reports (FR-090/091/092/093).
 - `GET /v1/threat-events` — emit on authenticated suspicious/malicious scans
 - `GET /v1/notifications` + `POST /{id}/read` — in-app alerts (body keys, no raw PII)
 - `POST/GET /v1/reports` — redacted JSON export
-- Web dashboard: activity feed, notifications, report export
+- `GET /v1/scans/{id}` — scan detail
+- `POST /v1/password-health` — FR-050 strength check (never stored/logged)
+- `GET /v1/risk-score/history` — authenticated risk trail (scan-derived + POST /risk-score)
+- Extension FR-062: background nav scan + phishing page banner + session allowlist
+- Web dashboard: activity, notifications, report export, password health, risk history
 - Includes 0.3.1 polish: guest history, device revoke, QR hunting, YARA stub
 
 ## 0.3.0 — 2026-07-10

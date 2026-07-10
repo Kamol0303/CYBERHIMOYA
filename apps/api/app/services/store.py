@@ -161,6 +161,16 @@ class SqliteStore:
               payload TEXT NOT NULL,
               created_at TEXT NOT NULL
             );
+            CREATE TABLE IF NOT EXISTS risk_score_history (
+              id TEXT PRIMARY KEY,
+              user_id TEXT NOT NULL REFERENCES users(id),
+              subject_type TEXT NOT NULL,
+              subject_hash TEXT NOT NULL,
+              score INTEGER NOT NULL,
+              confidence REAL NOT NULL,
+              model_version TEXT NOT NULL,
+              created_at TEXT NOT NULL
+            );
             """
         )
         self._conn.commit()
@@ -174,6 +184,7 @@ class SqliteStore:
             "threat_events",
             "notifications",
             "reports",
+            "risk_score_history",
             "audit_logs",
             "scan_results",
             "consent_records",
@@ -325,6 +336,21 @@ class SqliteStore:
             ),
         )
         self._conn.commit()
+        if row.user_id is not None:
+            from app.services.store_models import RiskScoreHistoryRow
+
+            self.add_risk_score_history(
+                RiskScoreHistoryRow(
+                    id=uuid4(),
+                    user_id=row.user_id,
+                    subject_type=row.scan_type,
+                    subject_hash=row.subject_hash or "",
+                    score=row.score,
+                    confidence=float((row.meta or {}).get("confidence") or 0.6),
+                    model_version="scan-derived",
+                    created_at=row.created_at,
+                )
+            )
         return row
 
     def list_scans(self, user_id: UUID | None = None, limit: int = 20) -> list[ScanRow]:
@@ -753,6 +779,50 @@ class SqliteStore:
         if not row:
             return None
         return self._row_to_scan(row)
+
+    def add_risk_score_history(self, row) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO risk_score_history
+            (id, user_id, subject_type, subject_hash, score, confidence, model_version, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(row.id),
+                str(row.user_id),
+                row.subject_type,
+                row.subject_hash,
+                row.score,
+                row.confidence,
+                row.model_version,
+                row.created_at.isoformat(),
+            ),
+        )
+        self._conn.commit()
+
+    def list_risk_score_history(self, user_id: UUID, limit: int = 50):
+        from app.services.store_models import RiskScoreHistoryRow
+
+        rows = self._conn.execute(
+            """
+            SELECT * FROM risk_score_history WHERE user_id = ?
+            ORDER BY created_at DESC LIMIT ?
+            """,
+            (str(user_id), limit),
+        ).fetchall()
+        return [
+            RiskScoreHistoryRow(
+                id=UUID(r["id"]),
+                user_id=UUID(r["user_id"]),
+                subject_type=r["subject_type"],
+                subject_hash=r["subject_hash"],
+                score=r["score"],
+                confidence=r["confidence"],
+                model_version=r["model_version"],
+                created_at=_parse_dt(r["created_at"]),
+            )
+            for r in rows
+        ]
 
     # refresh token map compatibility
     @property

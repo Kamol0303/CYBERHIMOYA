@@ -15,6 +15,8 @@ import {
   fetchThreatFeedSync,
   createReport,
   markNotificationRead,
+  passwordHealth,
+  fetchRiskHistory,
   getToken,
   login,
   register,
@@ -122,6 +124,11 @@ export default function App() {
     { id: string; level: string; body_key: string; read_at: string | null }[]
   >([]);
   const [reportMsg, setReportMsg] = useState<string | null>(null);
+  const [pwdInput, setPwdInput] = useState("");
+  const [pwdResult, setPwdResult] = useState<string | null>(null);
+  const [riskHistory, setRiskHistory] = useState<
+    { id: string; subject_type: string; score: number; created_at: string }[]
+  >([]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -160,7 +167,7 @@ export default function App() {
       setConsents([]);
       return;
     }
-    const [scans, consentRows, feedSync, allowlist, emLogs, deviceRows, events, notifs] =
+    const [scans, consentRows, feedSync, allowlist, emLogs, deviceRows, events, notifs, risks] =
       await Promise.all([
         fetchScans(),
         fetchConsents(),
@@ -170,6 +177,7 @@ export default function App() {
         fetchDevices().catch(() => []),
         fetchThreatEvents().catch(() => []),
         fetchNotifications().catch(() => []),
+        fetchRiskHistory().catch(() => []),
       ]);
     setHistory(scans);
     setConsents(consentRows);
@@ -179,6 +187,7 @@ export default function App() {
     setDevices(deviceRows);
     setThreatEvents(events);
     setNotifications(notifs);
+    setRiskHistory(risks);
   }
 
   useEffect(() => {
@@ -673,6 +682,24 @@ export default function App() {
           </section>
 
           <section className="consent-block">
+            <h2>{t(locale, "riskHistoryTitle")}</h2>
+            <p className="note">{t(locale, "riskHistoryHint")}</p>
+            {riskHistory.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {riskHistory.slice(0, 10).map((r) => (
+                  <li key={r.id}>
+                    <span className="score">{r.score}</span>
+                    <span>{r.subject_type}</span>
+                    <span className="hash">{r.created_at.slice(0, 19)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
             <h2>{t(locale, "notificationsTitle")}</h2>
             {notifications.length === 0 ? (
               <p className="note">{t(locale, "noHistory")}</p>
@@ -729,6 +756,35 @@ export default function App() {
               {t(locale, "reportCta")}
             </button>
             {reportMsg ? <p className="note">{reportMsg}</p> : null}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "pwdTitle")}</h2>
+            <p className="note">{t(locale, "pwdHint")}</p>
+            <input
+              type="password"
+              value={pwdInput}
+              onChange={(e) => setPwdInput(e.target.value)}
+              placeholder="••••••••"
+              style={{ width: "100%", marginTop: "0.5rem" }}
+              autoComplete="new-password"
+            />
+            <button
+              type="button"
+              style={{ marginTop: "0.5rem" }}
+              disabled={!pwdInput}
+              onClick={() => {
+                void passwordHealth(pwdInput)
+                  .then((r) => {
+                    setPwdResult(`${r.verdict} · score=${r.score}`);
+                    setPwdInput("");
+                  })
+                  .catch(() => setPwdResult(t(locale, "error")));
+              }}
+            >
+              {t(locale, "pwdCta")}
+            </button>
+            {pwdResult ? <p className="note">{pwdResult}</p> : null}
           </section>
 
           <section className="consent-block">

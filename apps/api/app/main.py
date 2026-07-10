@@ -25,6 +25,7 @@ from app.routers import (
     scan,
     scans,
     threat_events,
+    password_health,
 )
 from app.services.feed import FEEDS_DIR, ensure_feed_files
 from app.services.rate_limit import GuestRateLimitExceeded
@@ -44,6 +45,7 @@ TAGS_METADATA = [
     {"name": "threat-events", "description": "Authenticated threat activity feed"},
     {"name": "notifications", "description": "In-app alerts (no raw PII)"},
     {"name": "reports", "description": "JSON export reports"},
+    {"name": "password-health", "description": "Password strength (never stored)"},
 ]
 
 BEARER_SCHEME = {
@@ -177,6 +179,7 @@ api.include_router(devices.router)
 api.include_router(threat_events.router)
 api.include_router(notifications.router)
 api.include_router(reports.router)
+api.include_router(password_health.router)
 app.mount("/v1", api)
 
 FEEDS_DIR.mkdir(parents=True, exist_ok=True)
