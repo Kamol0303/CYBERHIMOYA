@@ -66,7 +66,7 @@ bash scripts/defensive-lint.sh
 5. Guest rate-limit + CI + defensive-only lint  
 6. Android/Windows shell stubs + ed25519 feed + on-device SMS foundation  
 
-Keyingi: AQ-039 rasmiy allowlist (Legal), Compose/WinUI production, SMS runtime binding.
+Keyingi: Android Studio Compose ekranlari, WinUI host, AQ-039 Legal allowlist.
 
 ## Hujjatlar
 
