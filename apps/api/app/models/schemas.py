@@ -136,6 +136,18 @@ class FileScanResponse(BaseModel):
     scanned_at: datetime
 
 
+class ScanHistoryItem(BaseModel):
+    scan_id: UUID
+    scan_type: str
+    score: int
+    verdict: str
+    subject_hash: str
+    mitre_tags: list[str]
+    scam_family: str | None = None
+    recommended_action: str | None = None
+    created_at: datetime
+
+
 class RiskScoreRequest(BaseModel):
     features: dict[str, Any]
     subject_type: str = Field(pattern="^(url|file|message|device)$")

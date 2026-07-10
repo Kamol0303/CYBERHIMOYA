@@ -1,16 +1,28 @@
 import { useEffect, useState, type FormEvent } from "react";
 import {
+  fetchConsents,
+  fetchMe,
+  fetchScans,
+  getToken,
+  login,
+  register,
   scanFileHash,
   scanQr,
   scanUrl,
+  setToken,
   sha256Hex,
+  upsertConsent,
+  type ConsentRecord,
+  type ScanHistoryItem,
   type ScanReason,
+  type UserProfile,
   type Verdict,
 } from "./lib/api";
 import { locales, t, type Locale } from "./i18n/messages";
 import "./App.css";
 
 type ScanMode = "url" | "qr" | "file";
+type View = "scan" | "dashboard" | "auth";
 
 type ResultView = {
   title: string;
@@ -35,11 +47,42 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResultView | null>(null);
-  const [view, setView] = useState<"scan" | "dashboard">("scan");
+  const [view, setView] = useState<View>("scan");
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [history, setHistory] = useState<ScanHistoryItem[]>([]);
+  const [consents, setConsents] = useState<ConsentRecord[]>([]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) return;
+    void fetchMe()
+      .then(setUser)
+      .catch(() => setToken(null));
+  }, []);
+
+  async function refreshDashboard() {
+    if (!getToken()) {
+      setHistory([]);
+      setConsents([]);
+      return;
+    }
+    const [scans, consentRows] = await Promise.all([fetchScans(), fetchConsents()]);
+    setHistory(scans);
+    setConsents(consentRows);
+  }
+
+  useEffect(() => {
+    if (view === "dashboard" && user) {
+      void refreshDashboard().catch(() => undefined);
+    }
+  }, [view, user]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -104,6 +147,43 @@ export default function App() {
     }
   }
 
+  async function onAuth(kind: "login" | "register") {
+    setAuthError(null);
+    try {
+      const tokens =
+        kind === "login"
+          ? await login(email.trim(), password)
+          : await register(email.trim(), password, locale);
+      setToken(tokens.access_token);
+      const me = await fetchMe();
+      setUser(me);
+      setPassword("");
+      setView("dashboard");
+    } catch {
+      setAuthError(t(locale, "authError"));
+    }
+  }
+
+  function onLogout() {
+    setToken(null);
+    setUser(null);
+    setHistory([]);
+    setConsents([]);
+    setView("scan");
+  }
+
+  async function toggleConsent(type: string, granted: boolean) {
+    const row = await upsertConsent(type, granted);
+    setConsents((prev) => {
+      const rest = prev.filter((c) => c.consent_type !== type);
+      return [...rest, row];
+    });
+  }
+
+  function consentGranted(type: string): boolean {
+    return consents.find((c) => c.consent_type === type)?.granted === true;
+  }
+
   const canSubmit =
     mode === "url" ? Boolean(url.trim()) : mode === "qr" ? Boolean(qrPayload.trim()) : false;
 
@@ -121,9 +201,16 @@ export default function App() {
           <button
             type="button"
             className={view === "dashboard" ? "nav-link active" : "nav-link"}
-            onClick={() => setView("dashboard")}
+            onClick={() => setView(user ? "dashboard" : "auth")}
           >
             {t(locale, "dashboard")}
+          </button>
+          <button
+            type="button"
+            className={view === "auth" ? "nav-link active" : "nav-link"}
+            onClick={() => (user ? onLogout() : setView("auth"))}
+          >
+            {user ? t(locale, "logout") : t(locale, "auth")}
           </button>
         </nav>
         <label className="lang">
@@ -248,17 +335,102 @@ export default function App() {
             </div>
           </div>
         </main>
-      ) : (
+      ) : null}
+
+      {view === "auth" ? (
+        <main className="dashboard auth-panel">
+          <p className="brand">{t(locale, "brand")}</p>
+          <h1>{t(locale, "auth")}</h1>
+          <form
+            className="auth-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void onAuth("login");
+            }}
+          >
+            <label>
+              {t(locale, "email")}
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </label>
+            <label>
+              {t(locale, "password")}
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                autoComplete="current-password"
+              />
+            </label>
+            <div className="auth-actions">
+              <button type="submit">{t(locale, "login")}</button>
+              <button type="button" className="secondary" onClick={() => void onAuth("register")}>
+                {t(locale, "register")}
+              </button>
+            </div>
+          </form>
+          {authError ? <p className="error">{authError}</p> : null}
+        </main>
+      ) : null}
+
+      {view === "dashboard" && user ? (
         <main className="dashboard">
           <p className="brand">{t(locale, "brand")}</p>
           <h1>{t(locale, "dashboard")}</h1>
-          <p className="support">{t(locale, "dashboardHint")}</p>
+          <p className="support">
+            {t(locale, "signedInAs")}: {user.email}
+          </p>
+
           <section className="consent-block">
             <h2>{t(locale, "consentTitle")}</h2>
             <p>{t(locale, "consentBody")}</p>
+            <label className="consent-row">
+              <input
+                type="checkbox"
+                checked={consentGranted("analytics_meta")}
+                onChange={(e) => void toggleConsent("analytics_meta", e.target.checked)}
+              />
+              {t(locale, "consentAnalytics")}
+            </label>
+            <label className="consent-row">
+              <input
+                type="checkbox"
+                checked={consentGranted("emergency_law_enforcement")}
+                onChange={(e) =>
+                  void toggleConsent("emergency_law_enforcement", e.target.checked)
+                }
+              />
+              {t(locale, "consentEmergency")}
+            </label>
+          </section>
+
+          <section className="history-block">
+            <h2>{t(locale, "history")}</h2>
+            {history.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {history.map((item) => (
+                  <li key={item.scan_id}>
+                    <span className={`score score-${item.verdict}`}>{item.score}</span>
+                    <span>
+                      {item.scan_type} · {item.verdict}
+                    </span>
+                    <span className="hash">{item.subject_hash.slice(0, 12)}…</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         </main>
-      )}
+      ) : null}
 
       <footer className="footer">
         <span>Defensive only · No offensive tooling</span>

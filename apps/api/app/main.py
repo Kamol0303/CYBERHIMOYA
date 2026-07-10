@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import __version__
 from app.config import settings
 from app.models.schemas import HealthResponse
-from app.routers import auth, consents, feed, scan
+from app.routers import auth, consents, feed, scan, scans
 
 app = FastAPI(
     title=settings.app_name,
@@ -31,6 +31,7 @@ api.include_router(auth.router)
 api.include_router(auth.me_router)
 api.include_router(consents.router)
 api.include_router(scan.router)
+api.include_router(scans.router)
 api.include_router(feed.router)
 app.mount("/v1", api)
 

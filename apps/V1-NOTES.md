@@ -12,11 +12,18 @@
 - Web guest scan UI + dashboard shell + uz/ru/en
 - CI + defensive-only keyword gate
 
-### Sprint 1.1 (this update)
-- SQLite persistence (`CGA_DATABASE_URL`, default in-memory for tests)
-- `POST /v1/scan/qr` and `POST /v1/scan/file` (client SHA-256; no binary upload required)
+### Sprint 1.1
+- SQLite persistence (`CGA_DATABASE_URL`)
+- `POST /v1/scan/qr` and `POST /v1/scan/file` (client SHA-256)
 - Web modes: URL / QR / File hash
-- Android + Windows shell stubs under `apps/android`, `apps/windows`
+- Android + Windows shell stubs
+
+### Sprint 1.2 (this update)
+- `GET /v1/scans` authenticated history
+- Guest scan rate limit (429)
+- Web login/register + consent toggles + scan history
+- Default SQLite file DB for runtime; in-memory for tests
+- `docker-compose.yml` + Dockerfiles
 
 ## Explicitly out of V1
 
@@ -25,7 +32,3 @@
 - Emergency SMS to IIV (needs AQ-039)
 - Production PostgreSQL / KMS
 - Active probing of any kind
-
-## Storage
-
-SQLite now. PostgreSQL URL accepted but falls back to sqlite file until driver is wired (`sdd/03`).

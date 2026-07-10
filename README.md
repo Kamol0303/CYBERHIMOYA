@@ -19,11 +19,13 @@ Mudofaa-only xavfsizlik ekotizimi (Android + Windows + Web). **Hujum / exploit /
 cd apps/api
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env   # ixtiyoriy
 uvicorn app.main:app --reload --port 8000
 ```
 
 - Health: `GET http://127.0.0.1:8000/health`
 - Docs: `http://127.0.0.1:8000/docs`
+- SQLite fayl: `CGA_DATABASE_URL=sqlite:///./data/cga.db` (default)
 
 ### Web
 
@@ -35,10 +37,18 @@ npm run dev
 
 Brauzer: `http://127.0.0.1:5173` (Vite `/v1` ni API ga proxy qiladi).
 
+### Docker
+
+```bash
+docker compose up --build
+```
+
+API `:8000`, Web `:8080`.
+
 ### Testlar
 
 ```bash
-cd apps/api && pytest -q
+cd apps/api && PYTHONPATH=. pytest -q
 cd apps/web && npm test && npm run build
 bash scripts/defensive-lint.sh
 ```
@@ -46,12 +56,13 @@ bash scripts/defensive-lint.sh
 ## Birinchi sprint (V1)
 
 1. Auth + Consent (+ erasure foundation)  
-2. `POST /v1/scan/url` + risk score + MITRE / scam family skeleton  
+2. `POST /v1/scan/url|qr|file` + risk score + MITRE / scam family  
 3. Threat feed sync (signed delta stub)  
-4. Web mehmon skan + dashboard shell + i18n  
-5. CI + defensive-only lint  
+4. Web mehmon skan + login + dashboard tarix/rozilik + i18n  
+5. Guest rate-limit + CI + defensive-only lint  
+6. Android/Windows shell stubs  
 
-Keyingi: Android/Windows shell, QR/file scan, PostgreSQL.
+Keyingi: PostgreSQL driver, real feed CDN, native client UI.
 
 ## Hujjatlar
 
