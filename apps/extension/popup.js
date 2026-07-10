@@ -8,6 +8,8 @@ const STR = {
     scanning: "Tekshirilmoqda…",
     onlyHttp: "Faqat http(s) sahifalar skan qilinadi.",
     result: "Natija shu yerda…",
+    rateLimited: "Mehmon limitti tugadi. Keyinroq urinib ko‘ring.",
+    scanFailed: "Skan muvaffaqiyatsiz.",
   },
   ru: {
     brand: "Cyber Guardian AI",
@@ -16,6 +18,8 @@ const STR = {
     scanning: "Проверка…",
     onlyHttp: "Сканируются только http(s) страницы.",
     result: "Результат здесь…",
+    rateLimited: "Гостевой лимит исчерпан. Попробуйте позже.",
+    scanFailed: "Сканирование не удалось.",
   },
   en: {
     brand: "Cyber Guardian AI",
@@ -24,6 +28,8 @@ const STR = {
     scanning: "Scanning…",
     onlyHttp: "Only http(s) pages can be scanned.",
     result: "Result appears here…",
+    rateLimited: "Guest quota exceeded. Try again later.",
+    scanFailed: "Scan failed.",
   },
 };
 
@@ -49,7 +55,11 @@ async function scanUrl(url) {
       context: { source: "extension", client_cache_hit: false },
     }),
   });
-  if (!res.ok) throw new Error(`scan_failed_${res.status}`);
+  if (!res.ok) {
+    const err = new Error(`scan_failed_${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
   return res.json();
 }
 
@@ -76,6 +86,10 @@ document.getElementById("scan").addEventListener("click", async () => {
       .filter(Boolean)
       .join("\n");
   } catch (err) {
-    out.textContent = String(err);
+    if (err && err.status === 429) {
+      out.textContent = t.rateLimited;
+    } else {
+      out.textContent = t.scanFailed;
+    }
   }
 });

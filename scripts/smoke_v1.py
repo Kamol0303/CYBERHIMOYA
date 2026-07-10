@@ -69,6 +69,13 @@ def main() -> int:
     )
     ok("emergency_dispatch_dry_run", disp.status_code == 202 and disp.json().get("dry_run") is True)
 
+    r = client.get("/v1/threat-feed/verify")
+    ok("feed_verify", r.status_code == 200 and r.json().get("valid") is True)
+
+    ver = client.get("/v1/threat-feed/sync").json().get("version", "20260710.2")
+    cdn = client.get(f"/cdn/feeds/{ver}.json")
+    ok("feed_cdn", cdn.status_code == 200 and "signature" in cdn.json())
+
     r = client.get("/v1/metrics")
     ok(
         "metrics",
@@ -79,6 +86,7 @@ def main() -> int:
 
     r = client.get("/health")
     ok("security_header", r.headers.get("X-CGA-Defensive-Only") == "1")
+    ok("security_frame", r.headers.get("X-Frame-Options") == "DENY")
 
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")

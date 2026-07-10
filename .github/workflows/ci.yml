@@ -21,6 +21,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Defensive-only lint
         run: bash ../../scripts/defensive-lint.sh
+      - name: Extension packaging
+        run: bash ../../scripts/validate_extension.sh
       - name: Test
         run: PYTHONPATH=. pytest -q
       - name: Feed verify
@@ -46,3 +48,26 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+
+  docker-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start
+        run: docker compose up --build -d
+      - name: Wait for API health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8000/health | grep -q '"defensive_only":true'; then
+              echo "API healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker compose logs
+          exit 1
+      - name: Check web shell
+        run: curl -fsS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8080/ | grep -E '200|304'
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

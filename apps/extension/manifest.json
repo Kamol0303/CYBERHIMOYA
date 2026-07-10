@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Cyber Guardian AI",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Defensive URL scan helper for Cyber Guardian AI (guest scan).",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwRYnavbfUubrICGqLxVRG1RZn7s2LF1UdBJy3xzpTFGFaQ9csAa2Ct1fhLMR8jl+Mc44Z1roBue/Ic78rFZSQ7urxWG/neYW55A5/l9m0wn9EZ4y1SWFPrQWPCk/S8RXgA1BlG6i6hjm3sDrjaI8hQVM6FjS4NuBCVNPcIgCy1WeGSUyqcz3gbMcgGt3nrepQ7aMRHVV+xIdKfQKtzQnhEArS4xn+2s2CDDCnL/IiuLGHHGeJFN0ogIpm6Rfwx6XYFWX/MEM4Kr4wGTFxY/hTK/9+ffB4jzRmAjDyll6mKeoC5ivvOYu+W4uzqckC2p5eZrm03qGH9jjRSvgwMJ8iwIDAQAB",
   "action": {

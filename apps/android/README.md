@@ -1,6 +1,7 @@
 # Cyber Guardian AI — Android shell (V1)
 
-**Status:** scaffold only. Defensive client; no offensive tooling.
+**Status:** scaffold only. Defensive client; no offensive tooling.  
+**Version:** `0.2.0-v1-shell` (aligned with monorepo V1).
 
 ## Scope (next sprints)
 
@@ -19,16 +20,13 @@
 
 Point `CGA_API_BASE` to `http://10.0.2.2:8000` on emulator.
 
-Stub client: `src/main/java/uz/cyberguardian/android/api/GuardianApi.kt`  
-UI shell: `.../ui/ScanScreen.kt`  
-SMS on-device: `.../sms/OnDeviceSmsAnalyzer.kt` (raw SMS never uploaded)
+| Layer | Path |
+|-------|------|
+| Interface | `api/GuardianApi.kt` |
+| HTTP impl | `api/HttpGuardianApi.kt` (wired from `MainActivity`) |
+| UI shell | `ui/Screens.kt` (Compose stubs — uncomment deps in Studio) |
+| SMS on-device | `sms/OnDeviceSmsAnalyzer.kt` (raw SMS never uploaded) |
 
-```
-apps/android/
-  README.md
-  docs/architecture.md
-  docs/sms-on-device.md
-  src/main/java/.../
-```
+See `docs/android-studio.md` to enable Compose.
 
 Do not add offensive tooling.
