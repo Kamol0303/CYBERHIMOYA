@@ -9,7 +9,9 @@
 - Process monitoring stub: `Monitoring/ProcessMonitor.cs` (FR-070, detect/warn only)
 - USB stub: `Monitoring/UsbMonitor.cs` (FR-073)
 - Ransomware honeypot stub: `Monitoring/RansomwareMonitor.cs` (FR-074)
-- Future: Sigma/YARA packs, registry hooks
+- Registry stub: `Monitoring/RegistryMonitor.cs` (FR-071)
+- Network stub: `Monitoring/NetworkMonitor.cs` (FR-072)
+- Future: Sigma/YARA packs
 - Defensive playbooks: local block / isolate / alert only
 
 ## Suggested stack

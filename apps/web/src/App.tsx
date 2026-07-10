@@ -13,6 +13,8 @@ import {
   fetchNotifications,
   fetchScans,
   pruneRiskHistory,
+  assessDeepfakeVoice,
+  fetchAudit,
   fetchThreatEvents,
   fetchThreatFeedSync,
   createReport,
@@ -164,6 +166,8 @@ export default function App() {
   >([]);
   const [scanVerdictFilter, setScanVerdictFilter] = useState("");
   const [pruneMsg, setPruneMsg] = useState<string | null>(null);
+  const [deepfakeMsg, setDeepfakeMsg] = useState<string | null>(null);
+  const [auditRows, setAuditRows] = useState<{ id: string; action: string; at: string }[]>([]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -215,6 +219,7 @@ export default function App() {
       dnsRows,
       stats,
       sigma,
+      audit,
     ] = await Promise.all([
       fetchScans(),
       fetchConsents(),
@@ -228,6 +233,7 @@ export default function App() {
       fetchDnsAllowlist().catch(() => []),
       fetchMeStats().catch(() => null),
       fetchSigmaRules().catch(() => []),
+      fetchAudit().catch(() => []),
     ]);
     setHistory(scans);
     setConsents(consentRows);
@@ -241,6 +247,7 @@ export default function App() {
     setDnsAllowlist(dnsRows);
     setMeStats(stats);
     setSigmaRules(sigma);
+    setAuditRows(audit);
   }
 
   useEffect(() => {
@@ -721,6 +728,60 @@ export default function App() {
               />
               {t(locale, "consentEmergency")}
             </label>
+            <label className="consent-row">
+              <input
+                type="checkbox"
+                checked={consentGranted("audio_upload")}
+                onChange={(e) => void toggleConsent("audio_upload", e.target.checked)}
+              />
+              {t(locale, "consentAudio")}
+            </label>
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "deepfakeTitle")}</h2>
+            <p className="note">{t(locale, "deepfakeHint")}</p>
+            <button
+              type="button"
+              disabled={!consentGranted("audio_upload")}
+              onClick={() => {
+                void assessDeepfakeVoice({
+                  duration_ms: 4500,
+                  sample_rate_hz: 16000,
+                  filename_hint: "voice-check.wav",
+                })
+                  .then((r) =>
+                    setDeepfakeMsg(
+                      `${r.verdict} · score=${r.score} · stored=${r.audio_stored ? "yes" : "no"}`,
+                    ),
+                  )
+                  .catch((err) =>
+                    setDeepfakeMsg(
+                      err instanceof ApiError ? err.detail || t(locale, "error") : t(locale, "error"),
+                    ),
+                  );
+              }}
+            >
+              {t(locale, "deepfakeCta")}
+            </button>
+            {deepfakeMsg ? <p className="note">{deepfakeMsg}</p> : null}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "auditTitle")}</h2>
+            <p className="note">{t(locale, "auditHint")}</p>
+            {auditRows.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {auditRows.slice(0, 10).map((a) => (
+                  <li key={a.id}>
+                    <span className="hash">{a.at.slice(0, 19)}</span>
+                    <span>{a.action}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
 
           <section className="consent-block">

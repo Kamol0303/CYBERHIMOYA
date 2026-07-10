@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.5 — 2026-07-10
+
+- `POST /v1/deepfake/voice` — FR-042 consent-gated meta check (audio never stored)
+- `GET /v1/audit` — user-visible audit trail
+- Windows RegistryMonitor + NetworkMonitor stubs (FR-071/072)
+- Web: audio consent, deepfake CTA, audit list
+
 ## 0.4.4 — 2026-07-10
 
 - `GET /v1/scans?verdict=&scan_type=` — FR-092 history filters

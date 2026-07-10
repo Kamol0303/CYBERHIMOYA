@@ -364,6 +364,9 @@ class PostgresStore:
             )
         self._conn.commit()
 
+    def list_audit_logs(self, actor_id: UUID, limit: int = 50):
+        return []
+
     def add_emergency_log(self, row: EmergencyLogRow) -> EmergencyLogRow:
         with self._conn.cursor() as cur:
             cur.execute(

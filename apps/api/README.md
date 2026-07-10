@@ -64,6 +64,8 @@ Token `chrome-extension://*` expands to `allow_origin_regex` so the MV3 popup ca
 | GET | `/v1/sigma/rules` | — |
 | POST | `/v1/behavior/analyze` | Bearer |
 | POST | `/v1/notifications/read-all` | Bearer |
+| POST | `/v1/deepfake/voice` | Bearer + `audio_upload` consent |
+| GET | `/v1/audit` | Bearer |
 
 Scan responses may include hunting fields: `intent_tags`, `campaign_id`, `kill_chain_stage`.
 `POST /v1/scan/file` accepts `run_yara` (V1 stub heuristics, no yara-python).
