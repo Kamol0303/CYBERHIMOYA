@@ -624,3 +624,14 @@ def test_behavior_and_mitre_filter(client: TestClient):
     filtered = client.get("/v1/threat-events?mitre=T1566", headers=headers)
     assert filtered.status_code == 200
     assert len(filtered.json()) >= 1
+
+    rules = client.get("/v1/sigma/rules")
+    assert rules.status_code == 200
+    assert len(rules.json()) >= 1
+    assert rules.json()[0]["defensive_only"] is True
+
+    nlist = client.get("/v1/notifications", headers=headers)
+    assert nlist.status_code == 200
+    marked = client.post("/v1/notifications/read-all", headers=headers)
+    assert marked.status_code == 200
+    assert marked.json()["updated"] >= 0

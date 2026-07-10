@@ -439,6 +439,23 @@ export async function markNotificationRead(id: string) {
   return postJson(`/v1/notifications/${id}/read`, {});
 }
 
+export async function markAllNotificationsRead() {
+  return postJson<{ updated: number }>("/v1/notifications/read-all", {});
+}
+
+export async function fetchSigmaRules() {
+  return getJson<
+    {
+      id: string;
+      title: string;
+      version: string;
+      status: string;
+      mitre_tags: string[];
+      platforms: string[];
+    }[]
+  >("/v1/sigma/rules");
+}
+
 export async function createReport(fromIso: string, toIso: string) {
   return postJson<{
     report_id: string;

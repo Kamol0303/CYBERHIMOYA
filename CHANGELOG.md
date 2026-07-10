@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.3 — 2026-07-10
+
+- `GET /v1/sigma/rules` — FR-081 catalog stub (metadata only)
+- `POST /v1/notifications/read-all`
+- Web: sigma list + mark-all-read
+
 ## 0.4.2 — 2026-07-10
 
 - `POST /v1/behavior/analyze` — FR-080 correlate recent scans/threats

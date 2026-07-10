@@ -16,6 +16,8 @@ import {
   fetchThreatFeedSync,
   createReport,
   markNotificationRead,
+  markAllNotificationsRead,
+  fetchSigmaRules,
   passwordHealth,
   fetchRiskHistory,
   dnsCheck,
@@ -156,6 +158,9 @@ export default function App() {
   } | null>(null);
   const [behaviorMsg, setBehaviorMsg] = useState<string | null>(null);
   const [mitreFilter, setMitreFilter] = useState("");
+  const [sigmaRules, setSigmaRules] = useState<
+    { id: string; title: string; version: string; mitre_tags: string[] }[]
+  >([]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -206,6 +211,7 @@ export default function App() {
       risks,
       dnsRows,
       stats,
+      sigma,
     ] = await Promise.all([
       fetchScans(),
       fetchConsents(),
@@ -218,6 +224,7 @@ export default function App() {
       fetchRiskHistory().catch(() => []),
       fetchDnsAllowlist().catch(() => []),
       fetchMeStats().catch(() => null),
+      fetchSigmaRules().catch(() => []),
     ]);
     setHistory(scans);
     setConsents(consentRows);
@@ -230,6 +237,7 @@ export default function App() {
     setRiskHistory(risks);
     setDnsAllowlist(dnsRows);
     setMeStats(stats);
+    setSigmaRules(sigma);
   }
 
   useEffect(() => {
@@ -772,6 +780,26 @@ export default function App() {
           </section>
 
           <section className="consent-block">
+            <h2>{t(locale, "sigmaTitle")}</h2>
+            <p className="note">{t(locale, "sigmaHint")}</p>
+            {sigmaRules.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {sigmaRules.slice(0, 8).map((r) => (
+                  <li key={r.id}>
+                    <span className="hash">{r.version}</span>
+                    <span>
+                      {r.title}
+                      {r.mitre_tags?.length ? ` · ${r.mitre_tags.join(",")}` : ""}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
             <h2>{t(locale, "riskHistoryTitle")}</h2>
             <p className="note">{t(locale, "riskHistoryHint")}</p>
             {riskHistory.length === 0 ? (
@@ -858,6 +886,22 @@ export default function App() {
 
           <section className="consent-block">
             <h2>{t(locale, "notificationsTitle")}</h2>
+            <button
+              type="button"
+              className="secondary"
+              style={{ marginBottom: "0.5rem" }}
+              onClick={() => {
+                void markAllNotificationsRead()
+                  .then(() =>
+                    setNotifications((prev) =>
+                      prev.map((x) => ({ ...x, read_at: x.read_at || new Date().toISOString() })),
+                    ),
+                  )
+                  .catch(() => undefined);
+              }}
+            >
+              {t(locale, "markAllRead")}
+            </button>
             {notifications.length === 0 ? (
               <p className="note">{t(locale, "noHistory")}</p>
             ) : (
