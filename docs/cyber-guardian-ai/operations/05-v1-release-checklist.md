@@ -1,6 +1,6 @@
 # V1 release / merge checklist
 
-## Before merge to `main`
+## V1 automated gates (PR #1 merged to `main`)
 
 - [x] `make test` (lint + API pytest + web build + smoke) — verified 2026-07-10
 - [x] `GET /health` → `defensive_only: true`

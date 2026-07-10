@@ -10,7 +10,7 @@
 |------|--------|
 | Defensive lint | PASS |
 | API pytest | 27 passed |
-| Smoke `scripts/smoke_v1.py` | 15/15 |
+| Smoke `scripts/smoke_v1.py` | 17/17 |
 | Web `npm test` + `npm run build` | PASS |
 | Extension validate | PASS |
 

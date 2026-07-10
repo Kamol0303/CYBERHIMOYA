@@ -155,7 +155,14 @@ def test_guest_rate_limit(client: TestClient, monkeypatch):
     monkeypatch.setattr(settings, "guest_rate_limit_per_hour", 2)
     assert client.post("/v1/scan/url", json={"url": "https://example.com/1"}).status_code == 200
     assert client.post("/v1/scan/url", json={"url": "https://example.com/2"}).status_code == 200
-    assert client.post("/v1/scan/url", json={"url": "https://example.com/3"}).status_code == 429
+    r = client.post("/v1/scan/url", json={"url": "https://example.com/3"})
+    assert r.status_code == 429
+    assert r.headers["content-type"].startswith("application/problem+json")
+    body = r.json()
+    assert body["type"] == "https://api.cyberguardian.uz/errors/rate-limited"
+    assert body["status"] == 429
+    assert body["instance"] == "/v1/scan/url"
+    assert r.headers.get("X-RateLimit-Remaining") == "0"
 
 
 def test_persistence_across_operations(client: TestClient):

@@ -14,7 +14,10 @@ sys.path.insert(0, ROOT)
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from app import __version__  # noqa: E402
+from app.config import settings  # noqa: E402
 from app.main import app  # noqa: E402
+from app.services.rate_limit import guest_limiter  # noqa: E402
 
 
 def main() -> int:
@@ -27,7 +30,7 @@ def main() -> int:
 
     r = client.get("/health")
     ok("health", r.status_code == 200 and r.json().get("defensive_only") is True)
-    ok("version", r.json().get("version", "").startswith("0."))
+    ok("version", r.json().get("version") == __version__)
 
     r = client.post("/v1/scan/url", json={"url": "http://pay-click-uz.tk/x"})
     ok("scan_url_malicious", r.status_code == 200 and r.json()["score"] >= 50)
@@ -81,12 +84,31 @@ def main() -> int:
         "metrics",
         r.status_code == 200
         and r.json().get("defensive_only") is True
-        and r.json().get("version", "").startswith("0."),
+        and r.json().get("version") == __version__,
     )
 
     r = client.get("/health")
     ok("security_header", r.headers.get("X-CGA-Defensive-Only") == "1")
     ok("security_frame", r.headers.get("X-Frame-Options") == "DENY")
+
+    guest_limiter.reset()
+    prev_limit = settings.guest_rate_limit_per_hour
+    settings.guest_rate_limit_per_hour = 2
+    try:
+        client.post("/v1/scan/url", json={"url": "https://example.com/smoke-1"})
+        client.post("/v1/scan/url", json={"url": "https://example.com/smoke-2"})
+        r = client.post("/v1/scan/url", json={"url": "https://example.com/smoke-3"})
+        ok("guest_rate_limit_429", r.status_code == 429)
+        body = r.json() if r.status_code == 429 else {}
+        ok(
+            "guest_rate_limit_problem",
+            body.get("type") == "https://api.cyberguardian.uz/errors/rate-limited"
+            and body.get("status") == 429
+            and r.headers.get("X-RateLimit-Remaining") == "0",
+        )
+    finally:
+        settings.guest_rate_limit_per_hour = prev_limit
+        guest_limiter.reset()
 
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")

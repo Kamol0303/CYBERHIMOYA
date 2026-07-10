@@ -80,7 +80,8 @@ PYTHONPATH=apps/api python scripts/smoke_v1.py
 5. Guest rate-limit + CI + defensive-only lint  
 6. Android/Windows shell stubs + ed25519 feed + on-device SMS foundation  
 
-Keyingi: PR merge → `main`, Legal privacy/AQ-039, store screenshotlar.
+Keyingi: Legal privacy/AQ-039, store screenshotlar.
+Holat: [`06-merge-ready-status.md`](docs/cyber-guardian-ai/operations/06-merge-ready-status.md) (PR #1 → `main`).
 
 ## Hujjatlar
 
