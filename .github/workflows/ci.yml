@@ -25,6 +25,8 @@ jobs:
         run: PYTHONPATH=. pytest -q
       - name: Feed verify
         run: PYTHONPATH=. python -c "from app.services.feed import load_feed_pack, verify_signature; p=load_feed_pack(); assert verify_signature(p['signed_payload'], p['signature'])"
+      - name: Smoke
+        run: PYTHONPATH=. python ../../scripts/smoke_v1.py
 
   web:
     runs-on: ubuntu-latest

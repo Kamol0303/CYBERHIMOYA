@@ -8,11 +8,10 @@
 - Docker Compose (api + web)
 - Android/Windows shell docs
 
-### Sprint 1.7 (this update)
-- Android Compose screen/ViewModel + HttpGuardianApi + theme tokens
-- Windows WPF `MainWindow` host (brand-first scan UI)
-- AQ-039 `.env` template (REPLACE_* placeholders only)
-- Allowlist parser rejects REPLACE/PENDING placeholders
+### Sprint 1.8 (this update)
+- `scripts/smoke_v1.py` + `Makefile`
+- Chrome MV3 extension guest scan (`apps/extension`)
+- V1 release/merge checklist
 
 ## Emergency dry-run
 

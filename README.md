@@ -9,8 +9,9 @@ Mudofaa-only xavfsizlik ekotizimi (Android + Windows + Web). **Hujum / exploit /
 | Spec (APEX v5.3) | `docs/cyber-guardian-ai/` |
 | V1 API | `apps/api` — Auth, scan URL/QR/file, feed CDN, SQLite/Postgres |
 | V1 Web | `apps/web` — URL/QR/file skan, login, tarix, rozilik, feed, uz/ru/en |
-| Client shells | `apps/android`, `apps/windows` — Gradle/csproj + API/UI stubs |
-| Ops | `docs/.../04-aq039-allowlist-runbook.md` |
+| Client shells | `apps/android`, `apps/windows` — Gradle/WPF + API/UI stubs |
+| Extension | `apps/extension` — MV3 guest URL scan |
+| Ops | AQ-039 runbook + V1 release checklist |
 
 ## Tezkor ishga tushirish
 
@@ -52,9 +53,12 @@ API `:8000`, Web `:8080`. Feed CDN: `http://127.0.0.1:8000/cdn/feeds/`.
 ### Testlar
 
 ```bash
+make test
+# yoki:
 cd apps/api && PYTHONPATH=. pytest -q
 cd apps/web && npm test && npm run build
 bash scripts/defensive-lint.sh
+PYTHONPATH=apps/api python scripts/smoke_v1.py
 ```
 
 ## Birinchi sprint (V1)
@@ -66,7 +70,7 @@ bash scripts/defensive-lint.sh
 5. Guest rate-limit + CI + defensive-only lint  
 6. Android/Windows shell stubs + ed25519 feed + on-device SMS foundation  
 
-Keyingi: Android Studio da Compose yoqish, Windows `dotnet run`, Legal AQ-039 qiymatlari.
+Keyingi: `main` ga merge, Legal AQ-039, store packaging.
 
 ## Hujjatlar
 
@@ -75,3 +79,4 @@ Keyingi: Android Studio da Compose yoqish, Windows `dotnet run`, Legal AQ-039 qi
 3. [`docs/cyber-guardian-ai/README.md`](docs/cyber-guardian-ai/README.md)  
 4. [`docs/cyber-guardian-ai/operations/04-aq039-allowlist-runbook.md`](docs/cyber-guardian-ai/operations/04-aq039-allowlist-runbook.md)  
 5. [`docs/cyber-guardian-ai/operations/aq039-allowlist.env.template`](docs/cyber-guardian-ai/operations/aq039-allowlist.env.template)  
+6. [`docs/cyber-guardian-ai/operations/05-v1-release-checklist.md`](docs/cyber-guardian-ai/operations/05-v1-release-checklist.md)  

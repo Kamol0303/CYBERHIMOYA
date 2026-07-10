@@ -31,7 +31,10 @@ Bitta branch.
 |--------|--------|
 | **[`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md)** | IEEE 830 SRS+SDD — §0…§15 (**v5.1.0** yangilangan rollar/matritsa/arch) |
 | [`acceptance-checklist.md`](acceptance-checklist.md) | «Sprint planning boshlay oladimi?» |
-| [`assumptions-and-open-questions.md`](assumptions-and-open-questions.md) | AQ-001…038 |
+| [`assumptions-and-open-questions.md`](assumptions-and-open-questions.md) | AQ-001…041 |
+| `operations/04-aq039-allowlist-runbook.md` | Emergency allowlist (Legal) |
+| `operations/aq039-allowlist.env.template` | Env shablon (`REPLACE_*`) |
+| `operations/05-v1-release-checklist.md` | Merge/release checklist |
 
 ---
 
