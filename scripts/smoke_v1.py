@@ -171,6 +171,10 @@ def main() -> int:
     ok("sigma_rules", sg.status_code == 200 and len(sg.json()) >= 1)
     ra = client.post("/v1/notifications/read-all", headers=headers)
     ok("notify_read_all", ra.status_code == 200 and "updated" in ra.json())
+    filt = client.get("/v1/scans?verdict=malicious", headers=headers)
+    ok("scan_filter", filt.status_code == 200 and len(filt.json()) >= 1)
+    pr = client.post("/v1/retention/prune?retain_days=180", headers=headers)
+    ok("retention_prune", pr.status_code == 200 and "deleted_risk_history" in pr.json())
 
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")

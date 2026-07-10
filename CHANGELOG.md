@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.4 — 2026-07-10
+
+- `GET /v1/scans?verdict=&scan_type=` — FR-092 history filters
+- `POST /v1/retention/prune` — NFR-040 risk history retention (180d default)
+- Android `WifiAnalyzer` stub (FR-061)
+- Windows `UsbMonitor` + `RansomwareMonitor` stubs (FR-073/074)
+- Web: scan verdict filter + prune CTA
+
 ## 0.4.3 — 2026-07-10
 
 - `GET /v1/sigma/rules` — FR-081 catalog stub (metadata only)

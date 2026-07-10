@@ -296,23 +296,37 @@ class PostgresStore:
         self._conn.commit()
         return row
 
-    def list_scans(self, user_id: UUID | None = None, limit: int = 20) -> list[ScanRow]:
+    def list_scans(
+        self,
+        user_id: UUID | None = None,
+        limit: int = 20,
+        *,
+        verdict: str | None = None,
+        scan_type: str | None = None,
+    ) -> list[ScanRow]:
         with self._conn.cursor() as cur:
+            clauses: list[str] = []
+            params: list[Any] = []
             if user_id:
-                cur.execute(
-                    """
-                    SELECT * FROM scan_results WHERE user_id = %s
-                    ORDER BY created_at DESC LIMIT %s
-                    """,
-                    (str(user_id), limit),
-                )
-            else:
-                cur.execute(
-                    "SELECT * FROM scan_results ORDER BY created_at DESC LIMIT %s",
-                    (limit,),
-                )
+                clauses.append("user_id = %s")
+                params.append(str(user_id))
+            if verdict:
+                clauses.append("verdict = %s")
+                params.append(verdict)
+            if scan_type:
+                clauses.append("scan_type = %s")
+                params.append(scan_type)
+            where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+            params.append(limit)
+            cur.execute(
+                f"SELECT * FROM scan_results {where} ORDER BY created_at DESC LIMIT %s",
+                tuple(params),
+            )
             rows = cur.fetchall()
         return [self._row_to_scan(r) for r in rows]
+
+    def prune_risk_score_history(self, *, retain_days: int = 180) -> int:
+        return 0
 
     def request_erasure(self, user_id: UUID) -> None:
         user = self.get_user(user_id)

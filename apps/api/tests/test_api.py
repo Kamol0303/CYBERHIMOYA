@@ -635,3 +635,23 @@ def test_behavior_and_mitre_filter(client: TestClient):
     marked = client.post("/v1/notifications/read-all", headers=headers)
     assert marked.status_code == 200
     assert marked.json()["updated"] >= 0
+
+
+def test_scan_filters_and_retention_prune(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "filters@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    client.post("/v1/scan/url", headers=headers, json={"url": "http://pay-click-uz.tk/f"})
+    client.post("/v1/scan/url", headers=headers, json={"url": "https://example.com/ok"})
+    bad = client.get("/v1/scans?verdict=malicious", headers=headers)
+    assert bad.status_code == 200
+    assert len(bad.json()) >= 1
+    assert all(x["verdict"] == "malicious" for x in bad.json())
+    urls = client.get("/v1/scans?scan_type=url", headers=headers)
+    assert urls.status_code == 200
+    assert len(urls.json()) >= 2
+    pruned = client.post("/v1/retention/prune?retain_days=180", headers=headers)
+    assert pruned.status_code == 200
+    assert "deleted_risk_history" in pruned.json()
