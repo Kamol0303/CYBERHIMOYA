@@ -1,17 +1,19 @@
 from __future__ import annotations
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import __version__
 from app.config import settings
 from app.cors_util import parse_cors_origins
-from app.models.schemas import HealthResponse
+from app.models.schemas import HealthResponse, ProblemDetail
 from app.middleware_security import SecurityHeadersMiddleware
 from app.routers import auth, consents, emergency, feed, ops, scan, scans
 from app.services.feed import FEEDS_DIR, ensure_feed_files
+from app.services.rate_limit import GuestRateLimitExceeded
 
 TAGS_METADATA = [
     {"name": "auth", "description": "Register / login / profile (JWT)"},
@@ -86,6 +88,33 @@ api = FastAPI(
     openapi_tags=TAGS_METADATA,
 )
 _attach_bearer_openapi(api)
+
+
+@api.exception_handler(GuestRateLimitExceeded)
+async def guest_rate_limit_handler(
+    _request: Request, exc: GuestRateLimitExceeded
+) -> JSONResponse:
+    path = exc.instance or "/scan"
+    if not path.startswith("/v1"):
+        path = f"/v1{path}" if path.startswith("/") else f"/v1/{path}"
+    body = ProblemDetail(
+        type="https://api.cyberguardian.uz/errors/rate-limited",
+        title="Too Many Requests",
+        status=429,
+        detail="Guest scan quota exceeded. Sign in or try later.",
+        instance=path,
+    ).model_dump()
+    return JSONResponse(
+        status_code=429,
+        content=body,
+        media_type="application/problem+json",
+        headers={
+            "X-RateLimit-Limit": str(exc.limit),
+            "X-RateLimit-Remaining": "0",
+        },
+    )
+
+
 api.include_router(auth.router)
 api.include_router(auth.me_router)
 api.include_router(consents.router)

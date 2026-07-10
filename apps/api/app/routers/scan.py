@@ -22,7 +22,7 @@ router = APIRouter(tags=["scan"])
 
 def _enforce_guest_limit(request: Request, response: Response, user) -> None:
     if user is None:
-        headers = guest_limiter.check(client_key(request))
+        headers = guest_limiter.check(client_key(request), instance=request.url.path)
         for k, v in headers.items():
             response.headers[k] = v
 

@@ -2,6 +2,8 @@
 
 ## 0.2.1 — 2026-07-10
 
+- Guest 429 returns RFC 7807 `ProblemDetail` (`application/problem+json`)
+- PWA PNG icons + apple-touch-icon; smoke 429 + version pin
 - OpenAPI `HTTPBearer` scheme + `MetricsResponse` schema
 - Minimal PWA service worker (shell cache; `/v1/*` network-only)
 - Extension 429 i18n + packaging validate script
