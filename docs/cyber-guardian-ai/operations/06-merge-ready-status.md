@@ -1,6 +1,6 @@
 # V1 merge-ready status
 
-**Branch:** `main` (PR #1 merged) + follow-up `CURSOR/v1-post-merge-polish-b1ff`  
+**Branch:** `main` + open polish PRs (`CURSOR/v1-post-merge-polish-b1ff`)  
 **API version:** 0.2.1  
 **Verified:** 2026-07-10 (agent run)
 
@@ -9,7 +9,7 @@
 | Gate | Result |
 |------|--------|
 | Defensive lint | PASS |
-| API pytest | 27 passed |
+| API pytest | 29 passed |
 | Smoke `scripts/smoke_v1.py` | 17/17 |
 | Web `npm test` + `npm run build` | PASS |
 | Extension validate | PASS |
@@ -23,13 +23,14 @@
 - [x] Defensive keyword gate
 - [x] README run instructions present
 - [x] AQ-039 not invented — template/runbook only
-- [x] PR #1 merged to `main`
+- [x] PR #1–#2 merged to `main`
 
 ## Remaining human actions
 
-1. Legal: finalize privacy/terms; resolve AQ-039 allowlist values
-2. Capture real store screenshots; submit Play/MS when ready
-3. Rotate feed keys for production (`CGA_FEED_PRIVATE_KEY_B64`)
+1. Merge open polish PR(s) if any
+2. Legal: finalize privacy/terms; resolve AQ-039 allowlist values
+3. Capture real store screenshots; submit Play/MS when ready
+4. Rotate feed keys for production (`CGA_FEED_PRIVATE_KEY_B64`)
 
 ## Do not merge blockers
 

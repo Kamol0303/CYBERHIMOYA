@@ -2,15 +2,15 @@
 
 ## 0.2.1 — 2026-07-10
 
-- Guest 429 returns RFC 7807 `ProblemDetail` (`application/problem+json`)
+- Auth 401 + guest 429 as RFC 7807 `ProblemDetail`
+- Web: ProblemDetail.detail on errors, offline banner, account erasure UI
 - PWA PNG icons + apple-touch-icon; smoke 429 + version pin
 - OpenAPI `HTTPBearer` scheme + `MetricsResponse` schema
 - Minimal PWA service worker (shell cache; `/v1/*` network-only)
 - Extension 429 i18n + packaging validate script
-- CI: extension validate + Docker compose smoke job
-- Smoke: feed verify/CDN + frame security header
-- Android/Windows README accuracy; Android `versionName` 0.2.0-v1-shell
-- nginx `X-CGA-Defensive-Only` parity
+- CI: extension validate + Docker compose smoke (incl. SW/icons)
+- Remove unused feed `20260710.1`
+- Android/Windows README accuracy; nginx `X-CGA-Defensive-Only` parity
 
 ## 0.2.0 — 2026-07-10
 
