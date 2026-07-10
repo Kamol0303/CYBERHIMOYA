@@ -1,6 +1,6 @@
 # Cyber Guardian AI — Hujjatlar indeksi
 
-**Joriy nashr:** Apex Master **v5.0.0**  
+**Joriy nashr:** Apex Master **v5.1.0** (yangilangan rollar, matritsa #24–29, arch oqimi, roadmap)  
 **Sprint-planning KIRISH NUQTASI:** [`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md)
 
 Ushbu fayl — master spetsifikatsiyaga yo‘l ko‘rsatgich. Barcha 15 bo‘lim masterda; quyida chuqur satellite hujjatlar.
@@ -19,7 +19,7 @@ Bitta branch.
 
 | Hujjat | Mazmun |
 |--------|--------|
-| **[`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md)** | IEEE 830 SRS+SDD — §0…§15 to‘liq |
+| **[`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md)** | IEEE 830 SRS+SDD — §0…§15 (**v5.1.0** yangilangan rollar/matritsa/arch) |
 | [`acceptance-checklist.md`](acceptance-checklist.md) | «Sprint planning boshlay oladimi?» |
 | [`assumptions-and-open-questions.md`](assumptions-and-open-questions.md) | AQ-001…038 |
 
@@ -45,4 +45,4 @@ Bitta branch.
 
 ## Jamoa (qisqa)
 
-Hunt Lead · Malware RE · AI/ML · APT Hunter · EDR/XDR · TI Fusion · Forensics · Secure Full-Stack · Privacy/Legal · QA/Red-Team Sim
+Hunt Lead (kill chain) · Malware RE · AI/ML (Graph/LLM/predictive) · APT Hunter (infra attribution) · EDR/XDR · TI Fusion & Persona · Forensics · Zero-trust Full-Stack · Privacy/Legal · QA/Adversarial Testing

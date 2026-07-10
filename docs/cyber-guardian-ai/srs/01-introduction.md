@@ -51,15 +51,15 @@ Ko‘pchilik foydalanuvchi texnik bilimga ega emas; hujum **sodir bo‘lishidan 
 
 ### 1.2.3 Missiya
 
-**Apex missiya:** oddiy foydalanuvchilarni kundalik himoya qilish bilan birga, kiberhujum tayyorlayotgan/amalga oshirayotgan/rejalashtirayotgan threat actorlarni erta aniqlash, real-time kuzatish, infratuzilma attribution (qonuniy korrelyatsiya), kampaniyalarni **himoya choralar**i bilan to‘xtatish va milliy intellekt ta’minlash.
+**Cyber Guardian AI** — foydalanuvchilarni proaktiv himoya qilish bilan birga, kiberhujum tayyorlayotgan yoki amalga oshirayotgan threat actorlarni erta bosqichda aniqlaydigan, ularning infratuzilmasi, TTP’lari, kampaniyalari va shaxsiyatini (persona/cluster) kuzatadigan, atributlashtiradigan va zararsizlantirishga yordam beradigan apex mudofaa + threat hunting ekotizimi.
 
 ### 1.2.4 Asosiy printsip (butun loyiha)
 
-> Faqat defensive hunting, intelligence va automated **himoya** response. Offensive capability, exploit, C2-as-weapon, payload, weaponization — yo‘q. Qonuniy, rozilik asosida, faqat himoya.
+> Faqat **defensive, intelligence va automated response**. Hech qanday offensive imkoniyat, ekspluatatsiya yoki zararli kod bo‘lmaydi.
 
 ### Threat Hunting & Actor Disruption Strategy (majburiy)
 
-Disruption = blok/karantin/DNS deny/CERT intel. Hack-back yo‘q. Talablar: `srs/09` (Apex), `srs/08`, `srs/07`.
+Disruption = blok/karantin/DNS deny/CERT intel. Master: `APEX-MASTER-SPEC.md` v5.1.
 
 ### 1.2.5 Mahsulot chegaralari
 
