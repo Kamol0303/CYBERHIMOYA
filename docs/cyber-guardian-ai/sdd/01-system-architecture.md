@@ -36,6 +36,9 @@ flowchart TB
     RULE["Rules Service\nYARA/Sigma"]
     HUNT["Threat Hunting Pipeline"]
     TAKB["Threat Actor KB"]
+    FUS["Intelligence Fusion"]
+    GRAPH["Actor Knowledge Graph"]
+    PB["Playbook Engine defensive"]
   end
 
   subgraph Data["Ma’lumot"]
@@ -108,6 +111,9 @@ Oqim: signal → fusion → hunt → graph → score/intent → **defensive** pl
 | scan-orchestrator | BE | URL/file/QR/breach pipeline |
 | threat-hunting-pipeline | BE | correlate, hunt cases, IOA |
 | threat-actor-kb | BE | actor/campaign ombori |
+| intelligence-fusion | BE | OSINT + feeds + telemetry |
+| actor-knowledge-graph | BE | Neo4j/ekvivalent |
+| playbook-engine | BE | defensive actions only |
 
 ---
 
