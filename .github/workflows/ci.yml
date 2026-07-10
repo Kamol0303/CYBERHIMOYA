@@ -67,7 +67,11 @@ jobs:
           docker compose logs
           exit 1
       - name: Check web shell
-        run: curl -fsS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8080/ | grep -E '200|304'
+        run: |
+          curl -fsS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8080/ | grep -E '200|304'
+          curl -fsS -o /dev/null http://127.0.0.1:8080/sw.js
+          curl -fsS -o /dev/null http://127.0.0.1:8080/icon-192.png
+          curl -fsS -o /dev/null http://127.0.0.1:8080/manifest.webmanifest
       - name: Tear down
         if: always()
         run: docker compose down -v

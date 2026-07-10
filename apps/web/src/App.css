@@ -4,6 +4,15 @@
   grid-template-rows: auto 1fr auto;
 }
 
+.offline-banner {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--ink);
+  text-align: center;
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .topbar {
   display: flex;
   justify-content: space-between;

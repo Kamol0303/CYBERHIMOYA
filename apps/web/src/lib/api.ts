@@ -108,11 +108,28 @@ function authHeaders(): HeadersInit {
 
 export class ApiError extends Error {
   status: number;
-  constructor(status: number, message = `request_failed_${status}`) {
-    super(message);
+  detail?: string;
+  constructor(status: number, detail?: string) {
+    super(detail ?? `request_failed_${status}`);
     this.name = "ApiError";
     this.status = status;
+    this.detail = detail;
   }
+}
+
+async function raiseForStatus(res: Response): Promise<void> {
+  if (res.ok) return;
+  const ct = res.headers.get("content-type") || "";
+  if (ct.includes("json")) {
+    try {
+      const body = (await res.json()) as { detail?: unknown };
+      const detail = typeof body.detail === "string" ? body.detail : undefined;
+      throw new ApiError(res.status, detail);
+    } catch (err) {
+      if (err instanceof ApiError) throw err;
+    }
+  }
+  throw new ApiError(res.status);
 }
 
 async function postJson<T>(path: string, body: unknown, withAuth = true): Promise<T> {
@@ -129,15 +146,22 @@ async function postJson<T>(path: string, body: unknown, withAuth = true): Promis
     headers,
     body: JSON.stringify(body),
   });
-  if (!res.ok) {
-    throw new ApiError(res.status);
-  }
+  await raiseForStatus(res);
   return res.json() as Promise<T>;
 }
 
 async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, { headers: authHeaders() });
-  if (!res.ok) throw new ApiError(res.status);
+  await raiseForStatus(res);
+  return res.json() as Promise<T>;
+}
+
+async function deleteJson<T>(path: string): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  await raiseForStatus(res);
   return res.json() as Promise<T>;
 }
 
@@ -155,6 +179,10 @@ export async function login(email: string, password: string): Promise<TokenRespo
 
 export async function fetchMe(): Promise<UserProfile> {
   return getJson("/v1/me");
+}
+
+export async function eraseAccount(): Promise<{ status: string }> {
+  return deleteJson("/v1/me");
 }
 
 export async function fetchConsents(): Promise<ConsentRecord[]> {

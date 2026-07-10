@@ -3,6 +3,7 @@ import {
   ApiError,
   confirmEmergency,
   dispatchEmergency,
+  eraseAccount,
   fetchConsents,
   fetchEmergencyAllowlist,
   fetchEmergencyLogs,
@@ -50,7 +51,10 @@ function verdictLabel(locale: Locale, verdict: Verdict): string {
 
 function scanErrorMessage(locale: Locale, err: unknown): string {
   if (err instanceof ApiError && err.status === 429) {
-    return t(locale, "rateLimited");
+    return err.detail?.trim() || t(locale, "rateLimited");
+  }
+  if (err instanceof ApiError && err.detail?.trim()) {
+    return err.detail;
   }
   return t(locale, "error");
 }
@@ -77,10 +81,27 @@ export default function App() {
   const [confirmToken, setConfirmToken] = useState<string | null>(null);
   const [emergencyMsg, setEmergencyMsg] = useState<string | null>(null);
   const [emergencyBusy, setEmergencyBusy] = useState(false);
+  const [online, setOnline] = useState(
+    typeof navigator === "undefined" ? true : navigator.onLine,
+  );
+  const [erasureMsg, setErasureMsg] = useState<string | null>(null);
+  const [erasureBusy, setErasureBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
+
+  useEffect(() => {
+    const on = () => setOnline(true);
+    const off = () => setOnline(false);
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    return () => {
+      window.removeEventListener("online", on);
+      window.removeEventListener("offline", off);
+    };
+  }, []);
 
   useEffect(() => {
     const token = getToken();
@@ -204,6 +225,21 @@ export default function App() {
     setView("scan");
   }
 
+  async function onEraseAccount() {
+    if (!window.confirm(t(locale, "erasureConfirm"))) return;
+    setErasureBusy(true);
+    setErasureMsg(null);
+    try {
+      await eraseAccount();
+      onLogout();
+      setNotice(t(locale, "erasureDone"));
+    } catch {
+      setErasureMsg(t(locale, "erasureFail"));
+    } finally {
+      setErasureBusy(false);
+    }
+  }
+
   async function toggleConsent(type: string, granted: boolean) {
     const row = await upsertConsent(type, granted);
     setConsents((prev) => {
@@ -260,6 +296,11 @@ export default function App() {
 
   return (
     <div className="shell">
+      {!online ? (
+        <div className="offline-banner" role="status">
+          {t(locale, "offlineBanner")}
+        </div>
+      ) : null}
       <header className="topbar">
         <nav className="nav">
           <button
@@ -357,6 +398,7 @@ export default function App() {
 
             <p className="note">{t(locale, "guestNote")}</p>
             <p className="privacy">{t(locale, "privacy")}</p>
+            {notice ? <p className="note">{notice}</p> : null}
             {error ? <p className="error">{error}</p> : null}
             {result ? (
               <section className="result" aria-live="polite">
@@ -487,6 +529,20 @@ export default function App() {
               />
               {t(locale, "consentEmergency")}
             </label>
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "erasureTitle")}</h2>
+            <p>{t(locale, "erasureBody")}</p>
+            <button
+              type="button"
+              className="secondary"
+              disabled={erasureBusy}
+              onClick={() => void onEraseAccount()}
+            >
+              {t(locale, "erasureCta")}
+            </button>
+            {erasureMsg ? <p className="note">{erasureMsg}</p> : null}
           </section>
 
           <section className="history-block">

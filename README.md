@@ -2,6 +2,8 @@
 
 Mudofaa-only xavfsizlik ekotizimi (Android + Windows + Web). **Hujum / exploit / C2 vositalari yo‘q.**
 
+**Version:** 0.2.1
+
 ## Holat
 
 | Qatlam | Holat |
@@ -81,7 +83,8 @@ PYTHONPATH=apps/api python scripts/smoke_v1.py
 6. Android/Windows shell stubs + ed25519 feed + on-device SMS foundation  
 
 Keyingi: Legal privacy/AQ-039, store screenshotlar.
-Holat: [`06-merge-ready-status.md`](docs/cyber-guardian-ai/operations/06-merge-ready-status.md) (PR #1 → `main`).
+Holat: [`06-merge-ready-status.md`](docs/cyber-guardian-ai/operations/06-merge-ready-status.md)
+(PR #1–#2 → `main`; keyingi polish PR ochiq bo‘lishi mumkin).
 
 ## Hujjatlar
 
