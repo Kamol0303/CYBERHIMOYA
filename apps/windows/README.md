@@ -6,7 +6,8 @@
 ## Scope (next sprints)
 
 - Desktop tray + scan UI (URL / file hash)
-- Future: process/memory telemetry (read-only), Sigma/YARA packs
+- Process monitoring stub: `Monitoring/ProcessMonitor.cs` (FR-070, detect/warn only)
+- Future: Sigma/YARA packs, registry/USB hooks
 - Defensive playbooks: local block / isolate / alert only
 
 ## Suggested stack

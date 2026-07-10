@@ -23,6 +23,7 @@ Token `chrome-extension://*` expands to `allow_origin_regex` so the MV3 popup ca
 | POST | `/v1/auth/revoke` | Bearer |
 | GET/DELETE | `/v1/me` | Bearer |
 | GET | `/v1/me/stats` | Bearer |
+| POST | `/v1/behavior/analyze` | Bearer |
 | GET/POST | `/v1/consents` | Bearer |
 | POST | `/v1/scan/url` | optional |
 | POST | `/v1/scan/qr` | optional |

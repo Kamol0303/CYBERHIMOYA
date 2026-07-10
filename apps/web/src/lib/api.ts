@@ -209,6 +209,42 @@ export async function fetchMeStats() {
   }>("/v1/me/stats");
 }
 
+export async function analyzeBehavior(limit = 50) {
+  return postJson<{
+    score: number;
+    verdict: string;
+    confidence: number;
+    recommended_action: string;
+    reasons: { code: string; message_key: string }[];
+    mitre_tags: string[];
+    window: {
+      scans: number;
+      threat_events: number;
+      malicious_scans: number;
+      critical_events: number;
+    };
+  }>(`/v1/behavior/analyze?limit=${limit}`, {});
+}
+
+export async function fetchThreatEvents(severity?: string, mitre?: string) {
+  const params = new URLSearchParams();
+  if (severity) params.set("severity", severity);
+  if (mitre) params.set("mitre", mitre);
+  const q = params.toString() ? `?${params}` : "";
+  return getJson<
+    {
+      event_id: string;
+      category: string;
+      severity: string;
+      subject_hash: string;
+      mitre_tags: string[];
+      score: number | null;
+      scam_family: string | null;
+      detected_at: string;
+    }[]
+  >(`/v1/threat-events${q}`);
+}
+
 export async function eraseAccount(): Promise<{ status: string }> {
   return deleteJson("/v1/me");
 }
@@ -384,22 +420,6 @@ export async function fetchDevices() {
 
 export async function revokeDevice(deviceId: string): Promise<void> {
   await deleteVoid(`/v1/devices/${deviceId}`);
-}
-
-export async function fetchThreatEvents(severity?: string) {
-  const q = severity ? `?severity=${encodeURIComponent(severity)}` : "";
-  return getJson<
-    {
-      event_id: string;
-      category: string;
-      severity: string;
-      subject_hash: string;
-      mitre_tags: string[];
-      score: number | null;
-      scam_family: string | null;
-      detected_at: string;
-    }[]
-  >(`/v1/threat-events${q}`);
 }
 
 export async function fetchNotifications(unreadOnly = false) {
