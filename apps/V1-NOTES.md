@@ -8,12 +8,11 @@
 - Docker Compose (api + web)
 - Android/Windows shell docs
 
-### Sprint 1.9 (this update)
-- Web PWA manifest + icon
-- Extension uz/ru/en
-- Play / MS Store listing stubs
-- API 0.2.0 OpenAPI tags + guest rate-limit response headers
-- CONTRIBUTING, CHANGELOG, editorconfig
+### Sprint 1.10 (this update)
+- Play Data safety + MS Partner Center drafts
+- Screenshot capture guides
+- Merge-ready status doc (`06-merge-ready-status.md`)
+- Release checklist marked verified for automated gates
 
 ## Emergency dry-run
 

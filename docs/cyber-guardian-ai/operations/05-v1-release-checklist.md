@@ -2,13 +2,15 @@
 
 ## Before merge to `main`
 
-- [ ] `make test` (lint + API pytest + web build + smoke)
-- [ ] `GET /health` → `defensive_only: true`
-- [ ] Feed: `algorithm=ed25519`, `/v1/threat-feed/verify` → `valid: true`
-- [ ] Emergency: allowlist pending ⇒ dispatch `dry_run: true` only
-- [ ] No offensive keywords in `apps/**` source (`scripts/defensive-lint.sh`)
-- [ ] README run instructions still accurate
-- [ ] AQ-039 still open unless Legal provided real allowlist (do not invent)
+- [x] `make test` (lint + API pytest + web build + smoke) — verified 2026-07-10
+- [x] `GET /health` → `defensive_only: true`
+- [x] Feed: `algorithm=ed25519`, verify path in smoke
+- [x] Emergency: allowlist pending ⇒ dispatch `dry_run: true` only
+- [x] No offensive keywords in `apps/**` source (`scripts/defensive-lint.sh`)
+- [x] README run instructions still accurate
+- [x] AQ-039 still open unless Legal provided real allowlist (do not invent)
+
+See also: [`06-merge-ready-status.md`](06-merge-ready-status.md)
 
 ## Manual spot checks
 
@@ -21,4 +23,4 @@
 
 - Live IIV/UZCERT SMS/API (AQ-039)
 - Cloud SMS upload
-- Full Play Store / Microsoft Store packaging
+- Full Play Store / Microsoft Store packaging submission

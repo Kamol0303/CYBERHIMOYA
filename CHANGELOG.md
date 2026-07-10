@@ -5,7 +5,9 @@
 - V1 defensive platform: API, Web, extension, Android/Windows shells
 - ed25519 threat-feed CDN
 - Emergency consent/confirm/dispatch (dry-run until AQ-039)
-- PWA manifest, store listing stubs, smoke/`make test`
+- PWA manifest, store listing/data-safety stubs, smoke/`make test`
+- Security headers, `/v1/metrics`, Docker healthchecks
+- Merge-ready status documentation
 
 ## 0.1.0 — 2026-07-10
 

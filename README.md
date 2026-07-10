@@ -70,7 +70,7 @@ PYTHONPATH=apps/api python scripts/smoke_v1.py
 5. Guest rate-limit + CI + defensive-only lint  
 6. Android/Windows shell stubs + ed25519 feed + on-device SMS foundation  
 
-Keyingi: `main` ga merge, Legal AQ-039, store packaging.
+Keyingi: PR merge → `main`, Legal privacy/AQ-039, store screenshotlar.
 
 ## Hujjatlar
 

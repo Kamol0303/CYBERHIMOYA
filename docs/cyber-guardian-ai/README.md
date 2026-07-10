@@ -35,6 +35,7 @@ Bitta branch.
 | `operations/04-aq039-allowlist-runbook.md` | Emergency allowlist (Legal) |
 | `operations/aq039-allowlist.env.template` | Env shablon (`REPLACE_*`) |
 | `operations/05-v1-release-checklist.md` | Merge/release checklist |
+| `operations/06-merge-ready-status.md` | Verified gate status |
 
 ---
 
