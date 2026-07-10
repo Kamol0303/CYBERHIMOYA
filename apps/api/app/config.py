@@ -1,0 +1,17 @@
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="CGA_", env_file=".env", extra="ignore")
+
+    app_name: str = "Cyber Guardian AI API"
+    environment: str = "dev"
+    secret_key: str = "dev-only-change-me-cga-v1"
+    access_token_ttl_seconds: int = 900
+    refresh_token_ttl_seconds: int = 60 * 60 * 24 * 14
+    guest_rate_limit_per_hour: int = 20
+    feed_version: str = "20260710.1"
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+
+
+settings = Settings()

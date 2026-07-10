@@ -1,0 +1,364 @@
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  gap: 1rem;
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-link.active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+  font-weight: 700;
+}
+
+.lang {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.lang select {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 1rem 1.5rem 3rem;
+  min-height: calc(100vh - 7rem);
+  animation: rise 700ms ease-out both;
+}
+
+.hero-copy {
+  max-width: 38rem;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0 0 0.75rem;
+  color: var(--bg-deep);
+  letter-spacing: -0.02em;
+  animation: brand-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.hero h1,
+.dashboard h1 {
+  font-family: var(--font-body);
+  font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  color: var(--bg-mid);
+}
+
+.support {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  line-height: 1.55;
+  max-width: 34rem;
+}
+
+.scan-form {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.scan-form input {
+  flex: 1 1 16rem;
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.82);
+  outline: none;
+}
+
+.scan-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(43, 182, 115, 0.2);
+}
+
+.scan-form button {
+  padding: 0.9rem 1.25rem;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+.scan-form button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.scan-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.note,
+.privacy {
+  margin: 0.85rem 0 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.error {
+  color: var(--danger);
+  margin-top: 0.75rem;
+}
+
+.result {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  animation: rise 400ms ease-out both;
+}
+
+.result h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.normalized {
+  word-break: break-all;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+
+.meta dt {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.meta dd {
+  margin: 0.2rem 0 0;
+  font-weight: 700;
+}
+
+.score {
+  display: inline-block;
+  min-width: 2.5rem;
+}
+
+.score-malicious {
+  color: var(--danger);
+}
+
+.score-suspicious {
+  color: var(--warn);
+}
+
+.score-clean {
+  color: var(--accent-deep);
+}
+
+.reasons {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.reasons-title {
+  width: 100%;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.reasons li:not(.reasons-title) {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.55rem;
+  background: rgba(18, 52, 71, 0.08);
+  border-radius: 6px;
+}
+
+.hero-visual {
+  position: relative;
+  min-height: 22rem;
+  display: grid;
+  place-items: center;
+}
+
+.shield-plane {
+  position: relative;
+  width: min(100%, 22rem);
+  aspect-ratio: 1;
+  border-radius: 40% 40% 36% 36%;
+  background:
+    linear-gradient(160deg, rgba(11, 31, 42, 0.92), rgba(26, 74, 92, 0.85)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath fill='none' stroke='%232bb673' stroke-opacity='0.25' d='M0 60h120M60 0v120'/%3E%3C/svg%3E");
+  box-shadow: 0 30px 80px rgba(11, 31, 42, 0.28);
+  overflow: hidden;
+  animation: float 5.5s ease-in-out infinite;
+}
+
+.shield-ring {
+  position: absolute;
+  inset: 14%;
+  border: 2px solid rgba(43, 182, 115, 0.45);
+  border-radius: 50%;
+  animation: pulse-ring 2.8s ease-in-out infinite;
+}
+
+.shield-core {
+  position: absolute;
+  inset: 32%;
+  border-radius: 28% 28% 34% 34%;
+  background: linear-gradient(180deg, rgba(232, 220, 200, 0.95), rgba(43, 182, 115, 0.85));
+}
+
+.scan-beam {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  top: 20%;
+  background: linear-gradient(90deg, transparent, rgba(243, 247, 244, 0.9), transparent);
+  animation: beam 2.4s linear infinite;
+}
+
+.dashboard {
+  padding: 2rem 1.5rem 3rem;
+  max-width: 40rem;
+  animation: rise 500ms ease-out both;
+}
+
+.consent-block {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.consent-block h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.footer {
+  padding: 1rem 1.5rem 1.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes brand-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-ring {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+@keyframes beam {
+  from {
+    top: 18%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    top: 78%;
+    opacity: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .hero-visual {
+    order: -1;
+    min-height: 14rem;
+  }
+
+  .shield-plane {
+    width: min(100%, 16rem);
+  }
+}

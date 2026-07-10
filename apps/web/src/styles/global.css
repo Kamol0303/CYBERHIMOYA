@@ -1,0 +1,46 @@
+:root {
+  --bg-deep: #0b1f2a;
+  --bg-mid: #123447;
+  --bg-soft: #1a4a5c;
+  --sand: #e8dcc8;
+  --foam: #f3f7f4;
+  --accent: #2bb673;
+  --accent-deep: #1a7a4c;
+  --warn: #d97706;
+  --danger: #c23b3b;
+  --ink: #0e2430;
+  --muted: #5a7380;
+  --line: rgba(14, 36, 48, 0.12);
+  --font-display: "Source Serif 4", Georgia, serif;
+  --font-body: "Manrope", "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(43, 182, 115, 0.18), transparent 55%),
+    radial-gradient(900px 500px at 90% 0%, rgba(26, 74, 92, 0.35), transparent 50%),
+    linear-gradient(165deg, #f7f3ea 0%, #eef4f1 42%, #e4eef0 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  color: var(--accent-deep);
+}
