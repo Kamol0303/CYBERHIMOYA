@@ -542,6 +542,58 @@ class PostgresStore:
             )
         self._conn.commit()
 
+    def add_threat_event(self, row) -> None:
+        raise NotImplementedError("threat_events: use SQLite store in V1.4 or extend PostgresStore")
+
+    def find_recent_threat_event(self, user_id: UUID, subject_hash: str, within_seconds: int = 900):
+        return None
+
+    def list_threat_events(self, user_id: UUID, limit: int = 50, severity: str | None = None):
+        return []
+
+    def get_threat_event(self, user_id: UUID, event_id: UUID):
+        return None
+
+    def add_notification(self, row) -> None:
+        raise NotImplementedError("notifications: use SQLite store in V1.4 or extend PostgresStore")
+
+    def list_notifications(self, user_id: UUID, unread_only: bool = False, limit: int = 50):
+        return []
+
+    def mark_notification_read(self, user_id: UUID, notification_id: UUID) -> bool:
+        return False
+
+    def add_report(self, row) -> None:
+        raise NotImplementedError("reports: use SQLite store in V1.4 or extend PostgresStore")
+
+    def get_report(self, user_id: UUID, report_id: UUID):
+        return None
+
+    def get_scan(self, user_id: UUID, scan_id: UUID):
+        return None
+
+    def add_risk_score_history(self, row) -> None:
+        raise NotImplementedError(
+            "risk_score_history: use SQLite store in V1.4 or extend PostgresStore"
+        )
+
+    def list_risk_score_history(self, user_id: UUID, limit: int = 50):
+        return []
+
+    def add_domain_allowlist(self, user_id: UUID, domain: str, note: str | None = None):
+        raise NotImplementedError(
+            "domain_allowlist: use SQLite store in V1.4 or extend PostgresStore"
+        )
+
+    def list_domain_allowlist(self, user_id: UUID):
+        return []
+
+    def is_domain_allowlisted(self, user_id: UUID, domain: str) -> bool:
+        return False
+
+    def remove_domain_allowlist(self, user_id: UUID, entry_id: UUID) -> bool:
+        return False
+
     @property
     def refresh_tokens(self) -> "_PgRefreshTokenProxy":
         return _PgRefreshTokenProxy(self._conn)

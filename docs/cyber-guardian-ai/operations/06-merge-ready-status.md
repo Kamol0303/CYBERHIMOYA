@@ -1,23 +1,28 @@
 # V1 merge-ready status
 
-**Branch:** `CURSOR/v1-stage-next-b1ff` (0.3.0)  
-**API version:** 0.3.0  
+**Branch:** `CURSOR/v1-0-3-1-polish-b1ff` (0.4.1)  
+**API version:** 0.4.1  
 **Verified:** 2026-07-10 (agent run)
 
 ## Automated gates
 
 | Gate | Result |
 |------|--------|
-| Defensive lint | PASS |
-| API pytest | 33 passed |
-| Smoke `scripts/smoke_v1.py` | 22/22 |
-| Web `npm test` + `npm run build` | PASS |
-| Extension validate | PASS |
+| Defensive lint | run via `make test` |
+| API pytest | included in `make test` |
+| Smoke `scripts/smoke_v1.py` | included in `make test` |
+| Web `npm test` + `npm run build` | included in `make test` |
+| Extension validate | FR-062 content script + background |
 
-## 0.3.0 additions
+## 0.4.1 additions
 
-- Suspicious message report, breach-check, devices
-- Hunting metadata on scans (`intent_tags`, `campaign_id`)
+- DNS domain check + user allowlist (FR-060)
+
+## 0.4.0 additions
+
+- Threat events, notifications, reports
+- Password health (FR-050), scan detail, risk-score history
+- Extension phishing banner (FR-062)
 
 ## Remaining human actions
 

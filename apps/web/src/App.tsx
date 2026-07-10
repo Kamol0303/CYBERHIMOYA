@@ -9,13 +9,25 @@ import {
   fetchEmergencyAllowlist,
   fetchEmergencyLogs,
   fetchMe,
+  fetchMeStats,
+  fetchNotifications,
   fetchScans,
+  fetchThreatEvents,
   fetchThreatFeedSync,
+  createReport,
+  markNotificationRead,
+  passwordHealth,
+  fetchRiskHistory,
+  dnsCheck,
+  fetchDnsAllowlist,
+  addDnsAllowlist,
+  removeDnsAllowlist,
   getToken,
   login,
   register,
   registerDevice,
   reportSuspiciousMessage,
+  revokeDevice,
   breachCheck,
   scanFileHash,
   scanQr,
@@ -34,6 +46,12 @@ import {
   type Verdict,
 } from "./lib/api";
 import { locales, t, tCode, type Locale } from "./i18n/messages";
+import {
+  clearGuestHistory,
+  loadGuestHistory,
+  pushGuestScan,
+  type GuestScanItem,
+} from "./lib/guestHistory";
 import "./App.css";
 
 type ScanMode = "url" | "qr" | "file";
@@ -102,6 +120,33 @@ export default function App() {
   const [devices, setDevices] = useState<{ id: string; platform: string; app_version: string }[]>(
     [],
   );
+  const [guestHistory, setGuestHistory] = useState<GuestScanItem[]>([]);
+  const [deviceBusy, setDeviceBusy] = useState<string | null>(null);
+  const [threatEvents, setThreatEvents] = useState<
+    { event_id: string; category: string; severity: string; score: number | null }[]
+  >([]);
+  const [notifications, setNotifications] = useState<
+    { id: string; level: string; body_key: string; read_at: string | null }[]
+  >([]);
+  const [reportMsg, setReportMsg] = useState<string | null>(null);
+  const [pwdInput, setPwdInput] = useState("");
+  const [pwdResult, setPwdResult] = useState<string | null>(null);
+  const [riskHistory, setRiskHistory] = useState<
+    { id: string; subject_type: string; score: number; created_at: string }[]
+  >([]);
+  const [dnsDomain, setDnsDomain] = useState("");
+  const [dnsResult, setDnsResult] = useState<string | null>(null);
+  const [dnsAllowlist, setDnsAllowlist] = useState<
+    { id: string; domain: string; note: string | null }[]
+  >([]);
+  const [meStats, setMeStats] = useState<{
+    scans: number;
+    threat_events: number;
+    unread_notifications: number;
+    domain_allowlist: number;
+    risk_history: number;
+    devices: number;
+  } | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -120,9 +165,17 @@ export default function App() {
 
   useEffect(() => {
     const token = getToken();
-    if (!token) return;
+    if (!token) {
+      setGuestHistory(loadGuestHistory());
+      return;
+    }
     void fetchMe()
-      .then(setUser)
+      .then(async (me) => {
+        setUser(me);
+        clearGuestHistory();
+        setGuestHistory([]);
+        await registerDevice("web").catch(() => undefined);
+      })
       .catch(() => setToken(null));
   }, []);
 
@@ -132,13 +185,30 @@ export default function App() {
       setConsents([]);
       return;
     }
-    const [scans, consentRows, feedSync, allowlist, emLogs, deviceRows] = await Promise.all([
+    const [
+      scans,
+      consentRows,
+      feedSync,
+      allowlist,
+      emLogs,
+      deviceRows,
+      events,
+      notifs,
+      risks,
+      dnsRows,
+      stats,
+    ] = await Promise.all([
       fetchScans(),
       fetchConsents(),
       fetchThreatFeedSync(),
       fetchEmergencyAllowlist(),
       fetchEmergencyLogs(),
       fetchDevices().catch(() => []),
+      fetchThreatEvents().catch(() => []),
+      fetchNotifications().catch(() => []),
+      fetchRiskHistory().catch(() => []),
+      fetchDnsAllowlist().catch(() => []),
+      fetchMeStats().catch(() => null),
     ]);
     setHistory(scans);
     setConsents(consentRows);
@@ -146,6 +216,11 @@ export default function App() {
     setEmergency(allowlist);
     setEmergencyLogs(emLogs);
     setDevices(deviceRows);
+    setThreatEvents(events);
+    setNotifications(notifs);
+    setRiskHistory(risks);
+    setDnsAllowlist(dnsRows);
+    setMeStats(stats);
   }
 
   useEffect(() => {
@@ -175,6 +250,17 @@ export default function App() {
           campaign_id: data.campaign_id,
           actor_hint: data.actor_hint,
         });
+        if (!getToken()) {
+          setGuestHistory(
+            pushGuestScan({
+              mode: "url",
+              title: data.url_normalized,
+              score: data.score,
+              verdict: data.verdict,
+              scanned_at: new Date().toISOString(),
+            }),
+          );
+        }
       } else if (mode === "qr") {
         const data = await scanQr(qrPayload.trim());
         setResult({
@@ -189,6 +275,17 @@ export default function App() {
           campaign_id: data.campaign_id,
           actor_hint: data.actor_hint,
         });
+        if (!getToken()) {
+          setGuestHistory(
+            pushGuestScan({
+              mode: "qr",
+              title: data.url_normalized ?? data.payload_preview,
+              score: data.score,
+              verdict: data.verdict,
+              scanned_at: new Date().toISOString(),
+            }),
+          );
+        }
       }
     } catch (err) {
       setError(scanErrorMessage(locale, err));
@@ -214,7 +311,20 @@ export default function App() {
         scam_family: data.scam_family,
         mitre_tags: data.mitre_tags,
         reasons: data.reasons,
+        intent_tags: data.intent_tags,
+        campaign_id: data.campaign_id,
       });
+      if (!getToken()) {
+        setGuestHistory(
+          pushGuestScan({
+            mode: "file",
+            title: file.name,
+            score: data.score,
+            verdict: data.verdict,
+            scanned_at: new Date().toISOString(),
+          }),
+        );
+      }
     } catch (err) {
       setError(scanErrorMessage(locale, err));
       setResult(null);
@@ -233,6 +343,8 @@ export default function App() {
       setToken(tokens.access_token);
       const me = await fetchMe();
       setUser(me);
+      clearGuestHistory();
+      setGuestHistory([]);
       void registerDevice("web").catch(() => undefined);
       setPassword("");
       setView("dashboard");
@@ -421,6 +533,21 @@ export default function App() {
             )}
 
             <p className="note">{t(locale, "guestNote")}</p>
+            {!user && guestHistory.length > 0 ? (
+              <section className="history-block" style={{ marginTop: "1rem" }}>
+                <h2 style={{ fontSize: "1rem" }}>{t(locale, "guestHistoryTitle")}</h2>
+                <p className="note">{t(locale, "guestHistoryHint")}</p>
+                <ul className="history-list">
+                  {guestHistory.map((item) => (
+                    <li key={`${item.scanned_at}-${item.title}`}>
+                      <span className={`score score-${item.verdict}`}>{item.score}</span>
+                      <span>{item.title}</span>
+                      <span className="hash">{item.mode}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
             <p className="privacy">{t(locale, "privacy")}</p>
             {notice ? <p className="note">{notice}</p> : null}
             {error ? <p className="error">{error}</p> : null}
@@ -537,6 +664,15 @@ export default function App() {
           <p className="support">
             {t(locale, "signedInAs")}: {user.email}
           </p>
+          {meStats ? (
+            <p className="note">
+              {t(locale, "statsLine")
+                .replace("{scans}", String(meStats.scans))
+                .replace("{events}", String(meStats.threat_events))
+                .replace("{unread}", String(meStats.unread_notifications))
+                .replace("{devices}", String(meStats.devices))}
+            </p>
+          ) : null}
 
           <section className="consent-block">
             <h2>{t(locale, "consentTitle")}</h2>
@@ -565,6 +701,200 @@ export default function App() {
               />
               {t(locale, "consentEmergency")}
             </label>
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "activityTitle")}</h2>
+            <p className="note">{t(locale, "activityHint")}</p>
+            {threatEvents.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {threatEvents.slice(0, 10).map((e) => (
+                  <li key={e.event_id}>
+                    <span className="score">{e.severity}</span>
+                    <span>
+                      {e.category} · {e.score ?? "—"}
+                    </span>
+                    <span className="hash">{e.event_id.slice(0, 8)}…</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "riskHistoryTitle")}</h2>
+            <p className="note">{t(locale, "riskHistoryHint")}</p>
+            {riskHistory.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {riskHistory.slice(0, 10).map((r) => (
+                  <li key={r.id}>
+                    <span className="score">{r.score}</span>
+                    <span>{r.subject_type}</span>
+                    <span className="hash">{r.created_at.slice(0, 19)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "dnsTitle")}</h2>
+            <p className="note">{t(locale, "dnsHint")}</p>
+            <input
+              value={dnsDomain}
+              onChange={(e) => setDnsDomain(e.target.value)}
+              placeholder="example.uz"
+              style={{ width: "100%", marginTop: "0.5rem" }}
+            />
+            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                disabled={!dnsDomain.trim()}
+                onClick={() => {
+                  void dnsCheck(dnsDomain.trim())
+                    .then((r) =>
+                      setDnsResult(
+                        `${r.domain}: ${r.verdict} · score=${r.score}${r.allowlisted ? " · allowlist" : ""}`,
+                      ),
+                    )
+                    .catch(() => setDnsResult(t(locale, "error")));
+                }}
+              >
+                {t(locale, "dnsCheck")}
+              </button>
+              <button
+                type="button"
+                className="secondary"
+                disabled={!dnsDomain.trim()}
+                onClick={() => {
+                  void addDnsAllowlist(dnsDomain.trim())
+                    .then((row) => {
+                      setDnsAllowlist((prev) => [row, ...prev.filter((x) => x.id !== row.id)]);
+                      setDnsDomain("");
+                      setDnsResult(t(locale, "dnsAdded"));
+                    })
+                    .catch(() => setDnsResult(t(locale, "error")));
+                }}
+              >
+                {t(locale, "dnsAllow")}
+              </button>
+            </div>
+            {dnsResult ? <p className="note">{dnsResult}</p> : null}
+            {dnsAllowlist.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {dnsAllowlist.map((d) => (
+                  <li key={d.id}>
+                    <span>{d.domain}</span>
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => {
+                        void removeDnsAllowlist(d.id)
+                          .then(() => setDnsAllowlist((prev) => prev.filter((x) => x.id !== d.id)))
+                          .catch(() => undefined);
+                      }}
+                    >
+                      {t(locale, "dnsRemove")}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "notificationsTitle")}</h2>
+            {notifications.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {notifications.slice(0, 10).map((n) => (
+                  <li key={n.id}>
+                    <span className="score">{n.level}</span>
+                    <span>{tCode(locale, n.body_key)}</span>
+                    {!n.read_at ? (
+                      <button
+                        type="button"
+                        className="secondary"
+                        onClick={() => {
+                          void markNotificationRead(n.id)
+                            .then(() =>
+                              setNotifications((prev) =>
+                                prev.map((x) =>
+                                  x.id === n.id ? { ...x, read_at: new Date().toISOString() } : x,
+                                ),
+                              ),
+                            )
+                            .catch(() => undefined);
+                        }}
+                      >
+                        {t(locale, "markRead")}
+                      </button>
+                    ) : (
+                      <span className="hash">read</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "reportTitle")}</h2>
+            <p className="note">{t(locale, "reportHint")}</p>
+            <button
+              type="button"
+              onClick={() => {
+                const to = new Date();
+                const from = new Date(to.getTime() - 30 * 24 * 3600 * 1000);
+                void createReport(from.toISOString(), to.toISOString())
+                  .then((r) => {
+                    const scans = (r.payload as { sections?: { scan?: { count?: number } } })
+                      ?.sections?.scan?.count;
+                    setReportMsg(`${t(locale, "reportReady")}: ${r.report_id.slice(0, 8)}… (${scans ?? 0})`);
+                  })
+                  .catch(() => setReportMsg(t(locale, "error")));
+              }}
+            >
+              {t(locale, "reportCta")}
+            </button>
+            {reportMsg ? <p className="note">{reportMsg}</p> : null}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "pwdTitle")}</h2>
+            <p className="note">{t(locale, "pwdHint")}</p>
+            <input
+              type="password"
+              value={pwdInput}
+              onChange={(e) => setPwdInput(e.target.value)}
+              placeholder="••••••••"
+              style={{ width: "100%", marginTop: "0.5rem" }}
+              autoComplete="new-password"
+            />
+            <button
+              type="button"
+              style={{ marginTop: "0.5rem" }}
+              disabled={!pwdInput}
+              onClick={() => {
+                void passwordHealth(pwdInput)
+                  .then((r) => {
+                    const pwned = r.pwned_local ? " · pwned_local" : "";
+                    setPwdResult(`${r.verdict} · score=${r.score}${pwned}`);
+                    setPwdInput("");
+                  })
+                  .catch(() => setPwdResult(t(locale, "error")));
+              }}
+            >
+              {t(locale, "pwdCta")}
+            </button>
+            {pwdResult ? <p className="note">{pwdResult}</p> : null}
           </section>
 
           <section className="consent-block">
@@ -633,10 +963,13 @@ export default function App() {
                       setBreachResult(t(locale, "breachClean"));
                       return;
                     }
+                    const recs = r.recommendations
+                      .map((code) => tCode(locale, `breach.rec.${code}`))
+                      .join(", ");
                     setBreachResult(
                       `${t(locale, "breachFound")}: ${r.breach_count} · ${r.breaches
                         .map((b) => b.name)
-                        .join(", ")} · ${r.recommendations.join(", ")}`,
+                        .join(", ")} · ${recs}`,
                     );
                   })
                   .catch(() => setBreachResult(t(locale, "error")));
@@ -657,7 +990,20 @@ export default function App() {
                   <li key={d.id}>
                     <span className="score">{d.platform}</span>
                     <span>{d.app_version}</span>
-                    <span className="hash">{d.id.slice(0, 8)}…</span>
+                    <button
+                      type="button"
+                      className="secondary"
+                      disabled={deviceBusy === d.id}
+                      onClick={() => {
+                        setDeviceBusy(d.id);
+                        void revokeDevice(d.id)
+                          .then(() => setDevices((prev) => prev.filter((x) => x.id !== d.id)))
+                          .catch(() => undefined)
+                          .finally(() => setDeviceBusy(null));
+                      }}
+                    >
+                      {t(locale, "deviceRevoke")}
+                    </button>
                   </li>
                 ))}
               </ul>

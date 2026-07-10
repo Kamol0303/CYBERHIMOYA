@@ -174,6 +174,16 @@ class RiskScoreResponse(BaseModel):
     model_version: str = "score-2026.07.1"
 
 
+class RiskScoreHistoryItem(BaseModel):
+    id: UUID
+    subject_type: str
+    subject_hash: str
+    score: int
+    confidence: float
+    model_version: str
+    created_at: datetime
+
+
 class ThreatFeedSyncResponse(BaseModel):
     version: str
     generated_at: datetime
@@ -190,6 +200,16 @@ class UserProfile(BaseModel):
     role: str
     locale: str
     created_at: datetime
+
+
+class MeStatsResponse(BaseModel):
+    scans: int
+    threat_events: int
+    unread_notifications: int
+    domain_allowlist: int
+    risk_history: int
+    devices: int
+    defensive_only: bool = True
 
 
 class HealthResponse(BaseModel):
@@ -250,6 +270,9 @@ class MetricsResponse(BaseModel):
     emergency_dry_run: bool
     scan_rows: int
     feed_version: str
+    threat_event_rows: int = 0
+    notification_rows: int = 0
+    domain_allowlist_rows: int = 0
 
 
 class MessageEntities(BaseModel):
@@ -313,3 +336,42 @@ class DeviceRecord(BaseModel):
     fingerprint: str
     created_at: datetime
     last_seen_at: datetime
+
+
+class ThreatEventItem(BaseModel):
+    event_id: UUID
+    category: str
+    severity: str
+    subject_hash: str
+    mitre_tags: list[str]
+    score: int | None = None
+    scam_family: str | None = None
+    detected_at: datetime
+
+
+class NotificationItem(BaseModel):
+    id: UUID
+    level: str
+    body_key: str
+    body_params: dict[str, Any] = Field(default_factory=dict)
+    subject_hash: str | None = None
+    related_event_id: UUID | None = None
+    read_at: datetime | None = None
+    created_at: datetime
+
+
+class ReportCreateRequest(BaseModel):
+    from_ts: datetime = Field(alias="from")
+    to_ts: datetime = Field(alias="to")
+    types: list[str] = Field(default_factory=lambda: ["scan", "threat_event"])
+    format: str = Field(default="json", pattern="^(json)$")
+    redact_pii: bool = True
+
+    model_config = {"populate_by_name": True}
+
+
+class ReportResponse(BaseModel):
+    report_id: UUID
+    status: str
+    created_at: datetime
+    payload: dict[str, Any] | None = None

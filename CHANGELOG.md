@@ -1,14 +1,38 @@
 # Changelog
 
+## 0.4.1 — 2026-07-10
+
+- `POST/GET/DELETE /v1/dns/*` — FR-060 domain check + user allowlist (audit)
+- Web dashboard DNS allowlist UI
+- Extension: local IOC cache from threat-feed sync (+ offline seed) for faster FR-062 warnings
+- Password health: local pwned seed (`pwned_local`, never logged)
+- Metrics: threat_event / notification / domain_allowlist counts
+- `GET /v1/me/stats` — dashboard counters; extension popup IOC sync status
+
+## 0.4.0 — 2026-07-10
+
+Activity layer: threat events, notifications, JSON reports (FR-090/091/092/093).
+
+- `GET /v1/threat-events` — emit on authenticated suspicious/malicious scans
+- `GET /v1/notifications` + `POST /{id}/read` — in-app alerts (body keys, no raw PII)
+- `POST/GET /v1/reports` — redacted JSON export
+- `GET /v1/scans/{id}` — scan detail
+- `POST /v1/password-health` — FR-050 strength check (never stored/logged)
+- `GET /v1/risk-score/history` — authenticated risk trail (scan-derived + POST /risk-score)
+- Extension FR-062: background nav scan + phishing page banner + session allowlist
+- Web dashboard: activity, notifications, report export, password health, risk history
+- Includes 0.3.1 polish: guest history, device revoke, QR hunting, YARA stub
+
 ## 0.3.0 — 2026-07-10
 
 P0 user tools + passive hunting metadata (FR-043 / FR-051 / FR-003 / FR-MX01).
 
 - `POST /v1/messages/suspicious` — PII-minimized message report + heuristics
 - `POST /v1/breach-check` — offline seed breach lookup (email hash only)
-- `POST/GET/DELETE /v1/devices` — linked device registry
-- Scan responses: `intent_tags`, `campaign_id`, `kill_chain_stage`
-- Web dashboard: message report (preview confirm), breach check, devices list
+- `POST/GET/DELETE /v1/devices` — linked device registry (+ web revoke)
+- Scan responses: `intent_tags`, `campaign_id`, `kill_chain_stage` (incl. QR non-URL)
+- Web: message preview confirm, breach i18n, guest `sessionStorage` history
+- File scan `run_yara` stub (name heuristic, no yara-python)
 
 ## 0.2.1 — 2026-07-10
 

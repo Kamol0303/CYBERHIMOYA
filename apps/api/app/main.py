@@ -11,7 +11,23 @@ from app.config import settings
 from app.cors_util import parse_cors_origins
 from app.models.schemas import HealthResponse, ProblemDetail
 from app.middleware_security import SecurityHeadersMiddleware
-from app.routers import auth, breach, consents, devices, emergency, feed, messages, ops, scan, scans
+from app.routers import (
+    auth,
+    breach,
+    consents,
+    devices,
+    dns,
+    emergency,
+    feed,
+    messages,
+    notifications,
+    ops,
+    reports,
+    scan,
+    scans,
+    threat_events,
+    password_health,
+)
 from app.services.feed import FEEDS_DIR, ensure_feed_files
 from app.services.rate_limit import GuestRateLimitExceeded
 
@@ -27,6 +43,11 @@ TAGS_METADATA = [
     {"name": "messages", "description": "Suspicious message reports (PII-minimized)"},
     {"name": "breach", "description": "Offline email breach check (hash lookup)"},
     {"name": "devices", "description": "Linked devices registry"},
+    {"name": "threat-events", "description": "Authenticated threat activity feed"},
+    {"name": "notifications", "description": "In-app alerts (no raw PII)"},
+    {"name": "reports", "description": "JSON export reports"},
+    {"name": "password-health", "description": "Password strength (never stored)"},
+    {"name": "dns", "description": "Domain check + user allowlist (FR-060)"},
 ]
 
 BEARER_SCHEME = {
@@ -157,6 +178,11 @@ api.include_router(ops.router)
 api.include_router(messages.router)
 api.include_router(breach.router)
 api.include_router(devices.router)
+api.include_router(threat_events.router)
+api.include_router(notifications.router)
+api.include_router(reports.router)
+api.include_router(password_health.router)
+api.include_router(dns.router)
 app.mount("/v1", api)
 
 FEEDS_DIR.mkdir(parents=True, exist_ok=True)

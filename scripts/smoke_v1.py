@@ -58,6 +58,14 @@ def main() -> int:
     ok("auth_register", reg.status_code == 201)
     token = reg.json().get("access_token", "")
     headers = {"Authorization": f"Bearer {token}"}
+    dev = client.post(
+        "/v1/devices/register",
+        headers=headers,
+        json={"platform": "web", "app_version": "0.3.0", "fingerprint": "smoke-fp"},
+    )
+    ok("device_register", dev.status_code == 200)
+    listed = client.get("/v1/devices", headers=headers)
+    ok("device_list", listed.status_code == 200 and len(listed.json()) >= 1)
     client.post("/v1/emergency/consent", headers=headers, json={"granted": True})
     conf = client.post(
         "/v1/emergency/confirm",
@@ -137,6 +145,26 @@ def main() -> int:
         and bool(r.json().get("intent_tags"))
         and bool(r.json().get("campaign_id")),
     )
+
+    # Authenticated threat event + notification
+    auth_scan = client.post(
+        "/v1/scan/url",
+        headers=headers,
+        json={"url": "http://gov-subsidy-uz.xyz/claim"},
+    )
+    ok("auth_scan", auth_scan.status_code == 200)
+    ev = client.get("/v1/threat-events", headers=headers)
+    ok("threat_events", ev.status_code == 200 and len(ev.json()) >= 1)
+    nf = client.get("/v1/notifications", headers=headers)
+    ok("notifications", nf.status_code == 200 and len(nf.json()) >= 1)
+    rh = client.get("/v1/risk-score/history", headers=headers)
+    ok("risk_history", rh.status_code == 200 and len(rh.json()) >= 1)
+    pwd = client.post("/v1/password-health", json={"password": "not-a-secret-demo"})
+    ok("password_health", pwd.status_code == 200 and "verdict" in pwd.json())
+    dns = client.post("/v1/dns/check", headers=headers, json={"domain": "pay-click-uz.tk"})
+    ok("dns_check", dns.status_code == 200 and dns.json().get("verdict") == "malicious")
+    st = client.get("/v1/me/stats", headers=headers)
+    ok("me_stats", st.status_code == 200 and st.json().get("scans", 0) >= 1)
 
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")

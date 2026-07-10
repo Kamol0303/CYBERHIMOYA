@@ -22,6 +22,7 @@ Token `chrome-extension://*` expands to `allow_origin_regex` so the MV3 popup ca
 | POST | `/v1/auth/token` | — |
 | POST | `/v1/auth/revoke` | Bearer |
 | GET/DELETE | `/v1/me` | Bearer |
+| GET | `/v1/me/stats` | Bearer |
 | GET/POST | `/v1/consents` | Bearer |
 | POST | `/v1/scan/url` | optional |
 | POST | `/v1/scan/qr` | optional |
@@ -39,6 +40,26 @@ Token `chrome-extension://*` expands to `allow_origin_regex` so the MV3 popup ca
 | POST | `/v1/emergency/dispatch` | Bearer |
 | GET | `/v1/emergency/logs` | Bearer |
 | GET | `/v1/metrics` | — |
+| POST | `/v1/messages/suspicious` | optional |
+| POST | `/v1/breach-check` | optional |
+| POST | `/v1/devices/register` | Bearer |
+| GET | `/v1/devices` | Bearer |
+| DELETE | `/v1/devices/{id}` | Bearer |
+| GET | `/v1/threat-events` | Bearer |
+| GET | `/v1/threat-events/{id}` | Bearer |
+| GET | `/v1/notifications` | Bearer |
+| POST | `/v1/notifications/{id}/read` | Bearer |
+| POST | `/v1/reports` | Bearer |
+| GET | `/v1/reports/{id}` | Bearer |
+| GET | `/v1/scans/{id}` | Bearer |
+| POST | `/v1/password-health` | — (never stored) |
+| GET | `/v1/risk-score/history` | Bearer |
+| POST | `/v1/dns/check` | Bearer |
+| GET/POST/DELETE | `/v1/dns/allowlist` | Bearer |
+
+Scan responses may include hunting fields: `intent_tags`, `campaign_id`, `kill_chain_stage`.
+`POST /v1/scan/file` accepts `run_yara` (V1 stub heuristics, no yara-python).
+Authenticated scans also append `risk_score_history` rows (FR-020 trail).
 
 Emergency dispatch stays **dry-run** until AQ-039 allowlists are set (env only).
 

@@ -464,3 +464,144 @@ def test_scan_url_hunting_metadata(client: TestClient):
     assert b1["campaign_id"]
     assert b1["campaign_id"] == b2["campaign_id"]
     assert b1["kill_chain_stage"] == "delivery"
+
+
+def test_scan_qr_payment_hunting_metadata(client: TestClient):
+    r = client.post("/v1/scan/qr", json={"payload_text": "payme sum=100000"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["qr_type"] == "payment"
+    assert body["intent_tags"]
+    assert body["campaign_id"]
+
+
+def test_file_yara_stub(client: TestClient):
+    r = client.post(
+        "/v1/scan/file",
+        json={
+            "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "file_name": "click-wallet.apk",
+            "run_yara": True,
+        },
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert any(m["rule"] == "stub_apk_lure" for m in body["yara_matches"])
+
+
+def test_threat_events_and_notifications(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "threat@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    assert client.post(
+        "/v1/scan/url", headers=headers, json={"url": "http://pay-click-uz.tk/x"}
+    ).status_code == 200
+    events = client.get("/v1/threat-events", headers=headers)
+    assert events.status_code == 200
+    assert len(events.json()) >= 1
+    assert events.json()[0]["severity"] in {"warning", "critical"}
+    notifs = client.get("/v1/notifications", headers=headers)
+    assert notifs.status_code == 200
+    assert len(notifs.json()) >= 1
+    nid = notifs.json()[0]["id"]
+    marked = client.post(f"/v1/notifications/{nid}/read", headers=headers)
+    assert marked.status_code == 200
+    assert marked.json()["read_at"] is not None
+
+
+def test_report_export(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "report@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    client.post("/v1/scan/url", headers=headers, json={"url": "https://example.com/"})
+    r = client.post(
+        "/v1/reports",
+        headers=headers,
+        json={
+            "from": "2020-01-01T00:00:00Z",
+            "to": "2030-01-01T00:00:00Z",
+            "types": ["scan", "threat_event"],
+            "format": "json",
+            "redact_pii": True,
+        },
+    )
+    assert r.status_code == 201
+    body = r.json()
+    assert body["status"] == "ready"
+    assert "sections" in body["payload"]
+    got = client.get(f"/v1/reports/{body['report_id']}", headers=headers)
+    assert got.status_code == 200
+
+
+def test_password_health_and_scan_detail(client: TestClient):
+    weak = client.post("/v1/password-health", json={"password": "123456"})
+    assert weak.status_code == 200
+    assert weak.json()["verdict"] == "weak"
+    assert weak.json()["pwned_local"] is True
+    strong = client.post("/v1/password-health", json={"password": "Tr0ub4dor&3-long!"})
+    assert strong.status_code == 200
+    assert strong.json()["score"] >= 50
+    assert strong.json()["pwned_local"] is False
+
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "detail@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    scan = client.post(
+        "/v1/scan/url", headers=headers, json={"url": "https://example.com/detail"}
+    )
+    scan_id = scan.json()["scan_id"]
+    detail = client.get(f"/v1/scans/{scan_id}", headers=headers)
+    assert detail.status_code == 200
+    assert detail.json()["scan_id"] == scan_id
+    assert "reasons" in detail.json()
+
+    hist = client.get("/v1/risk-score/history", headers=headers)
+    assert hist.status_code == 200
+    assert len(hist.json()) >= 1
+    assert hist.json()[0]["score"] == scan.json()["score"]
+
+    scored = client.post(
+        "/v1/risk-score",
+        headers=headers,
+        json={"features": {"url_score": 70, "ti_hits": 1}, "subject_type": "url"},
+    )
+    assert scored.status_code == 200
+    hist2 = client.get("/v1/risk-score/history", headers=headers)
+    assert len(hist2.json()) >= 2
+
+    stats = client.get("/v1/me/stats", headers=headers)
+    assert stats.status_code == 200
+    assert stats.json()["scans"] >= 1
+    assert stats.json()["risk_history"] >= 1
+
+
+def test_dns_allowlist_and_check(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "dns@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    bad = client.post("/v1/dns/check", headers=headers, json={"domain": "pay-click-uz.tk"})
+    assert bad.status_code == 200
+    assert bad.json()["verdict"] == "malicious"
+    added = client.post(
+        "/v1/dns/allowlist",
+        headers=headers,
+        json={"domain": "pay-click-uz.tk", "note": "lab"},
+    )
+    assert added.status_code == 201
+    ok = client.post("/v1/dns/check", headers=headers, json={"domain": "https://pay-click-uz.tk/x"})
+    assert ok.status_code == 200
+    assert ok.json()["allowlisted"] is True
+    assert ok.json()["verdict"] == "clean"
+    listed = client.get("/v1/dns/allowlist", headers=headers)
+    assert listed.status_code == 200
+    assert len(listed.json()) == 1
+    entry_id = listed.json()[0]["id"]
+    assert client.delete(f"/v1/dns/allowlist/{entry_id}", headers=headers).status_code == 204

@@ -191,6 +191,20 @@ def scan_url(url: str, user_id: UUID | None = None) -> UrlScanResponse:
             created_at=utcnow(),
         )
     )
+    from app.services.threat_events import emit_threat_event
+
+    emit_threat_event(
+        user_id=user_id,
+        category="url_scan",
+        score=result["score"],
+        subject_hash=result["subject_hash"],
+        mitre_tags=result["mitre_tags"],
+        meta={
+            "scam_family": result["scam_family"],
+            "campaign_id": result.get("campaign_id"),
+            "scan_id": str(scan_id),
+        },
+    )
     return UrlScanResponse(
         scan_id=scan_id,
         url_normalized=result["url_normalized"],
@@ -262,6 +276,17 @@ def scan_qr(payload_text: str, user_id: UUID | None = None) -> QrScanResponse:
     verdict, action, confidence = _verdict_from_score(score)
     scan_id = uuid4()
     subject = sha256(payload_text.encode("utf-8")).hexdigest()
+    mitre = ["T1566"] if qr_type == "payment" else []
+    family = SCAM_FAMILY_PAYMENT if qr_type == "payment" else None
+    hunting = attach_hunting(
+        {
+            "score": score,
+            "scam_family": family,
+            "reasons": reasons,
+            "mitre_tags": mitre,
+        },
+        subject_key=subject[:16],
+    )
     store.add_scan(
         ScanRow(
             id=scan_id,
@@ -271,8 +296,15 @@ def scan_qr(payload_text: str, user_id: UUID | None = None) -> QrScanResponse:
             verdict=verdict.value,
             reasons=[r.model_dump() for r in reasons],
             subject_hash=subject,
-            mitre_tags=["T1566"] if qr_type == "payment" else [],
-            meta={"qr_type": qr_type, "recommended_action": action},
+            mitre_tags=mitre,
+            meta={
+                "qr_type": qr_type,
+                "recommended_action": action,
+                "scam_family": family,
+                "intent_tags": hunting["intent_tags"],
+                "campaign_id": hunting["campaign_id"],
+                "kill_chain_stage": hunting["kill_chain_stage"],
+            },
             created_at=utcnow(),
         )
     )
@@ -285,10 +317,13 @@ def scan_qr(payload_text: str, user_id: UUID | None = None) -> QrScanResponse:
         confidence=confidence,
         verdict=verdict,
         reasons=reasons,
-        mitre_tags=["T1566"] if qr_type == "payment" else [],
-        scam_family=SCAM_FAMILY_PAYMENT if qr_type == "payment" else None,
+        mitre_tags=mitre,
+        scam_family=family,
         actor_hint=None,
         recommended_action=action,
+        intent_tags=hunting["intent_tags"],
+        campaign_id=hunting["campaign_id"],
+        kill_chain_stage=hunting["kill_chain_stage"],
         scanned_at=utcnow(),
     )
 
@@ -297,6 +332,7 @@ def scan_file_hash(
     sha256_hex: str,
     file_name: str | None = None,
     user_id: UUID | None = None,
+    run_yara: bool = False,
 ) -> FileScanResponse:
     digest = sha256_hex.strip().lower()
     if not re.fullmatch(r"[a-f0-9]{64}", digest):
@@ -305,6 +341,7 @@ def scan_file_hash(
     reasons: list[Reason] = []
     mitre: list[str] = []
     ti_hits: list[dict[str, str]] = []
+    yara_matches: list[dict[str, str]] = []
     score = 5
     scam_family: str | None = None
 
@@ -322,6 +359,15 @@ def scan_file_hash(
         reasons.append(Reason(code="APK_NAME_HEURISTIC", message_key="reason.apk_name"))
         scam_family = scam_family or "fake_bank_apk"
         mitre.append("T1204")
+
+    # Lightweight stub — no yara-python dependency in V1.
+    if run_yara:
+        if name.endswith(".apk") and any(k in name for k in ("bank", "payme", "click", "wallet")):
+            yara_matches.append({"rule": "stub_apk_lure", "namespace": "cga-stub"})
+            score += 10
+            reasons.append(Reason(code="YARA_STUB_HIT", message_key="reason.yara_stub"))
+        else:
+            reasons.append(Reason(code="YARA_STUB_EMPTY", message_key="reason.yara_stub_empty"))
 
     score = max(0, min(100, score))
     verdict, action, confidence = _verdict_from_score(score)
@@ -357,6 +403,7 @@ def scan_file_hash(
                 "scam_family": scam_family,
                 "recommended_action": action,
                 "ti_hits": ti_hits,
+                "yara_matches": yara_matches,
                 "intent_tags": hunting["intent_tags"],
                 "campaign_id": hunting["campaign_id"],
                 "kill_chain_stage": hunting["kill_chain_stage"],
@@ -372,7 +419,7 @@ def scan_file_hash(
         confidence=confidence,
         verdict=verdict,
         ti_hits=ti_hits,
-        yara_matches=[],
+        yara_matches=yara_matches,
         reasons=reasons,
         mitre_tags=sorted(set(mitre)),
         scam_family=scam_family,

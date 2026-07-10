@@ -10,6 +10,8 @@ const STR = {
     result: "Natija shu yerda…",
     rateLimited: "Mehmon limitti tugadi. Keyinroq urinib ko‘ring.",
     scanFailed: "Skan muvaffaqiyatsiz.",
+    sync: "IOC sync",
+    feed: "IOC",
   },
   ru: {
     brand: "Cyber Guardian AI",
@@ -20,6 +22,8 @@ const STR = {
     result: "Результат здесь…",
     rateLimited: "Гостевой лимит исчерпан. Попробуйте позже.",
     scanFailed: "Сканирование не удалось.",
+    sync: "IOC sync",
+    feed: "IOC",
   },
   en: {
     brand: "Cyber Guardian AI",
@@ -30,6 +34,8 @@ const STR = {
     result: "Result appears here…",
     rateLimited: "Guest quota exceeded. Try again later.",
     scanFailed: "Scan failed.",
+    sync: "IOC sync",
+    feed: "IOC",
   },
 };
 
@@ -44,6 +50,16 @@ function applyI18n() {
   document.getElementById("subtitle").textContent = t.subtitle;
   document.getElementById("scan").textContent = t.scan;
   document.getElementById("out").textContent = t.result;
+  document.getElementById("sync").textContent = t.sync;
+}
+
+async function refreshFeedStatus() {
+  const t = STR[locale()];
+  const el = document.getElementById("feed");
+  const { iocCache } = await chrome.storage.local.get("iocCache");
+  const n = iocCache?.domains?.length ?? 0;
+  const ver = iocCache?.version || "seed";
+  el.textContent = `${t.feed}: ${ver} · ${n} domains`;
 }
 
 async function scanUrl(url) {
@@ -75,6 +91,13 @@ async function scanUrl(url) {
 }
 
 applyI18n();
+void refreshFeedStatus();
+
+document.getElementById("sync").addEventListener("click", () => {
+  chrome.runtime.sendMessage({ type: "cga.syncFeed" }, () => {
+    void refreshFeedStatus();
+  });
+});
 
 document.getElementById("scan").addEventListener("click", async () => {
   const t = STR[locale()];
