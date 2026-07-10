@@ -90,6 +90,9 @@ class UrlScanResponse(BaseModel):
     scam_family: str | None = None
     actor_hint: str | None = None
     recommended_action: str
+    intent_tags: list[str] = Field(default_factory=list)
+    campaign_id: str | None = None
+    kill_chain_stage: str | None = None
     scanned_at: datetime
 
 
@@ -111,6 +114,9 @@ class QrScanResponse(BaseModel):
     scam_family: str | None = None
     actor_hint: str | None = None
     recommended_action: str
+    intent_tags: list[str] = Field(default_factory=list)
+    campaign_id: str | None = None
+    kill_chain_stage: str | None = None
     scanned_at: datetime
 
 
@@ -132,7 +138,11 @@ class FileScanResponse(BaseModel):
     reasons: list[Reason]
     mitre_tags: list[str]
     scam_family: str | None = None
+    actor_hint: str | None = None
     recommended_action: str
+    intent_tags: list[str] = Field(default_factory=list)
+    campaign_id: str | None = None
+    kill_chain_stage: str | None = None
     scanned_at: datetime
 
 
@@ -145,6 +155,8 @@ class ScanHistoryItem(BaseModel):
     mitre_tags: list[str]
     scam_family: str | None = None
     recommended_action: str | None = None
+    intent_tags: list[str] = Field(default_factory=list)
+    campaign_id: str | None = None
     created_at: datetime
 
 
@@ -238,3 +250,66 @@ class MetricsResponse(BaseModel):
     emergency_dry_run: bool
     scan_rows: int
     feed_version: str
+
+
+class MessageEntities(BaseModel):
+    urls: list[str] = Field(default_factory=list)
+    bot_username: str | None = None
+
+
+class SuspiciousMessageRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=4000)
+    source: str = Field(default="paste", pattern="^(telegram_share|paste|sms_meta)$")
+    entities: MessageEntities = Field(default_factory=MessageEntities)
+
+
+class SuspiciousMessageResponse(BaseModel):
+    report_id: UUID
+    score: int = Field(ge=0, le=100)
+    confidence: float = Field(ge=0.0, le=1.0)
+    verdict: Verdict
+    reasons: list[Reason]
+    mitre_tags: list[str]
+    scam_family: str | None = None
+    actor_hint: str | None = None
+    recommended_action: str
+    intent_tags: list[str] = Field(default_factory=list)
+    campaign_id: str | None = None
+    kill_chain_stage: str | None = None
+    preview: str
+    reported_at: datetime
+
+
+class BreachCheckRequest(BaseModel):
+    email: EmailStr
+
+
+class BreachItem(BaseModel):
+    name: str
+    year: int
+    data_classes: list[str] = Field(default_factory=list)
+
+
+class BreachCheckResponse(BaseModel):
+    found: bool
+    breach_count: int
+    breaches: list[BreachItem]
+    recommendations: list[str] = Field(default_factory=list)
+    email_hash_prefix: str
+
+
+class DeviceRegisterRequest(BaseModel):
+    platform: str = Field(pattern="^(web|android|windows|extension)$")
+    app_version: str = Field(default="0.3.0", max_length=32)
+    device_label: str | None = Field(default=None, max_length=128)
+    fingerprint: str | None = Field(default=None, max_length=128)
+
+
+class DeviceRecord(BaseModel):
+    id: UUID
+    platform: str
+    app_version: str
+    device_label: str | None = None
+    fingerprint: str
+    created_at: datetime
+    last_seen_at: datetime

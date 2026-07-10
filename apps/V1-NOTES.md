@@ -22,6 +22,12 @@
 - Client shell README accuracy
 - PR #3 follow-up: ProblemDetail 401/429, web offline banner + erasure UI
 
+### 0.3.0 P0 tools
+- Suspicious message report (FR-043)
+- Offline breach-check (FR-051)
+- Device registry (FR-003)
+- Passive hunting metadata (FR-MX01)
+
 ## Emergency dry-run
 
 Until Legal resolves AQ-039, `CGA_EMERGENCY_*_ALLOWLIST=PENDING_AQ039` and

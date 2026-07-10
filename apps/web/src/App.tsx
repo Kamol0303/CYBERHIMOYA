@@ -5,6 +5,7 @@ import {
   dispatchEmergency,
   eraseAccount,
   fetchConsents,
+  fetchDevices,
   fetchEmergencyAllowlist,
   fetchEmergencyLogs,
   fetchMe,
@@ -13,6 +14,9 @@ import {
   getToken,
   login,
   register,
+  registerDevice,
+  reportSuspiciousMessage,
+  breachCheck,
   scanFileHash,
   scanQr,
   scanUrl,
@@ -43,6 +47,9 @@ type ResultView = {
   scam_family: string | null;
   mitre_tags: string[];
   reasons: ScanReason[];
+  intent_tags?: string[];
+  campaign_id?: string | null;
+  actor_hint?: string | null;
 };
 
 function verdictLabel(locale: Locale, verdict: Verdict): string {
@@ -87,6 +94,14 @@ export default function App() {
   const [erasureMsg, setErasureMsg] = useState<string | null>(null);
   const [erasureBusy, setErasureBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [msgText, setMsgText] = useState("");
+  const [msgPreviewOk, setMsgPreviewOk] = useState(false);
+  const [msgResult, setMsgResult] = useState<string | null>(null);
+  const [breachEmail, setBreachEmail] = useState("");
+  const [breachResult, setBreachResult] = useState<string | null>(null);
+  const [devices, setDevices] = useState<{ id: string; platform: string; app_version: string }[]>(
+    [],
+  );
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -117,18 +132,20 @@ export default function App() {
       setConsents([]);
       return;
     }
-    const [scans, consentRows, feedSync, allowlist, emLogs] = await Promise.all([
+    const [scans, consentRows, feedSync, allowlist, emLogs, deviceRows] = await Promise.all([
       fetchScans(),
       fetchConsents(),
       fetchThreatFeedSync(),
       fetchEmergencyAllowlist(),
       fetchEmergencyLogs(),
+      fetchDevices().catch(() => []),
     ]);
     setHistory(scans);
     setConsents(consentRows);
     setFeed(feedSync);
     setEmergency(allowlist);
     setEmergencyLogs(emLogs);
+    setDevices(deviceRows);
   }
 
   useEffect(() => {
@@ -154,6 +171,9 @@ export default function App() {
           scam_family: data.scam_family,
           mitre_tags: data.mitre_tags,
           reasons: data.reasons,
+          intent_tags: data.intent_tags,
+          campaign_id: data.campaign_id,
+          actor_hint: data.actor_hint,
         });
       } else if (mode === "qr") {
         const data = await scanQr(qrPayload.trim());
@@ -165,6 +185,9 @@ export default function App() {
           scam_family: data.scam_family,
           mitre_tags: data.mitre_tags,
           reasons: data.reasons,
+          intent_tags: data.intent_tags,
+          campaign_id: data.campaign_id,
+          actor_hint: data.actor_hint,
         });
       }
     } catch (err) {
@@ -210,6 +233,7 @@ export default function App() {
       setToken(tokens.access_token);
       const me = await fetchMe();
       setUser(me);
+      void registerDevice("web").catch(() => undefined);
       setPassword("");
       setView("dashboard");
     } catch {
@@ -425,6 +449,18 @@ export default function App() {
                       <dd>{result.scam_family}</dd>
                     </div>
                   ) : null}
+                  {result.intent_tags && result.intent_tags.length > 0 ? (
+                    <div>
+                      <dt>{t(locale, "intentTags")}</dt>
+                      <dd>{result.intent_tags.join(", ")}</dd>
+                    </div>
+                  ) : null}
+                  {result.campaign_id ? (
+                    <div>
+                      <dt>{t(locale, "campaignId")}</dt>
+                      <dd className="hash">{result.campaign_id.slice(0, 13)}…</dd>
+                    </div>
+                  ) : null}
                 </dl>
                 {result.mitre_tags.length > 0 ? (
                   <p>
@@ -529,6 +565,103 @@ export default function App() {
               />
               {t(locale, "consentEmergency")}
             </label>
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "msgTitle")}</h2>
+            <p>{t(locale, "msgHint")}</p>
+            <textarea
+              value={msgText}
+              onChange={(e) => {
+                setMsgText(e.target.value);
+                setMsgPreviewOk(false);
+                setMsgResult(null);
+              }}
+              placeholder={t(locale, "msgPlaceholder")}
+              rows={4}
+              style={{ width: "100%", marginTop: "0.5rem" }}
+            />
+            {msgText.trim() ? (
+              <p className="note">
+                {t(locale, "msgPreview")}: {msgText.trim().slice(0, 160)}
+              </p>
+            ) : null}
+            <label className="consent-row">
+              <input
+                type="checkbox"
+                checked={msgPreviewOk}
+                onChange={(e) => setMsgPreviewOk(e.target.checked)}
+              />
+              {t(locale, "msgConfirm")}
+            </label>
+            <button
+              type="button"
+              disabled={!msgText.trim() || !msgPreviewOk}
+              onClick={() => {
+                void reportSuspiciousMessage(msgText.trim())
+                  .then((r) => {
+                    setMsgResult(
+                      `${r.verdict} · score=${r.score} · ${r.scam_family ?? "—"} · ${r.preview}`,
+                    );
+                  })
+                  .catch(() => setMsgResult(t(locale, "error")));
+              }}
+            >
+              {t(locale, "msgSubmit")}
+            </button>
+            {msgResult ? <p className="note">{msgResult}</p> : null}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "breachTitle")}</h2>
+            <p>{t(locale, "breachHint")}</p>
+            <input
+              type="email"
+              value={breachEmail}
+              onChange={(e) => setBreachEmail(e.target.value)}
+              placeholder="you@example.com"
+              style={{ width: "100%", marginTop: "0.5rem" }}
+            />
+            <button
+              type="button"
+              style={{ marginTop: "0.5rem" }}
+              disabled={!breachEmail.trim()}
+              onClick={() => {
+                void breachCheck(breachEmail.trim())
+                  .then((r) => {
+                    if (!r.found) {
+                      setBreachResult(t(locale, "breachClean"));
+                      return;
+                    }
+                    setBreachResult(
+                      `${t(locale, "breachFound")}: ${r.breach_count} · ${r.breaches
+                        .map((b) => b.name)
+                        .join(", ")} · ${r.recommendations.join(", ")}`,
+                    );
+                  })
+                  .catch(() => setBreachResult(t(locale, "error")));
+              }}
+            >
+              {t(locale, "breachCta")}
+            </button>
+            {breachResult ? <p className="note">{breachResult}</p> : null}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "devicesTitle")}</h2>
+            {devices.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {devices.map((d) => (
+                  <li key={d.id}>
+                    <span className="score">{d.platform}</span>
+                    <span>{d.app_version}</span>
+                    <span className="hash">{d.id.slice(0, 8)}…</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
 
           <section className="consent-block">

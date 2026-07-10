@@ -11,7 +11,7 @@ from app.config import settings
 from app.cors_util import parse_cors_origins
 from app.models.schemas import HealthResponse, ProblemDetail
 from app.middleware_security import SecurityHeadersMiddleware
-from app.routers import auth, consents, emergency, feed, ops, scan, scans
+from app.routers import auth, breach, consents, devices, emergency, feed, messages, ops, scan, scans
 from app.services.feed import FEEDS_DIR, ensure_feed_files
 from app.services.rate_limit import GuestRateLimitExceeded
 
@@ -24,6 +24,9 @@ TAGS_METADATA = [
     {"name": "emergency", "description": "Critical reporting — dry-run until AQ-039"},
     {"name": "me", "description": "Account profile / erasure"},
     {"name": "ops", "description": "Health / metrics"},
+    {"name": "messages", "description": "Suspicious message reports (PII-minimized)"},
+    {"name": "breach", "description": "Offline email breach check (hash lookup)"},
+    {"name": "devices", "description": "Linked devices registry"},
 ]
 
 BEARER_SCHEME = {
@@ -151,6 +154,9 @@ api.include_router(scans.router)
 api.include_router(feed.router)
 api.include_router(emergency.router)
 api.include_router(ops.router)
+api.include_router(messages.router)
+api.include_router(breach.router)
+api.include_router(devices.router)
 app.mount("/v1", api)
 
 FEEDS_DIR.mkdir(parents=True, exist_ok=True)

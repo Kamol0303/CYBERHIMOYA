@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 — 2026-07-10
+
+P0 user tools + passive hunting metadata (FR-043 / FR-051 / FR-003 / FR-MX01).
+
+- `POST /v1/messages/suspicious` — PII-minimized message report + heuristics
+- `POST /v1/breach-check` — offline seed breach lookup (email hash only)
+- `POST/GET/DELETE /v1/devices` — linked device registry
+- Scan responses: `intent_tags`, `campaign_id`, `kill_chain_stage`
+- Web dashboard: message report (preview confirm), breach check, devices list
+
 ## 0.2.1 — 2026-07-10
 
 Follow-up after PR #1–#3 on `main`: RFC 7807 errors, offline banner, account erasure UI.
