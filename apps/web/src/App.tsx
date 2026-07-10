@@ -3,6 +3,7 @@ import {
   fetchConsents,
   fetchMe,
   fetchScans,
+  fetchThreatFeedSync,
   getToken,
   login,
   register,
@@ -15,6 +16,7 @@ import {
   type ConsentRecord,
   type ScanHistoryItem,
   type ScanReason,
+  type ThreatFeedSync,
   type UserProfile,
   type Verdict,
 } from "./lib/api";
@@ -54,6 +56,7 @@ export default function App() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [history, setHistory] = useState<ScanHistoryItem[]>([]);
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
+  const [feed, setFeed] = useState<ThreatFeedSync | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -73,9 +76,14 @@ export default function App() {
       setConsents([]);
       return;
     }
-    const [scans, consentRows] = await Promise.all([fetchScans(), fetchConsents()]);
+    const [scans, consentRows, feedSync] = await Promise.all([
+      fetchScans(),
+      fetchConsents(),
+      fetchThreatFeedSync(),
+    ]);
     setHistory(scans);
     setConsents(consentRows);
+    setFeed(feedSync);
   }
 
   useEffect(() => {
@@ -409,6 +417,17 @@ export default function App() {
               />
               {t(locale, "consentEmergency")}
             </label>
+          </section>
+
+          <section className="history-block">
+            <h2>{t(locale, "feedTitle")}</h2>
+            <p className="note">{t(locale, "feedHint")}</p>
+            {feed ? (
+              <p className="note">
+                {feed.version} · domains {feed.item_counts.domain ?? 0} · sha256{" "}
+                {feed.item_counts.sha256 ?? 0}
+              </p>
+            ) : null}
           </section>
 
           <section className="history-block">

@@ -19,10 +19,13 @@
 
 Point `CGA_API_BASE` to `http://10.0.2.2:8000` on emulator.
 
+Stub client: `src/main/java/uz/cyberguardian/android/api/GuardianApi.kt`
+
 ```
 apps/android/
-  README.md          ← you are here
+  README.md
   docs/architecture.md
+  src/main/java/.../GuardianApi.kt
 ```
 
-Do not add exploit, C2, or active probing code.
+Do not add offensive tooling.

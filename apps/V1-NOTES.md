@@ -2,33 +2,32 @@
 
 ## Delivered
 
-### Sprint 1
-- Monorepo: `apps/api` (FastAPI) + `apps/web` (Vite/React)
-- Auth register/login JWT + `/me` + erasure foundation
-- Consent GET/POST
-- Guest `POST /v1/scan/url` with seed IOC + UZ scam heuristics
-- `POST /v1/risk-score`
-- `GET /v1/threat-feed/sync` signed stub
-- Web guest scan UI + dashboard shell + uz/ru/en
-- CI + defensive-only keyword gate
+### Sprint 1–1.2
+- API: auth, consent, URL/QR/file scan, risk-score, scans history, guest rate-limit
+- SQLite persistence + Web login/dashboard/i18n
+- Docker Compose (api + web)
+- Android/Windows shell docs
 
-### Sprint 1.1
-- SQLite persistence (`CGA_DATABASE_URL`)
-- `POST /v1/scan/qr` and `POST /v1/scan/file` (client SHA-256)
-- Web modes: URL / QR / File hash
-- Android + Windows shell stubs
+### Sprint 1.3 (this update)
+- PostgreSQL store (`psycopg`) via `CGA_DATABASE_URL=postgresql://...`
+- `create_store()` factory (sqlite | postgres)
+- Local threat-feed CDN: `/cdn/feeds/{version}.json` + `/v1/threat-feed/delta|verify`
+- Signed feed pack generation (`scripts/generate_feed.py`)
+- Compose profile `postgres` for optional Postgres 16
+- Native API client stubs (Kotlin + C#)
 
-### Sprint 1.2 (this update)
-- `GET /v1/scans` authenticated history
-- Guest scan rate limit (429)
-- Web login/register + consent toggles + scan history
-- Default SQLite file DB for runtime; in-memory for tests
-- `docker-compose.yml` + Dockerfiles
+## Postgres local
+
+```bash
+docker compose --profile postgres up -d db
+export CGA_DATABASE_URL=postgresql://cga:cga@127.0.0.1:5432/cga
+cd apps/api && uvicorn app.main:app --reload
+```
 
 ## Explicitly out of V1
 
-- Full Android / Windows apps
+- Full native apps UI
 - SMS / Telegram deep detection
-- Emergency SMS to IIV (needs AQ-039)
-- Production PostgreSQL / KMS
+- Emergency SMS to IIV (AQ-039)
+- Production ed25519 keys / KMS
 - Active probing of any kind

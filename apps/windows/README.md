@@ -18,6 +18,7 @@
 apps/windows/
   README.md
   docs/architecture.md
+  src/CyberGuardian.Windows/Api/GuardianApiClient.cs
 ```
 
-Hard rule: no exploit development, no hack-back, no active intrusion.
+Hard rule: defensive monitoring and local response only.

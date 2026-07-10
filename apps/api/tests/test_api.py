@@ -169,3 +169,31 @@ def test_persistence_across_operations(client: TestClient):
         json={"url": "https://example.com"},
     )
     assert len(store.list_scans()) >= 1
+
+
+def test_threat_feed_has_delta_url_and_cdn(client: TestClient):
+    r = client.get("/v1/threat-feed/sync")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["delta_url"]
+    assert "/cdn/feeds/" in body["delta_url"]
+    version = body["version"]
+    cdn = client.get(f"/cdn/feeds/{version}.json")
+    assert cdn.status_code == 200
+    pack = cdn.json()
+    assert pack["signature"] == body["signature"]
+    assert pack["defensive_only"] is True
+    delta = client.get(f"/v1/threat-feed/delta/{version}")
+    assert delta.status_code == 200
+    verify = client.get("/v1/threat-feed/verify")
+    assert verify.status_code == 200
+    assert verify.json()["valid"] is True
+
+
+def test_create_store_sqlite_factory():
+    from app.services.store import SqliteStore, create_store
+
+    s = create_store("sqlite:///:memory:")
+    assert isinstance(s, SqliteStore)
+    s.create_user("factory@example.com", "securepass1")
+    assert s.authenticate("factory@example.com", "securepass1") is not None

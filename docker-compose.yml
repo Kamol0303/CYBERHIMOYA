@@ -6,9 +6,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      CGA_DATABASE_URL: sqlite:////data/cga.db
+      CGA_DATABASE_URL: ${CGA_DATABASE_URL:-sqlite:////data/cga.db}
       CGA_CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080
-      CGA_SECRET_KEY: docker-dev-change-me
+      CGA_SECRET_KEY: ${CGA_SECRET_KEY:-docker-dev-change-me}
+      CGA_PUBLIC_BASE_URL: http://127.0.0.1:8000
     volumes:
       - cga-data:/data
 
@@ -21,5 +22,25 @@ services:
     depends_on:
       - api
 
+  # Optional: docker compose --profile postgres up
+  # then set CGA_DATABASE_URL=postgresql://cga:cga@db:5432/cga
+  db:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_DB: cga
+      POSTGRES_USER: cga
+      POSTGRES_PASSWORD: cga
+    ports:
+      - "5432:5432"
+    volumes:
+      - cga-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cga -d cga"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 volumes:
   cga-data:
+  cga-pg:

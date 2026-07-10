@@ -163,6 +163,18 @@ export async function fetchScans(): Promise<ScanHistoryItem[]> {
   return getJson("/v1/scans");
 }
 
+export type ThreatFeedSync = {
+  version: string;
+  delta_url: string | null;
+  signature: string;
+  algorithm: string;
+  item_counts: Record<string, number>;
+};
+
+export async function fetchThreatFeedSync(): Promise<ThreatFeedSync> {
+  return getJson("/v1/threat-feed/sync");
+}
+
 export async function scanUrl(url: string): Promise<UrlScanResponse> {
   return postJson("/v1/scan/url", {
     url,

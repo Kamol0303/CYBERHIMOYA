@@ -45,10 +45,10 @@ class SqliteStore:
         elif url == ":memory:" or url == "sqlite:///:memory:":
             conn = sqlite3.connect(":memory:", check_same_thread=False)
         else:
-            # Non-SQLite URLs fall back to local sqlite file until Postgres driver lands.
-            path = settings.sqlite_fallback_path
-            Path(path).parent.mkdir(parents=True, exist_ok=True)
-            conn = sqlite3.connect(path, check_same_thread=False)
+            raise ValueError(
+                f"Unsupported database URL scheme: {url!r}. "
+                "Use sqlite:///... or postgresql://..."
+            )
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
         return conn
@@ -366,5 +366,17 @@ class _RefreshTokenProxy:
         self._conn.commit()
 
 
-# Default store — tests override via reset() on memory DB when configured.
-store = SqliteStore()
+def create_store(database_url: str | None = None):
+    url = database_url or settings.database_url
+    if url.startswith("postgres://") or url.startswith("postgresql://"):
+        # Normalize postgres:// → postgresql:// for psycopg
+        if url.startswith("postgres://"):
+            url = "postgresql://" + url[len("postgres://") :]
+        from app.services.pg_store import PostgresStore
+
+        return PostgresStore(url)
+    return SqliteStore(url)
+
+
+# Default store — tests force sqlite:///:memory: via conftest env before import.
+store = create_store()

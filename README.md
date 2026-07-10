@@ -7,9 +7,9 @@ Mudofaa-only xavfsizlik ekotizimi (Android + Windows + Web). **Hujum / exploit /
 | Qatlam | Holat |
 |--------|-------|
 | Spec (APEX v5.3) | `docs/cyber-guardian-ai/` |
-| V1 API | `apps/api` — Auth, Consent, URL/QR/file scan, risk-score, threat-feed, SQLite |
-| V1 Web | `apps/web` — URL/QR/file skan, login, tarix, rozilik, uz/ru/en |
-| Client shells | `apps/android`, `apps/windows` — V1 stub docs |
+| V1 API | `apps/api` — Auth, scan URL/QR/file, feed CDN, SQLite/Postgres |
+| V1 Web | `apps/web` — URL/QR/file skan, login, tarix, rozilik, feed, uz/ru/en |
+| Client shells | `apps/android`, `apps/windows` — API client stubs |
 
 ## Tezkor ishga tushirish
 
@@ -41,9 +41,12 @@ Brauzer: `http://127.0.0.1:5173` (Vite `/v1` ni API ga proxy qiladi).
 
 ```bash
 docker compose up --build
+# optional Postgres:
+docker compose --profile postgres up -d db
+# CGA_DATABASE_URL=postgresql://cga:cga@db:5432/cga docker compose up --build api web
 ```
 
-API `:8000`, Web `:8080`.
+API `:8000`, Web `:8080`. Feed CDN: `http://127.0.0.1:8000/cdn/feeds/`.
 
 ### Testlar
 
@@ -62,7 +65,7 @@ bash scripts/defensive-lint.sh
 5. Guest rate-limit + CI + defensive-only lint  
 6. Android/Windows shell stubs  
 
-Keyingi: PostgreSQL driver, real feed CDN, native client UI.
+Keyingi: production ed25519 feed keys, native UI, SMS on-device (V2).
 
 ## Hujjatlar
 
