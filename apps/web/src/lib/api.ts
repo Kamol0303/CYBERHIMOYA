@@ -280,6 +280,25 @@ export async function pruneRiskHistory(retainDays = 180) {
   );
 }
 
+export async function assessDeepfakeVoice(body: {
+  duration_ms: number;
+  sample_rate_hz?: number;
+  filename_hint?: string;
+}) {
+  return postJson<{
+    score: number;
+    verdict: string;
+    recommended_action: string;
+    audio_stored: boolean;
+  }>("/v1/deepfake/voice", body);
+}
+
+export async function fetchAudit(limit = 50) {
+  return getJson<{ id: string; action: string; meta: Record<string, unknown>; at: string }[]>(
+    `/v1/audit?limit=${limit}`,
+  );
+}
+
 export type ThreatFeedSync = {
   version: string;
   delta_url: string | null;

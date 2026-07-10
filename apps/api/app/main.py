@@ -12,10 +12,12 @@ from app.cors_util import parse_cors_origins
 from app.models.schemas import HealthResponse, ProblemDetail
 from app.middleware_security import SecurityHeadersMiddleware
 from app.routers import (
+    audit,
     auth,
     behavior,
     breach,
     consents,
+    deepfake,
     devices,
     dns,
     emergency,
@@ -52,6 +54,8 @@ TAGS_METADATA = [
     {"name": "dns", "description": "Domain check + user allowlist (FR-060)"},
     {"name": "behavior", "description": "Correlate recent signals (FR-080)"},
     {"name": "sigma", "description": "Sigma rule catalog stub (FR-081)"},
+    {"name": "deepfake", "description": "Consent-gated voice meta check (FR-042)"},
+    {"name": "audit", "description": "User-visible audit trail"},
 ]
 
 BEARER_SCHEME = {
@@ -189,6 +193,8 @@ api.include_router(password_health.router)
 api.include_router(dns.router)
 api.include_router(behavior.router)
 api.include_router(sigma.router)
+api.include_router(deepfake.router)
+api.include_router(audit.router)
 app.mount("/v1", api)
 
 FEEDS_DIR.mkdir(parents=True, exist_ok=True)

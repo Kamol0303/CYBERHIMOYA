@@ -655,3 +655,37 @@ def test_scan_filters_and_retention_prune(client: TestClient):
     pruned = client.post("/v1/retention/prune?retain_days=180", headers=headers)
     assert pruned.status_code == 200
     assert "deleted_risk_history" in pruned.json()
+
+
+def test_deepfake_consent_and_audit(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "deepfake@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    denied = client.post(
+        "/v1/deepfake/voice",
+        headers=headers,
+        json={"duration_ms": 3000, "sample_rate_hz": 16000, "filename_hint": "clip.wav"},
+    )
+    assert denied.status_code == 403
+    client.post(
+        "/v1/consents",
+        headers=headers,
+        json={"consent_type": "audio_upload", "granted": True, "source": "ui"},
+    )
+    ok = client.post(
+        "/v1/deepfake/voice",
+        headers=headers,
+        json={
+            "duration_ms": 3000,
+            "sample_rate_hz": 16000,
+            "filename_hint": "deepfake-clone.wav",
+        },
+    )
+    assert ok.status_code == 200
+    assert ok.json()["audio_stored"] is False
+    assert ok.json()["score"] >= 40
+    audit = client.get("/v1/audit", headers=headers)
+    assert audit.status_code == 200
+    assert any(a["action"] == "deepfake.voice_assess" for a in audit.json())

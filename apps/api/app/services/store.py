@@ -435,6 +435,25 @@ class SqliteStore:
         )
         self._conn.commit()
 
+    def list_audit_logs(self, actor_id: UUID, limit: int = 50) -> list[AuditRow]:
+        rows = self._conn.execute(
+            """
+            SELECT * FROM audit_logs WHERE actor_id = ?
+            ORDER BY at DESC LIMIT ?
+            """,
+            (str(actor_id), limit),
+        ).fetchall()
+        return [
+            AuditRow(
+                id=UUID(r["id"]),
+                actor_id=UUID(r["actor_id"]) if r["actor_id"] else None,
+                action=r["action"],
+                meta=json.loads(r["meta"] or "{}"),
+                at=_parse_dt(r["at"]),
+            )
+            for r in rows
+        ]
+
     def add_emergency_log(self, row: EmergencyLogRow) -> EmergencyLogRow:
         from app.services.store_models import EmergencyLogRow as EL
 

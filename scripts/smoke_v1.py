@@ -175,6 +175,19 @@ def main() -> int:
     ok("scan_filter", filt.status_code == 200 and len(filt.json()) >= 1)
     pr = client.post("/v1/retention/prune?retain_days=180", headers=headers)
     ok("retention_prune", pr.status_code == 200 and "deleted_risk_history" in pr.json())
+    client.post(
+        "/v1/consents",
+        headers=headers,
+        json={"consent_type": "audio_upload", "granted": True, "source": "ui"},
+    )
+    df = client.post(
+        "/v1/deepfake/voice",
+        headers=headers,
+        json={"duration_ms": 2500, "filename_hint": "sample.wav"},
+    )
+    ok("deepfake_voice", df.status_code == 200 and df.json().get("audio_stored") is False)
+    au = client.get("/v1/audit", headers=headers)
+    ok("audit", au.status_code == 200 and len(au.json()) >= 1)
 
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")
