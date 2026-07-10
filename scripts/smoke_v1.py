@@ -165,6 +165,12 @@ def main() -> int:
     ok("dns_check", dns.status_code == 200 and dns.json().get("verdict") == "malicious")
     st = client.get("/v1/me/stats", headers=headers)
     ok("me_stats", st.status_code == 200 and st.json().get("scans", 0) >= 1)
+    beh = client.post("/v1/behavior/analyze", headers=headers)
+    ok("behavior", beh.status_code == 200 and "verdict" in beh.json())
+    sg = client.get("/v1/sigma/rules")
+    ok("sigma_rules", sg.status_code == 200 and len(sg.json()) >= 1)
+    ra = client.post("/v1/notifications/read-all", headers=headers)
+    ok("notify_read_all", ra.status_code == 200 and "updated" in ra.json())
 
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")

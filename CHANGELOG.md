@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.3 — 2026-07-10
+
+- `GET /v1/sigma/rules` — FR-081 catalog stub (metadata only)
+- `POST /v1/notifications/read-all`
+- Web: sigma list + mark-all-read
+
+## 0.4.2 — 2026-07-10
+
+- `POST /v1/behavior/analyze` — FR-080 correlate recent scans/threats
+- `GET /v1/threat-events?mitre=` — FR-082 MITRE filter
+- Extension FR-063 permission analyzer (`management` + `analyzer.js`)
+- Windows `ProcessMonitor` stub (FR-070 detect/warn only)
+- Web: behavior CTA + MITRE filter on activity
+
 ## 0.4.1 — 2026-07-10
 
 - `POST/GET/DELETE /v1/dns/*` — FR-060 domain check + user allowlist (audit)

@@ -563,6 +563,9 @@ class PostgresStore:
     def mark_notification_read(self, user_id: UUID, notification_id: UUID) -> bool:
         return False
 
+    def mark_all_notifications_read(self, user_id: UUID) -> int:
+        return 0
+
     def add_report(self, row) -> None:
         raise NotImplementedError("reports: use SQLite store in V1.4 or extend PostgresStore")
 

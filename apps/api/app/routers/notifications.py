@@ -33,6 +33,12 @@ def list_notifications(
     ]
 
 
+@router.post("/read-all")
+def mark_all_read(user=Depends(get_current_user)) -> dict:
+    updated = store.mark_all_notifications_read(user.id)
+    return {"updated": updated, "defensive_only": True}
+
+
 @router.post("/{notification_id}/read", response_model=NotificationItem)
 def mark_read(notification_id: UUID, user=Depends(get_current_user)) -> NotificationItem:
     ok = store.mark_notification_read(user.id, notification_id)

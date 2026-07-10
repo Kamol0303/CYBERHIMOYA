@@ -13,6 +13,7 @@ from app.models.schemas import HealthResponse, ProblemDetail
 from app.middleware_security import SecurityHeadersMiddleware
 from app.routers import (
     auth,
+    behavior,
     breach,
     consents,
     devices,
@@ -25,6 +26,7 @@ from app.routers import (
     reports,
     scan,
     scans,
+    sigma,
     threat_events,
     password_health,
 )
@@ -48,6 +50,8 @@ TAGS_METADATA = [
     {"name": "reports", "description": "JSON export reports"},
     {"name": "password-health", "description": "Password strength (never stored)"},
     {"name": "dns", "description": "Domain check + user allowlist (FR-060)"},
+    {"name": "behavior", "description": "Correlate recent signals (FR-080)"},
+    {"name": "sigma", "description": "Sigma rule catalog stub (FR-081)"},
 ]
 
 BEARER_SCHEME = {
@@ -183,6 +187,8 @@ api.include_router(notifications.router)
 api.include_router(reports.router)
 api.include_router(password_health.router)
 api.include_router(dns.router)
+api.include_router(behavior.router)
+api.include_router(sigma.router)
 app.mount("/v1", api)
 
 FEEDS_DIR.mkdir(parents=True, exist_ok=True)

@@ -26,5 +26,5 @@ openssl rsa -in key.pem -pubout -outform DER | openssl base64 -A
 Paste the base64 into `manifest.json` `"key"`.
 
 **V1 scope:** content-script warning banner + session allowlist + local IOC cache
-(from `/v1/threat-feed/sync`, with offline seed fallback). No enterprise policy push,
-no network blocking via declarativeNetRequest.
+(from `/v1/threat-feed/sync`, with offline seed fallback) + FR-063 permission analyzer.
+No enterprise policy push, no network blocking via declarativeNetRequest.

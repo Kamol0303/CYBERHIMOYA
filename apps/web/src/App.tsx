@@ -16,12 +16,15 @@ import {
   fetchThreatFeedSync,
   createReport,
   markNotificationRead,
+  markAllNotificationsRead,
+  fetchSigmaRules,
   passwordHealth,
   fetchRiskHistory,
   dnsCheck,
   fetchDnsAllowlist,
   addDnsAllowlist,
   removeDnsAllowlist,
+  analyzeBehavior,
   getToken,
   login,
   register,
@@ -123,7 +126,13 @@ export default function App() {
   const [guestHistory, setGuestHistory] = useState<GuestScanItem[]>([]);
   const [deviceBusy, setDeviceBusy] = useState<string | null>(null);
   const [threatEvents, setThreatEvents] = useState<
-    { event_id: string; category: string; severity: string; score: number | null }[]
+    {
+      event_id: string;
+      category: string;
+      severity: string;
+      score: number | null;
+      mitre_tags?: string[];
+    }[]
   >([]);
   const [notifications, setNotifications] = useState<
     { id: string; level: string; body_key: string; read_at: string | null }[]
@@ -147,6 +156,11 @@ export default function App() {
     risk_history: number;
     devices: number;
   } | null>(null);
+  const [behaviorMsg, setBehaviorMsg] = useState<string | null>(null);
+  const [mitreFilter, setMitreFilter] = useState("");
+  const [sigmaRules, setSigmaRules] = useState<
+    { id: string; title: string; version: string; mitre_tags: string[] }[]
+  >([]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -197,6 +211,7 @@ export default function App() {
       risks,
       dnsRows,
       stats,
+      sigma,
     ] = await Promise.all([
       fetchScans(),
       fetchConsents(),
@@ -209,6 +224,7 @@ export default function App() {
       fetchRiskHistory().catch(() => []),
       fetchDnsAllowlist().catch(() => []),
       fetchMeStats().catch(() => null),
+      fetchSigmaRules().catch(() => []),
     ]);
     setHistory(scans);
     setConsents(consentRows);
@@ -221,6 +237,7 @@ export default function App() {
     setRiskHistory(risks);
     setDnsAllowlist(dnsRows);
     setMeStats(stats);
+    setSigmaRules(sigma);
   }
 
   useEffect(() => {
@@ -706,6 +723,24 @@ export default function App() {
           <section className="consent-block">
             <h2>{t(locale, "activityTitle")}</h2>
             <p className="note">{t(locale, "activityHint")}</p>
+            <input
+              value={mitreFilter}
+              onChange={(e) => setMitreFilter(e.target.value)}
+              placeholder="MITRE e.g. T1566"
+              style={{ width: "100%", marginTop: "0.5rem" }}
+            />
+            <button
+              type="button"
+              className="secondary"
+              style={{ marginTop: "0.5rem" }}
+              onClick={() => {
+                void fetchThreatEvents(undefined, mitreFilter.trim() || undefined)
+                  .then((events) => setThreatEvents(events))
+                  .catch(() => undefined);
+              }}
+            >
+              {t(locale, "mitreFilter")}
+            </button>
             {threatEvents.length === 0 ? (
               <p className="note">{t(locale, "noHistory")}</p>
             ) : (
@@ -715,8 +750,49 @@ export default function App() {
                     <span className="score">{e.severity}</span>
                     <span>
                       {e.category} · {e.score ?? "—"}
+                      {e.mitre_tags?.length ? ` · ${e.mitre_tags.join(",")}` : ""}
                     </span>
                     <span className="hash">{e.event_id.slice(0, 8)}…</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "behaviorTitle")}</h2>
+            <p className="note">{t(locale, "behaviorHint")}</p>
+            <button
+              type="button"
+              onClick={() => {
+                void analyzeBehavior()
+                  .then((r) =>
+                    setBehaviorMsg(
+                      `${r.verdict} · score=${r.score} · ${r.recommended_action} · scans=${r.window.scans}`,
+                    ),
+                  )
+                  .catch(() => setBehaviorMsg(t(locale, "error")));
+              }}
+            >
+              {t(locale, "behaviorCta")}
+            </button>
+            {behaviorMsg ? <p className="note">{behaviorMsg}</p> : null}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "sigmaTitle")}</h2>
+            <p className="note">{t(locale, "sigmaHint")}</p>
+            {sigmaRules.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {sigmaRules.slice(0, 8).map((r) => (
+                  <li key={r.id}>
+                    <span className="hash">{r.version}</span>
+                    <span>
+                      {r.title}
+                      {r.mitre_tags?.length ? ` · ${r.mitre_tags.join(",")}` : ""}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -810,6 +886,22 @@ export default function App() {
 
           <section className="consent-block">
             <h2>{t(locale, "notificationsTitle")}</h2>
+            <button
+              type="button"
+              className="secondary"
+              style={{ marginBottom: "0.5rem" }}
+              onClick={() => {
+                void markAllNotificationsRead()
+                  .then(() =>
+                    setNotifications((prev) =>
+                      prev.map((x) => ({ ...x, read_at: x.read_at || new Date().toISOString() })),
+                    ),
+                  )
+                  .catch(() => undefined);
+              }}
+            >
+              {t(locale, "markAllRead")}
+            </button>
             {notifications.length === 0 ? (
               <p className="note">{t(locale, "noHistory")}</p>
             ) : (

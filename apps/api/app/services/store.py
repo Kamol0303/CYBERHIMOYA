@@ -747,6 +747,17 @@ class SqliteStore:
         self._conn.commit()
         return cur.rowcount > 0
 
+    def mark_all_notifications_read(self, user_id: UUID) -> int:
+        cur = self._conn.execute(
+            """
+            UPDATE notifications SET read_at = ?
+            WHERE user_id = ? AND read_at IS NULL
+            """,
+            (utcnow().isoformat(), str(user_id)),
+        )
+        self._conn.commit()
+        return int(cur.rowcount)
+
     def add_report(self, row) -> None:
         self._conn.execute(
             """
