@@ -40,12 +40,12 @@ N/A Platformaga tegishli emas
 | 21 | YARA Rule Engine | ✅ | ✅ | ❌ | Web UI orqali backend file-upload skanerida ishlaydi |
 | 22 | Sigma Rule Engine | ❌ | ✅ | N/A | Windows agent + backend threat pipeline |
 | 23 | MITRE ATT&CK Mapping | ✅ | ✅ | ✅ | Alohida engine emas — dashboard tasnifi |
-| 24 | Advanced Threat Actor Fingerprinting | ✅ | ✅ | ✅ | Behavior + infrastructure + code similarity |
-| 25 | Campaign Correlation Engine | ✅ | ✅ | ✅ | Ko‘p hodisa bog‘lanishi |
-| 26 | Automated TTP Mapping & Attribution | ⚠️ | ✅ | ✅ | MITRE + custom UZ TTP base |
-| 27 | Suspicious Infrastructure Detection (C2/phishing kit/scam panel) | ✅ | ✅ | ✅ | Domain, IP, ASN, certificate — aniqlash |
-| 28 | Memory & Process Ancestry Analysis | ❌ | ✅ | ❌ | Windows killer feature (detection-only) |
-| 29 | Cross-platform IOC Sweeping | ✅ | ✅ | ✅ | Real-time sweep engine |
+| 24 | Threat Actor Fingerprinting & Profiling | ✅ | ✅ | ✅ | Behavior + infra + code similarity |
+| 25 | Campaign Correlation & Tracking | ✅ | ✅ | ✅ | Multiple incidents linkage |
+| 26 | Predictive Attack Forecasting | ⚠️ | ✅ | ✅ | ML asosida |
+| 27 | Infrastructure Hunting (C2, phishing kit, scam panel) | ✅ | ✅ | ✅ | Domain/IP/ASN — aniqlash |
+| 28 | Memory Forensics & Process Ancestry | ❌ | ✅ | ❌ | Windows killer feature (detection-only) |
+| 29 | Graph-based Actor Relationship Analysis | ❌ | ✅ | ✅ | Knowledge Graph |
 | 30 | Threat Actor Persona & Group Tracking | ❌ | ✅ | ✅ | Qonuniy OSINT; dark web — AQ-030 |
 | 31 | Threat Hunting Pipeline | ⚠️ | ⚠️ | ✅ | Real-time + scheduled (BE) |
 | 32 | Actor Knowledge Graph / TAKB | ❌ | ❌ | ✅ | Neo4j yoki ekvivalent |
@@ -60,7 +60,7 @@ N/A Platformaga tegishli emas
 | 41 | Live Phishing Kit & Scam Panel Hunting | ✅ | ✅ | ✅ | Detection only |
 | 42 | Zero-Day Behavior Anomaly Detection | ⚠️ | ✅ | ⚠️ | Signature’siz; W kuchli |
 
-> **Apex #36–42** — `srs/09-apex-edition-requirements.md`. Killer #24–35 saqlanadi.
+> **#24–29** — majburiy hunting qatorlari (v5.1). Master: `APEX-MASTER-SPEC.md` §4.
 
 ---
 
