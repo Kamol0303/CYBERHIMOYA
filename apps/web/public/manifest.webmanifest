@@ -1,0 +1,18 @@
+{
+  "name": "Cyber Guardian AI",
+  "short_name": "CyberGuardian",
+  "description": "Defensive security scanner for Uzbekistan — URL, QR, and file hash checks.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B1F2A",
+  "theme_color": "#0B1F2A",
+  "lang": "uz",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

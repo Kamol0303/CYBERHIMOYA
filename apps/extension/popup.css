@@ -1,0 +1,48 @@
+:root {
+  --bg: #0b1f2a;
+  --accent: #2bb673;
+  --foam: #f3f7f4;
+  --muted: #5a7380;
+}
+
+body {
+  margin: 0;
+  width: 320px;
+  font: 14px/1.4 "Segoe UI", sans-serif;
+  color: var(--foam);
+  background: linear-gradient(165deg, #0b1f2a, #123447);
+  padding: 14px;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+header p,
+footer {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+button {
+  margin: 12px 0;
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+pre {
+  white-space: pre-wrap;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px;
+  border-radius: 8px;
+  min-height: 4rem;
+  font-size: 12px;
+}

@@ -1,0 +1,76 @@
+{
+  "version": "20260710.2",
+  "generated_at": "2026-07-10T12:03:08.096818Z",
+  "algorithm": "ed25519",
+  "public_key_b64": "Vznc94N6BDjbh9y0V8IVtplXC/9yZIKQNHsP6Kk1E9E=",
+  "item_counts": {
+    "url": 0,
+    "domain": 8,
+    "sha256": 2
+  },
+  "items": [
+    {
+      "kind": "domain",
+      "value": "click-payme-secure.cf",
+      "severity": "malicious",
+      "family": "seed_ioc"
+    },
+    {
+      "kind": "domain",
+      "value": "gov-subsidy-uz.xyz",
+      "severity": "malicious",
+      "family": "seed_ioc"
+    },
+    {
+      "kind": "domain",
+      "value": "iiv-fine-pay.ru.com",
+      "severity": "malicious",
+      "family": "seed_ioc"
+    },
+    {
+      "kind": "domain",
+      "value": "pay-click-uz.tk",
+      "severity": "malicious",
+      "family": "seed_ioc"
+    },
+    {
+      "kind": "domain",
+      "value": "telegram-bonus-uz.ml",
+      "severity": "malicious",
+      "family": "seed_ioc"
+    },
+    {
+      "kind": "sha256",
+      "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "severity": "malicious",
+      "family": "fake_bank_apk"
+    },
+    {
+      "kind": "sha256",
+      "value": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "severity": "malicious",
+      "family": "trojan_dropper_seed"
+    },
+    {
+      "kind": "domain",
+      "value": "payme.uz",
+      "severity": "trusted",
+      "family": "payment_legit"
+    },
+    {
+      "kind": "domain",
+      "value": "click.uz",
+      "severity": "trusted",
+      "family": "payment_legit"
+    },
+    {
+      "kind": "domain",
+      "value": "my.gov.uz",
+      "severity": "trusted",
+      "family": "gov_legit"
+    }
+  ],
+  "defensive_only": true,
+  "signed_payload": "20260710.2|[{\"family\":\"seed_ioc\",\"kind\":\"domain\",\"severity\":\"malicious\",\"value\":\"click-payme-secure.cf\"},{\"family\":\"seed_ioc\",\"kind\":\"domain\",\"severity\":\"malicious\",\"value\":\"gov-subsidy-uz.xyz\"},{\"family\":\"seed_ioc\",\"kind\":\"domain\",\"severity\":\"malicious\",\"value\":\"iiv-fine-pay.ru.com\"},{\"family\":\"seed_ioc\",\"kind\":\"domain\",\"severity\":\"malicious\",\"value\":\"pay-click-uz.tk\"},{\"family\":\"seed_ioc\",\"kind\":\"domain\",\"severity\":\"malicious\",\"value\":\"telegram-bonus-uz.ml\"},{\"family\":\"fake_bank_apk\",\"kind\":\"sha256\",\"severity\":\"malicious\",\"value\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},{\"family\":\"trojan_dropper_seed\",\"kind\":\"sha256\",\"severity\":\"malicious\",\"value\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"},{\"family\":\"payment_legit\",\"kind\":\"domain\",\"severity\":\"trusted\",\"value\":\"payme.uz\"},{\"family\":\"payment_legit\",\"kind\":\"domain\",\"severity\":\"trusted\",\"value\":\"click.uz\"},{\"family\":\"gov_legit\",\"kind\":\"domain\",\"severity\":\"trusted\",\"value\":\"my.gov.uz\"}]",
+  "signature": "wSwPlpMYLobeEPKYbgPhwh+iPEZOls2iBIuheumGEnah7bUK+5rteXOghUX5PkW3OBMA9BjZqNecYrmy13EFAA=="
+}

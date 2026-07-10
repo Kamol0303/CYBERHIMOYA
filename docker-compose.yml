@@ -1,0 +1,59 @@
+services:
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      CGA_DATABASE_URL: ${CGA_DATABASE_URL:-sqlite:////data/cga.db}
+      CGA_CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080,chrome-extension://*
+      CGA_SECRET_KEY: ${CGA_SECRET_KEY:-docker-dev-change-me}
+      CGA_PUBLIC_BASE_URL: http://127.0.0.1:8000
+    volumes:
+      - cga-data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  # Optional: docker compose --profile postgres up
+  # then set CGA_DATABASE_URL=postgresql://cga:cga@db:5432/cga
+  db:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_DB: cga
+      POSTGRES_USER: cga
+      POSTGRES_PASSWORD: cga
+    ports:
+      - "5432:5432"
+    volumes:
+      - cga-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cga -d cga"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  cga-data:
+  cga-pg:
