@@ -67,10 +67,10 @@ def main() -> int:
         headers=headers,
         json={"confirm_token": conf.json()["confirm_token"], "channel": "api"},
     )
-    ok(
-        "emergency_dispatch_dry_run",
-        disp.status_code == 202 and disp.json().get("dry_run") is True,
-    )
+    ok("emergency_dispatch_dry_run", disp.status_code == 202 and disp.json().get("dry_run") is True)
+
+    r = client.get("/health")
+    ok("security_header", r.headers.get("X-CGA-Defensive-Only") == "1")
 
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")

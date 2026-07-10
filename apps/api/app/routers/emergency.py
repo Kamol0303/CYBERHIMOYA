@@ -11,6 +11,7 @@ from app.models.schemas import (
     EmergencyDispatchRequest,
     EmergencyLogItem,
 )
+from app.http_status import UNPROCESSABLE
 from app.services.auth import get_current_user
 from app.services import emergency as em
 from app.services.store import store
@@ -65,7 +66,7 @@ def emergency_confirm(
     except PermissionError as exc:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc)) from exc
     except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+        raise HTTPException(status_code=UNPROCESSABLE, detail=str(exc)) from exc
     return EmergencyConfirmResponse(**result)
 
 
@@ -79,7 +80,7 @@ def emergency_dispatch(
     except PermissionError as exc:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc)) from exc
     except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+        raise HTTPException(status_code=UNPROCESSABLE, detail=str(exc)) from exc
     return EmergencyLogItem(
         id=row.id,
         status=row.status,

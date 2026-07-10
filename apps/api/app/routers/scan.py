@@ -12,6 +12,7 @@ from app.models.schemas import (
     UrlScanRequest,
     UrlScanResponse,
 )
+from app.http_status import UNPROCESSABLE
 from app.services.auth import get_optional_user
 from app.services.rate_limit import client_key, guest_limiter
 from app.services.scoring import combine_risk, scan_file_hash, scan_qr, scan_url
@@ -65,7 +66,7 @@ def scan_file_endpoint(
         )
     except ValueError as exc:
         raise HTTPException(
-            status_code=getattr(status, "HTTP_422_UNPROCESSABLE_CONTENT", status.HTTP_422_UNPROCESSABLE_ENTITY),
+            status_code=UNPROCESSABLE,
             detail="Invalid SHA-256",
         ) from exc
 

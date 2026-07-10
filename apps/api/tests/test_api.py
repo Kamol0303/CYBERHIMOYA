@@ -298,3 +298,9 @@ def test_emergency_flow_dry_run(client: TestClient):
     logs = client.get("/v1/emergency/logs", headers=headers)
     assert logs.status_code == 200
     assert len(logs.json()) == 1
+
+
+def test_security_headers(client: TestClient):
+    r = client.get("/health")
+    assert r.headers.get("X-CGA-Defensive-Only") == "1"
+    assert r.headers.get("X-Content-Type-Options") == "nosniff"

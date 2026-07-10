@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from app import __version__
 from app.config import settings
 from app.models.schemas import HealthResponse
+from app.middleware_security import SecurityHeadersMiddleware
 from app.routers import auth, consents, emergency, feed, scan, scans
 from app.services.feed import FEEDS_DIR, ensure_feed_files
 
@@ -35,6 +36,7 @@ app = FastAPI(
 )
 
 origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
+app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins or ["*"],
