@@ -40,6 +40,10 @@ N/A Platformaga tegishli emas
 | 21 | YARA Rule Engine | ✅ | ✅ | ❌ | Web UI orqali backend file-upload skanerida ishlaydi |
 | 22 | Sigma Rule Engine | ❌ | ✅ | N/A | Windows agent + backend threat pipeline |
 | 23 | MITRE ATT&CK Mapping | ✅ | ✅ | ✅ | Alohida engine emas — dashboard tasnifi |
+| 24 | Universal Scam Classifier | ✅ | ✅ | ✅ | Barcha `SCAM_*` oilalar; V1 qisman |
+| 25 | Money-Offer / Scam Bot Detection | ✅ | ✅ | ✅ | Faqat ulashilgan/ommaviy bot; shaxsiy chat yo‘q |
+| 26 | Deepfake Face/Video | ✅ | ✅ | ✅ | Faqat consent + user upload |
+| 27 | Campaign / Actor Attribution | ⚠️ | ⚠️ | ✅ | Client: natija ko‘rsatish; klasterlash — BE/analyst |
 
 ---
 
@@ -148,6 +152,22 @@ Windows log/ETW hodisalari + backend pipeline. Androidda Sigma ma’nosiz; Webda
 
 Aniqlangan hodisaga tactic/technique teglari qo‘yish — alohida ML engine emas, tasniflash qatlami.
 
+### 24. Universal Scam Classifier — ✅✅✅
+
+Barcha `SCAM_*` oilalar (ish, lotoreya, invest, bot-pul, deepfake, fishing, …). V1 da URL asosidagi oilalar; V2 da matn/bot. Batafsil: `06-universal-scam-and-attribution.md`.
+
+### 25. Money-Offer / Scam Bot — ✅✅✅
+
+Telegram/web bot orqali pul taklifi. Shaxsiy chat o‘qilmaydi; ulashilgan kontent + TI bot ro‘yxati.
+
+### 26. Deepfake Face/Video — ✅✅✅
+
+Faqat foydalanuvchi rozilik bilan yuklagan media. Jonli yashirin yozib olish yo‘q.
+
+### 27. Campaign / Actor Attribution — ⚠️⚠️✅
+
+Backend klasterlash; clientga «shu kampaniya» tushuntirishi. Hack-back yo‘q; rasmiy hisobot FR-122.
+
 ---
 
 ## 3.3 Cross-cutting funksiyalar
@@ -178,6 +198,7 @@ V1 da **P0** bo‘lganlar (barcha 3 platformada, imkon qadar):
 | 12 | Email Breach | P0 |
 | 15 | File Reputation | P0 (hash+TI; YARA V2/V3) |
 | 23 | MITRE Mapping | P0 — oddiy teglar |
+| 24 | Universal Scam (qisman) | P0 — payment/gov/emergency |
 | — | Dashboard / Notification / i18n | P0 |
 
 V2/V3: `operations/03-roadmap.md`.

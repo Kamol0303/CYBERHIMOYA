@@ -124,6 +124,9 @@ Har bir talab:
 - Foydalanuvchi matn/URL/skrinshot yuboradi (PII filtri bilan).
 - **Qabul:** yuborishdan oldin nima ulashilishi ko‘rsatiladi; bekor qilish mumkin.
 
+> **Kengaytma (scam oilalari, bot/pul taklifi, deepfake face, kampaniya/hujumchi klaster, rasmiy hisobot):**  
+> `FR-044`…`FR-047`, `FR-120`…`FR-123` — batafsil: [`06-universal-scam-and-attribution.md`](06-universal-scam-and-attribution.md).
+
 ---
 
 ## 4.6 Parol va breach

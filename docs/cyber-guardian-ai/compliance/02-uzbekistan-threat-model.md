@@ -23,6 +23,12 @@ Threat Intelligence va detection qoidalarini O‘zbekiston foydalanuvchilari duc
 | UZ-T4 | «Qo‘llab-quvvatlash» qo‘ng‘iroq SE | Foydalanuvchi yuklagan audio + yo‘riqnoma; SMS kod so‘rovi | Deepfake (V3), SMS (V2), ta’lim kontenti |
 | UZ-T5 | QR to‘lov firibgarligi | QR decode + URL/payment qoidalar | QR Analysis |
 | UZ-T6 | Favqulodda/xavfsizlik ogohlantirishi niqobidagi soxta saytlar | Urgency + official brand spoof qoidalari | URL, Browser, TI |
+| UZ-T7 | Bot orqali avtomatik pul/ish/investitsiya taklifi | Bot username TI + money-offer skript klassifikatori | Money-Offer Bot, Universal Scam |
+| UZ-T8 | Deepfake ovoz/yuz/video (SE) | Consent media + SE lug‘ati | Deepfake Voice/Face |
+| UZ-T9 | Romantik / «yaqin odam» pul so‘rovi | Ulashilgan chat naqshlari | Universal Scam |
+| UZ-T10 | Kampaniya / firibgarlik tarmog‘i | IOC klasterlash (domen, bot, APK cert, telefon hash) | Campaign & Actor Attribution |
+
+> To‘liq taksonomiya va FR-044…FR-123: [`../srs/06-universal-scam-and-attribution.md`](../srs/06-universal-scam-and-attribution.md).
 
 ---
 
@@ -31,8 +37,9 @@ Threat Intelligence va detection qoidalarini O‘zbekiston foydalanuvchilari duc
 | Toifa | Tipik ATT&CK teglari (dashboard) |
 |-------|----------------------------------|
 | UZ-T1 | T1204 (User Execution) — aniqlash konteksti |
-| UZ-T2/T3/T5/T6 | T1566 (Phishing) |
-| UZ-T4 | T1566 / Social Engineering teglari (ichki) |
+| UZ-T2/T3/T5/T6/T7/T9 | T1566 (Phishing) / Social Engineering |
+| UZ-T4/T8 | Social Engineering + sintetik media teglari (ichki) |
+| UZ-T10 | Attribution — alohida ATT&CK emas; kampaniya bog‘lanishi |
 
 Eslatma: mapping — tasniflash; hujum bosqichlarini o‘rgatish emas.
 
@@ -91,9 +98,13 @@ tag: uz.gov_portal_phish
 tag: uz.support_call_se
 tag: uz.qr_payment_fraud
 tag: uz.emergency_alert_phish
+tag: uz.bot_money_offer
+tag: uz.deepfake_se
+tag: uz.romance_scam
+tag: uz.campaign_cluster
 ```
 
-Har bir teg `reasons[].code` va MITRE map ga bog‘lanadi.
+Har bir teg `reasons[].code`, `scam_family` va MITRE/kampaniya map ga bog‘lanadi.
 
 ---
 

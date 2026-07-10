@@ -225,11 +225,17 @@ Har bir modul majburiy shablon bo‘yicha.
 | Email Breach | ✅ | ✅ | ✅ |
 | File Reputation | ✅ hash/TI | +YARA | ✅ |
 | MITRE mapping | ✅ oddiy | ✅ | ✅ |
+| Universal Scam Classifier | ✅ qisman | ✅ to‘liq | ✅ |
+| Money-Offer Bot Detector | — | ✅ | ✅ |
 | SMS Scam | — | ✅ | ✅ |
 | Telegram Scam | — | ✅ | ✅ |
+| Campaign & Actor Attribution | — | ✅ kampaniya | ✅ actor cluster |
 | Behavior | — | ✅ | ✅ |
 | Browser Protection | ⚠️ asos | ✅ | ✅ |
 | DNS / Wi-Fi | — | ✅ | ✅ |
 | USB / Ransomware / Process | — | ✅ W | ✅ |
 | YARA/Sigma | — | qisman | ✅ |
-| Deepfake | — | — | ✅ |
+| Deepfake Voice | — | — | ✅ |
+| Deepfake Face/Video | — | — | ✅ |
+
+> Yangi modullar tavsifi: `srs/06-universal-scam-and-attribution.md` §6.

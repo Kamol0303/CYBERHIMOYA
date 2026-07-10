@@ -29,6 +29,7 @@ Butun spetsifikatsiya va keyingi implementatsiya uchun:
 | 2 | SRS — Umumiy tavsif | [`srs/02-overall-description.md`](srs/02-overall-description.md) | Mahsulot portfeli, foydalanuvchilar, cheklovlar |
 | 3 | SRS — Funksiya × Platforma | [`srs/03-feature-platform-matrix.md`](srs/03-feature-platform-matrix.md) | Majburiy matritsa + asoslash |
 | 4 | SRS — Funksional talablar | [`srs/04-functional-requirements.md`](srs/04-functional-requirements.md) | FR-001… raqamlangan talablar |
+| 4b | SRS — Scam + hujumchi aniqlash | [`srs/06-universal-scam-and-attribution.md`](srs/06-universal-scam-and-attribution.md) | Barcha scam oilalari, bot/pul taklifi, deepfake, kampaniya/actor (himoya) |
 | 5 | SRS — Nofunksional talablar | [`srs/05-non-functional-requirements.md`](srs/05-non-functional-requirements.md) | NFR-001… |
 | 6 | SDD — Tizim arxitekturasi | [`sdd/01-system-architecture.md`](sdd/01-system-architecture.md) | HLD, on-device vs cloud, trust boundaries |
 | 7 | SDD — UML va ER diagrammalar | [`sdd/02-uml-er-diagrams.md`](sdd/02-uml-er-diagrams.md) | Use Case, Class, Sequence, Component, Deployment, ER |
@@ -59,6 +60,12 @@ Butun spetsifikatsiya va keyingi implementatsiya uchun:
 | UX/UI Product Designer | `sdd/05` |
 | Privacy & Compliance Officer | `compliance/01` |
 | QA/DevOps Lead | `operations/02` |
+
+---
+
+## Modul arxitekturasi
+
+Batafsil: `sdd/03-api-and-database.md` va `srs/06-universal-scam-and-attribution.md` (scam/bot/deepfake/kampaniya API).
 
 ---
 

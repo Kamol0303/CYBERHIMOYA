@@ -21,6 +21,7 @@
 | 10 | Ops, QA/DevOps, roadmap | ✅ |
 | 11 | Taxminlar va ochiq savollar alohida | ✅ |
 | 12 | Faqat defensive funksiyalar | ✅ |
+| 13 | Universal scam + bot/pul + deepfake + kampaniya/actor (himoya) | ✅ `srs/06-…` |
 
 ---
 

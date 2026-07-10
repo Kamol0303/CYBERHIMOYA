@@ -44,6 +44,10 @@
 | AQ-018 | Windows agent va UI versiyalash strategiyasi? | CI/CD | Windows Eng |
 | AQ-019 | Push: FCM o‘rniga boshqa (Huawei va h.k.) kerakmi? | Notification | Mobile |
 | AQ-020 | Korporativ SSO (SAML/OIDC) V1 da kerakmi? | Auth | Business |
+| AQ-021 | UZCERT ga avtomatik hisobot API yoki qo‘lda yuklash? | FR-122 | TI + Legal |
+| AQ-022 | Actor cluster taxallusini oddiy foydalanuvchiga ko‘rsatish? | FR-121/123 | Product |
+| AQ-023 | Deepfake video hajm/davomiylik limitti? | FR-046 | Eng + Privacy |
+| AQ-024 | Rasmiy CGA Telegram bot (forward→tekshiruv) qilinadimi? | FR-045 | Product |
 
 ---
 
