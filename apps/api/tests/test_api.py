@@ -464,3 +464,26 @@ def test_scan_url_hunting_metadata(client: TestClient):
     assert b1["campaign_id"]
     assert b1["campaign_id"] == b2["campaign_id"]
     assert b1["kill_chain_stage"] == "delivery"
+
+
+def test_scan_qr_payment_hunting_metadata(client: TestClient):
+    r = client.post("/v1/scan/qr", json={"payload_text": "payme sum=100000"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["qr_type"] == "payment"
+    assert body["intent_tags"]
+    assert body["campaign_id"]
+
+
+def test_file_yara_stub(client: TestClient):
+    r = client.post(
+        "/v1/scan/file",
+        json={
+            "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "file_name": "click-wallet.apk",
+            "run_yara": True,
+        },
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert any(m["rule"] == "stub_apk_lure" for m in body["yara_matches"])

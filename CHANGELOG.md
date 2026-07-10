@@ -6,9 +6,10 @@ P0 user tools + passive hunting metadata (FR-043 / FR-051 / FR-003 / FR-MX01).
 
 - `POST /v1/messages/suspicious` — PII-minimized message report + heuristics
 - `POST /v1/breach-check` — offline seed breach lookup (email hash only)
-- `POST/GET/DELETE /v1/devices` — linked device registry
-- Scan responses: `intent_tags`, `campaign_id`, `kill_chain_stage`
-- Web dashboard: message report (preview confirm), breach check, devices list
+- `POST/GET/DELETE /v1/devices` — linked device registry (+ web revoke)
+- Scan responses: `intent_tags`, `campaign_id`, `kill_chain_stage` (incl. QR non-URL)
+- Web: message preview confirm, breach i18n, guest `sessionStorage` history
+- File scan `run_yara` stub (name heuristic, no yara-python)
 
 ## 0.2.1 — 2026-07-10
 

@@ -58,6 +58,14 @@ def main() -> int:
     ok("auth_register", reg.status_code == 201)
     token = reg.json().get("access_token", "")
     headers = {"Authorization": f"Bearer {token}"}
+    dev = client.post(
+        "/v1/devices/register",
+        headers=headers,
+        json={"platform": "web", "app_version": "0.3.0", "fingerprint": "smoke-fp"},
+    )
+    ok("device_register", dev.status_code == 200)
+    listed = client.get("/v1/devices", headers=headers)
+    ok("device_list", listed.status_code == 200 and len(listed.json()) >= 1)
     client.post("/v1/emergency/consent", headers=headers, json={"granted": True})
     conf = client.post(
         "/v1/emergency/confirm",
