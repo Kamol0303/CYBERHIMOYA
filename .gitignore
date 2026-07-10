@@ -14,5 +14,7 @@ apps/web/dist/
 htmlcov/
 .idea/
 .vscode/
-data/
+/data/
+apps/api/data/
 *.db
+*.tsbuildinfo
