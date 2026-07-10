@@ -2,9 +2,12 @@
 
 ## 0.2.1 — 2026-07-10
 
+Follow-up after PR #1–#3 on `main`: RFC 7807 errors, offline banner, account erasure UI.
+
 - Auth 401 + guest 429 as RFC 7807 `ProblemDetail`
 - Web: ProblemDetail.detail on errors, offline banner, account erasure UI
-- PWA PNG icons + apple-touch-icon; smoke 429 + version pin
+- Extension popup shows API `detail` on 429
+- PWA PNG icons + apple-touch-icon; smoke 401/429 + version pin
 - OpenAPI `HTTPBearer` scheme + `MetricsResponse` schema
 - Minimal PWA service worker (shell cache; `/v1/*` network-only)
 - Extension 429 i18n + packaging validate script

@@ -91,6 +91,17 @@ def main() -> int:
     ok("security_header", r.headers.get("X-CGA-Defensive-Only") == "1")
     ok("security_frame", r.headers.get("X-Frame-Options") == "DENY")
 
+    r = client.get("/v1/me")
+    ok("auth_401", r.status_code == 401)
+    body401 = r.json() if r.status_code == 401 else {}
+    ok(
+        "auth_401_problem",
+        r.headers.get("content-type", "").startswith("application/problem+json")
+        and body401.get("type") == "https://api.cyberguardian.uz/errors/unauthorized"
+        and body401.get("status") == 401
+        and body401.get("instance") == "/v1/me",
+    )
+
     guest_limiter.reset()
     prev_limit = settings.guest_rate_limit_per_hour
     settings.guest_rate_limit_per_hour = 2
