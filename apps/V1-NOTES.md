@@ -8,12 +8,11 @@
 - Docker Compose (api + web)
 - Android/Windows shell docs
 
-### Sprint 1.6 (this update)
-- Web emergency double-confirm dry-run UI + logs
-- Android Gradle/manifest/BroadcastReceiver shell
-- Windows `.csproj` + build docs
-- AQ-039 allowlist runbook (no invented numbers)
-- CI feed signature verify step
+### Sprint 1.7 (this update)
+- Android Compose screen/ViewModel + HttpGuardianApi + theme tokens
+- Windows WPF `MainWindow` host (brand-first scan UI)
+- AQ-039 `.env` template (REPLACE_* placeholders only)
+- Allowlist parser rejects REPLACE/PENDING placeholders
 
 ## Emergency dry-run
 

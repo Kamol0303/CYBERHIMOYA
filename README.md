@@ -66,7 +66,7 @@ bash scripts/defensive-lint.sh
 5. Guest rate-limit + CI + defensive-only lint  
 6. Android/Windows shell stubs + ed25519 feed + on-device SMS foundation  
 
-Keyingi: Android Studio Compose ekranlari, WinUI host, AQ-039 Legal allowlist.
+Keyingi: Android Studio da Compose yoqish, Windows `dotnet run`, Legal AQ-039 qiymatlari.
 
 ## Hujjatlar
 
@@ -74,3 +74,4 @@ Keyingi: Android Studio Compose ekranlari, WinUI host, AQ-039 Legal allowlist.
 2. [`docs/cyber-guardian-ai/acceptance-checklist.md`](docs/cyber-guardian-ai/acceptance-checklist.md)  
 3. [`docs/cyber-guardian-ai/README.md`](docs/cyber-guardian-ai/README.md)  
 4. [`docs/cyber-guardian-ai/operations/04-aq039-allowlist-runbook.md`](docs/cyber-guardian-ai/operations/04-aq039-allowlist-runbook.md)  
+5. [`docs/cyber-guardian-ai/operations/aq039-allowlist.env.template`](docs/cyber-guardian-ai/operations/aq039-allowlist.env.template)  

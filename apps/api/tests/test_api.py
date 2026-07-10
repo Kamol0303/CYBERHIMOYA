@@ -225,6 +225,19 @@ def test_emergency_allowlist_pending(client: TestClient):
     assert body["defensive_only"] is True
 
 
+def test_emergency_allowlist_ignores_replace_placeholders(monkeypatch):
+    from app.config import settings
+    from app.services import emergency as em
+
+    monkeypatch.setattr(settings, "emergency_sms_allowlist", "REPLACE_WITH_OFFICIAL_SMS_E164")
+    monkeypatch.setattr(settings, "emergency_api_allowlist", "PENDING_AQ039")
+    monkeypatch.setattr(settings, "emergency_email_allowlist", "")
+    monkeypatch.setattr(settings, "emergency_dry_run", False)
+    info = em.allowlist_status()
+    assert info.aq039_resolved is False
+    assert info.dry_run_forced is True
+
+
 def test_emergency_flow_dry_run(client: TestClient):
     reg = client.post(
         "/v1/auth/register",

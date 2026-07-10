@@ -30,7 +30,14 @@ def allowlist_status() -> AllowlistStatus:
     emails = [x.strip() for x in settings.emergency_email_allowlist.split(",") if x.strip()]
     # Filter obvious placeholders
     def real(items: list[str]) -> list[str]:
-        return [i for i in items if not i.upper().startswith("PENDING") and i != "AQ-039"]
+        blocked = ("PENDING", "REPLACE", "AQ-039", "EXAMPLE", "TODO")
+        out: list[str] = []
+        for i in items:
+            u = i.upper()
+            if any(u.startswith(b) or b in u for b in blocked):
+                continue
+            out.append(i)
+        return out
 
     sms_r, api_r, email_r = real(sms), real(apis), real(emails)
     resolved = bool(sms_r or api_r or email_r)

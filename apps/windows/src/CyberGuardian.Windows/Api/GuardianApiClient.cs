@@ -1,5 +1,5 @@
-// Cyber Guardian AI — Windows V1 API client stub (.NET)
-// Defensive only: scan + feed sync. No offensive tooling.
+// Cyber Guardian AI — Windows V1 API client
+// Defensive only: scan + feed sync.
 
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
@@ -12,18 +12,26 @@ public sealed class GuardianApiClient
 
     public GuardianApiClient(HttpClient http) => _http = http;
 
-    public Task<UrlScanResponse?> ScanUrlAsync(string url, CancellationToken ct = default) =>
-        _http.PostAsJsonAsync("/v1/scan/url", new { url, context = new { source = "manual" } }, ct)
-            .ContinueWith(async t => await t.Result.Content.ReadFromJsonAsync<UrlScanResponse>(ct), ct)
-            .Unwrap();
+    public async Task<UrlScanResponse?> ScanUrlAsync(string url, CancellationToken ct = default)
+    {
+        using var res = await _http.PostAsJsonAsync(
+            "/v1/scan/url",
+            new { url, context = new { source = "manual", client_cache_hit = false } },
+            ct);
+        if (!res.IsSuccessStatusCode) return null;
+        return await res.Content.ReadFromJsonAsync<UrlScanResponse>(cancellationToken: ct);
+    }
 
-    public Task<ThreatFeedSync?> SyncFeedAsync(string? sinceVersion = null, CancellationToken ct = default)
+    public async Task<ThreatFeedSync?> SyncFeedAsync(string? sinceVersion = null, CancellationToken ct = default)
     {
         var path = string.IsNullOrEmpty(sinceVersion)
             ? "/v1/threat-feed/sync"
             : $"/v1/threat-feed/sync?since_version={Uri.EscapeDataString(sinceVersion)}";
-        return _http.GetFromJsonAsync<ThreatFeedSync>(path, ct);
+        return await _http.GetFromJsonAsync<ThreatFeedSync>(path, ct);
     }
+
+    public async Task<EmergencyAllowlist?> GetEmergencyAllowlistAsync(CancellationToken ct = default) =>
+        await _http.GetFromJsonAsync<EmergencyAllowlist>("/v1/emergency/allowlist", ct);
 }
 
 public sealed record UrlScanResponse(
@@ -41,9 +49,15 @@ public sealed record ThreatFeedSync(
     [property: JsonPropertyName("algorithm")] string Algorithm
 );
 
+public sealed record EmergencyAllowlist(
+    [property: JsonPropertyName("aq039_resolved")] bool Aq039Resolved,
+    [property: JsonPropertyName("dry_run_forced")] bool DryRunForced,
+    [property: JsonPropertyName("note")] string Note
+);
+
 /// <summary>
 /// Verify ed25519 signed feed pack before applying IOCs (NFR-011).
-/// Production: use NSec or BouncyCastle Ed25519 with embedded public key.
+/// Production: use NSec/BouncyCastle with embedded public key.
 /// </summary>
 public static class FeedVerifier
 {
