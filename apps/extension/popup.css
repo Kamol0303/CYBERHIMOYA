@@ -60,3 +60,8 @@ button.secondary {
   color: var(--muted);
   font-size: 12px;
 }
+
+.ext-out {
+  min-height: 2.5rem;
+  margin-top: 8px;
+}

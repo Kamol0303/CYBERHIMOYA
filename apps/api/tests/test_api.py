@@ -605,3 +605,22 @@ def test_dns_allowlist_and_check(client: TestClient):
     assert len(listed.json()) == 1
     entry_id = listed.json()[0]["id"]
     assert client.delete(f"/v1/dns/allowlist/{entry_id}", headers=headers).status_code == 204
+
+
+def test_behavior_and_mitre_filter(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "behavior@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    client.post("/v1/scan/url", headers=headers, json={"url": "http://pay-click-uz.tk/a"})
+    client.post("/v1/scan/url", headers=headers, json={"url": "http://gov-subsidy-uz.xyz/b"})
+    beh = client.post("/v1/behavior/analyze", headers=headers)
+    assert beh.status_code == 200
+    body = beh.json()
+    assert body["score"] >= 35
+    assert body["verdict"] in ("watch", "elevated")
+    assert body["window"]["malicious_scans"] >= 2
+    filtered = client.get("/v1/threat-events?mitre=T1566", headers=headers)
+    assert filtered.status_code == 200
+    assert len(filtered.json()) >= 1

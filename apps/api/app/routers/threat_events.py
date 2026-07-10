@@ -14,10 +14,14 @@ router = APIRouter(prefix="/threat-events", tags=["threat-events"])
 @router.get("", response_model=list[ThreatEventItem])
 def list_events(
     severity: str | None = Query(default=None, pattern="^(info|warning|critical)$"),
+    mitre: str | None = Query(default=None, min_length=2, max_length=32),
     limit: int = Query(default=50, ge=1, le=100),
     user=Depends(get_current_user),
 ) -> list[ThreatEventItem]:
     rows = store.list_threat_events(user.id, limit=limit, severity=severity)
+    if mitre:
+        tag = mitre.strip().upper()
+        rows = [r for r in rows if tag in {t.upper() for t in (r.mitre_tags or [])}]
     return [
         ThreatEventItem(
             event_id=r.id,
