@@ -313,3 +313,42 @@ class DeviceRecord(BaseModel):
     fingerprint: str
     created_at: datetime
     last_seen_at: datetime
+
+
+class ThreatEventItem(BaseModel):
+    event_id: UUID
+    category: str
+    severity: str
+    subject_hash: str
+    mitre_tags: list[str]
+    score: int | None = None
+    scam_family: str | None = None
+    detected_at: datetime
+
+
+class NotificationItem(BaseModel):
+    id: UUID
+    level: str
+    body_key: str
+    body_params: dict[str, Any] = Field(default_factory=dict)
+    subject_hash: str | None = None
+    related_event_id: UUID | None = None
+    read_at: datetime | None = None
+    created_at: datetime
+
+
+class ReportCreateRequest(BaseModel):
+    from_ts: datetime = Field(alias="from")
+    to_ts: datetime = Field(alias="to")
+    types: list[str] = Field(default_factory=lambda: ["scan", "threat_event"])
+    format: str = Field(default="json", pattern="^(json)$")
+    redact_pii: bool = True
+
+    model_config = {"populate_by_name": True}
+
+
+class ReportResponse(BaseModel):
+    report_id: UUID
+    status: str
+    created_at: datetime
+    payload: dict[str, Any] | None = None

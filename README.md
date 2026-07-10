@@ -2,7 +2,7 @@
 
 Mudofaa-only xavfsizlik ekotizimi (Android + Windows + Web). **Hujum / exploit / C2 vositalari yo‘q.**
 
-**Version:** 0.3.0
+**Version:** 0.4.0
 
 ## Holat
 

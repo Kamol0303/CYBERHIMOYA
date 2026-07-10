@@ -9,8 +9,12 @@ import {
   fetchEmergencyAllowlist,
   fetchEmergencyLogs,
   fetchMe,
+  fetchNotifications,
   fetchScans,
+  fetchThreatEvents,
   fetchThreatFeedSync,
+  createReport,
+  markNotificationRead,
   getToken,
   login,
   register,
@@ -111,6 +115,13 @@ export default function App() {
   );
   const [guestHistory, setGuestHistory] = useState<GuestScanItem[]>([]);
   const [deviceBusy, setDeviceBusy] = useState<string | null>(null);
+  const [threatEvents, setThreatEvents] = useState<
+    { event_id: string; category: string; severity: string; score: number | null }[]
+  >([]);
+  const [notifications, setNotifications] = useState<
+    { id: string; level: string; body_key: string; read_at: string | null }[]
+  >([]);
+  const [reportMsg, setReportMsg] = useState<string | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -149,20 +160,25 @@ export default function App() {
       setConsents([]);
       return;
     }
-    const [scans, consentRows, feedSync, allowlist, emLogs, deviceRows] = await Promise.all([
-      fetchScans(),
-      fetchConsents(),
-      fetchThreatFeedSync(),
-      fetchEmergencyAllowlist(),
-      fetchEmergencyLogs(),
-      fetchDevices().catch(() => []),
-    ]);
+    const [scans, consentRows, feedSync, allowlist, emLogs, deviceRows, events, notifs] =
+      await Promise.all([
+        fetchScans(),
+        fetchConsents(),
+        fetchThreatFeedSync(),
+        fetchEmergencyAllowlist(),
+        fetchEmergencyLogs(),
+        fetchDevices().catch(() => []),
+        fetchThreatEvents().catch(() => []),
+        fetchNotifications().catch(() => []),
+      ]);
     setHistory(scans);
     setConsents(consentRows);
     setFeed(feedSync);
     setEmergency(allowlist);
     setEmergencyLogs(emLogs);
     setDevices(deviceRows);
+    setThreatEvents(events);
+    setNotifications(notifs);
   }
 
   useEffect(() => {
@@ -634,6 +650,85 @@ export default function App() {
               />
               {t(locale, "consentEmergency")}
             </label>
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "activityTitle")}</h2>
+            <p className="note">{t(locale, "activityHint")}</p>
+            {threatEvents.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {threatEvents.slice(0, 10).map((e) => (
+                  <li key={e.event_id}>
+                    <span className="score">{e.severity}</span>
+                    <span>
+                      {e.category} · {e.score ?? "—"}
+                    </span>
+                    <span className="hash">{e.event_id.slice(0, 8)}…</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "notificationsTitle")}</h2>
+            {notifications.length === 0 ? (
+              <p className="note">{t(locale, "noHistory")}</p>
+            ) : (
+              <ul className="history-list">
+                {notifications.slice(0, 10).map((n) => (
+                  <li key={n.id}>
+                    <span className="score">{n.level}</span>
+                    <span>{tCode(locale, n.body_key)}</span>
+                    {!n.read_at ? (
+                      <button
+                        type="button"
+                        className="secondary"
+                        onClick={() => {
+                          void markNotificationRead(n.id)
+                            .then(() =>
+                              setNotifications((prev) =>
+                                prev.map((x) =>
+                                  x.id === n.id ? { ...x, read_at: new Date().toISOString() } : x,
+                                ),
+                              ),
+                            )
+                            .catch(() => undefined);
+                        }}
+                      >
+                        {t(locale, "markRead")}
+                      </button>
+                    ) : (
+                      <span className="hash">read</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="consent-block">
+            <h2>{t(locale, "reportTitle")}</h2>
+            <p className="note">{t(locale, "reportHint")}</p>
+            <button
+              type="button"
+              onClick={() => {
+                const to = new Date();
+                const from = new Date(to.getTime() - 30 * 24 * 3600 * 1000);
+                void createReport(from.toISOString(), to.toISOString())
+                  .then((r) => {
+                    const scans = (r.payload as { sections?: { scan?: { count?: number } } })
+                      ?.sections?.scan?.count;
+                    setReportMsg(`${t(locale, "reportReady")}: ${r.report_id.slice(0, 8)}… (${scans ?? 0})`);
+                  })
+                  .catch(() => setReportMsg(t(locale, "error")));
+              }}
+            >
+              {t(locale, "reportCta")}
+            </button>
+            {reportMsg ? <p className="note">{reportMsg}</p> : null}
           </section>
 
           <section className="consent-block">

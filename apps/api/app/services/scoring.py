@@ -191,6 +191,20 @@ def scan_url(url: str, user_id: UUID | None = None) -> UrlScanResponse:
             created_at=utcnow(),
         )
     )
+    from app.services.threat_events import emit_threat_event
+
+    emit_threat_event(
+        user_id=user_id,
+        category="url_scan",
+        score=result["score"],
+        subject_hash=result["subject_hash"],
+        mitre_tags=result["mitre_tags"],
+        meta={
+            "scam_family": result["scam_family"],
+            "campaign_id": result.get("campaign_id"),
+            "scan_id": str(scan_id),
+        },
+    )
     return UrlScanResponse(
         scan_id=scan_id,
         url_normalized=result["url_normalized"],

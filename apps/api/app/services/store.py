@@ -133,6 +133,34 @@ class SqliteStore:
               meta TEXT NOT NULL,
               created_at TEXT NOT NULL
             );
+            CREATE TABLE IF NOT EXISTS threat_events (
+              id TEXT PRIMARY KEY,
+              user_id TEXT NOT NULL REFERENCES users(id),
+              category TEXT NOT NULL,
+              severity TEXT NOT NULL,
+              subject_hash TEXT NOT NULL,
+              mitre_tags TEXT NOT NULL,
+              meta TEXT NOT NULL,
+              detected_at TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS notifications (
+              id TEXT PRIMARY KEY,
+              user_id TEXT NOT NULL REFERENCES users(id),
+              level TEXT NOT NULL,
+              body_key TEXT NOT NULL,
+              body_params TEXT NOT NULL,
+              subject_hash TEXT,
+              related_event_id TEXT,
+              read_at TEXT,
+              created_at TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS reports (
+              id TEXT PRIMARY KEY,
+              user_id TEXT NOT NULL REFERENCES users(id),
+              status TEXT NOT NULL,
+              payload TEXT NOT NULL,
+              created_at TEXT NOT NULL
+            );
             """
         )
         self._conn.commit()
@@ -143,6 +171,9 @@ class SqliteStore:
             "emergency_logs",
             "message_reports",
             "devices",
+            "threat_events",
+            "notifications",
+            "reports",
             "audit_logs",
             "scan_results",
             "consent_records",
@@ -528,6 +559,200 @@ class SqliteStore:
             ),
         )
         self._conn.commit()
+
+    def add_threat_event(self, row) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO threat_events
+            (id, user_id, category, severity, subject_hash, mitre_tags, meta, detected_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(row.id),
+                str(row.user_id),
+                row.category,
+                row.severity,
+                row.subject_hash,
+                json.dumps(row.mitre_tags),
+                json.dumps(row.meta),
+                row.detected_at.isoformat(),
+            ),
+        )
+        self._conn.commit()
+
+    def find_recent_threat_event(self, user_id: UUID, subject_hash: str, within_seconds: int = 900):
+        from app.services.store_models import ThreatEventRow
+        from datetime import timedelta
+
+        cutoff = (utcnow() - timedelta(seconds=within_seconds)).isoformat()
+        r = self._conn.execute(
+            """
+            SELECT * FROM threat_events
+            WHERE user_id = ? AND subject_hash = ? AND detected_at >= ?
+            ORDER BY detected_at DESC LIMIT 1
+            """,
+            (str(user_id), subject_hash, cutoff),
+        ).fetchone()
+        if not r:
+            return None
+        return ThreatEventRow(
+            id=UUID(r["id"]),
+            user_id=UUID(r["user_id"]),
+            category=r["category"],
+            severity=r["severity"],
+            subject_hash=r["subject_hash"],
+            mitre_tags=json.loads(r["mitre_tags"] or "[]"),
+            meta=json.loads(r["meta"] or "{}"),
+            detected_at=_parse_dt(r["detected_at"]),
+        )
+
+    def list_threat_events(self, user_id: UUID, limit: int = 50, severity: str | None = None):
+        from app.services.store_models import ThreatEventRow
+
+        if severity:
+            rows = self._conn.execute(
+                """
+                SELECT * FROM threat_events WHERE user_id = ? AND severity = ?
+                ORDER BY detected_at DESC LIMIT ?
+                """,
+                (str(user_id), severity, limit),
+            ).fetchall()
+        else:
+            rows = self._conn.execute(
+                """
+                SELECT * FROM threat_events WHERE user_id = ?
+                ORDER BY detected_at DESC LIMIT ?
+                """,
+                (str(user_id), limit),
+            ).fetchall()
+        return [
+            ThreatEventRow(
+                id=UUID(r["id"]),
+                user_id=UUID(r["user_id"]),
+                category=r["category"],
+                severity=r["severity"],
+                subject_hash=r["subject_hash"],
+                mitre_tags=json.loads(r["mitre_tags"] or "[]"),
+                meta=json.loads(r["meta"] or "{}"),
+                detected_at=_parse_dt(r["detected_at"]),
+            )
+            for r in rows
+        ]
+
+    def get_threat_event(self, user_id: UUID, event_id: UUID):
+        rows = self.list_threat_events(user_id, limit=500)
+        for r in rows:
+            if r.id == event_id:
+                return r
+        return None
+
+    def add_notification(self, row) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO notifications
+            (id, user_id, level, body_key, body_params, subject_hash, related_event_id, read_at, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(row.id),
+                str(row.user_id),
+                row.level,
+                row.body_key,
+                json.dumps(row.body_params),
+                row.subject_hash,
+                str(row.related_event_id) if row.related_event_id else None,
+                row.read_at.isoformat() if row.read_at else None,
+                row.created_at.isoformat(),
+            ),
+        )
+        self._conn.commit()
+
+    def list_notifications(self, user_id: UUID, unread_only: bool = False, limit: int = 50):
+        from app.services.store_models import NotificationRow
+
+        if unread_only:
+            rows = self._conn.execute(
+                """
+                SELECT * FROM notifications WHERE user_id = ? AND read_at IS NULL
+                ORDER BY created_at DESC LIMIT ?
+                """,
+                (str(user_id), limit),
+            ).fetchall()
+        else:
+            rows = self._conn.execute(
+                """
+                SELECT * FROM notifications WHERE user_id = ?
+                ORDER BY created_at DESC LIMIT ?
+                """,
+                (str(user_id), limit),
+            ).fetchall()
+        return [
+            NotificationRow(
+                id=UUID(r["id"]),
+                user_id=UUID(r["user_id"]),
+                level=r["level"],
+                body_key=r["body_key"],
+                body_params=json.loads(r["body_params"] or "{}"),
+                subject_hash=r["subject_hash"],
+                related_event_id=UUID(r["related_event_id"]) if r["related_event_id"] else None,
+                read_at=_parse_dt(r["read_at"]),
+                created_at=_parse_dt(r["created_at"]),
+            )
+            for r in rows
+        ]
+
+    def mark_notification_read(self, user_id: UUID, notification_id: UUID) -> bool:
+        cur = self._conn.execute(
+            """
+            UPDATE notifications SET read_at = ?
+            WHERE id = ? AND user_id = ? AND read_at IS NULL
+            """,
+            (utcnow().isoformat(), str(notification_id), str(user_id)),
+        )
+        self._conn.commit()
+        return cur.rowcount > 0
+
+    def add_report(self, row) -> None:
+        self._conn.execute(
+            """
+            INSERT INTO reports (id, user_id, status, payload, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                str(row.id),
+                str(row.user_id),
+                row.status,
+                json.dumps(row.payload),
+                row.created_at.isoformat(),
+            ),
+        )
+        self._conn.commit()
+
+    def get_report(self, user_id: UUID, report_id: UUID):
+        from app.services.store_models import ReportRow
+
+        r = self._conn.execute(
+            "SELECT * FROM reports WHERE id = ? AND user_id = ?",
+            (str(report_id), str(user_id)),
+        ).fetchone()
+        if not r:
+            return None
+        return ReportRow(
+            id=UUID(r["id"]),
+            user_id=UUID(r["user_id"]),
+            status=r["status"],
+            payload=json.loads(r["payload"] or "{}"),
+            created_at=_parse_dt(r["created_at"]),
+        )
+
+    def get_scan(self, user_id: UUID, scan_id: UUID):
+        row = self._conn.execute(
+            "SELECT * FROM scan_results WHERE id = ? AND user_id = ?",
+            (str(scan_id), str(user_id)),
+        ).fetchone()
+        if not row:
+            return None
+        return self._row_to_scan(row)
 
     # refresh token map compatibility
     @property

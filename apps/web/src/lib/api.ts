@@ -375,6 +375,54 @@ export async function revokeDevice(deviceId: string): Promise<void> {
   await deleteVoid(`/v1/devices/${deviceId}`);
 }
 
+export async function fetchThreatEvents(severity?: string) {
+  const q = severity ? `?severity=${encodeURIComponent(severity)}` : "";
+  return getJson<
+    {
+      event_id: string;
+      category: string;
+      severity: string;
+      subject_hash: string;
+      mitre_tags: string[];
+      score: number | null;
+      scam_family: string | null;
+      detected_at: string;
+    }[]
+  >(`/v1/threat-events${q}`);
+}
+
+export async function fetchNotifications(unreadOnly = false) {
+  return getJson<
+    {
+      id: string;
+      level: string;
+      body_key: string;
+      body_params: Record<string, unknown>;
+      read_at: string | null;
+      created_at: string;
+    }[]
+  >(`/v1/notifications?unread_only=${unreadOnly ? "true" : "false"}`);
+}
+
+export async function markNotificationRead(id: string) {
+  return postJson(`/v1/notifications/${id}/read`, {});
+}
+
+export async function createReport(fromIso: string, toIso: string) {
+  return postJson<{
+    report_id: string;
+    status: string;
+    created_at: string;
+    payload: unknown;
+  }>("/v1/reports", {
+    from: fromIso,
+    to: toIso,
+    types: ["scan", "threat_event"],
+    format: "json",
+    redact_pii: true,
+  });
+}
+
 export async function sha256Hex(file: File): Promise<string> {
   const buffer = await file.arrayBuffer();
   const digest = await crypto.subtle.digest("SHA-256", buffer);

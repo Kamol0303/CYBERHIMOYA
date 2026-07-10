@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 — 2026-07-10
+
+Activity layer: threat events, notifications, JSON reports (FR-090/091/092/093).
+
+- `GET /v1/threat-events` — emit on authenticated suspicious/malicious scans
+- `GET /v1/notifications` + `POST /{id}/read` — in-app alerts (body keys, no raw PII)
+- `POST/GET /v1/reports` — redacted JSON export
+- Web dashboard: activity feed, notifications, report export
+- Includes 0.3.1 polish: guest history, device revoke, QR hunting, YARA stub
+
 ## 0.3.0 — 2026-07-10
 
 P0 user tools + passive hunting metadata (FR-043 / FR-051 / FR-003 / FR-MX01).

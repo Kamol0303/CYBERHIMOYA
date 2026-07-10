@@ -146,6 +146,18 @@ def main() -> int:
         and bool(r.json().get("campaign_id")),
     )
 
+    # Authenticated threat event + notification
+    auth_scan = client.post(
+        "/v1/scan/url",
+        headers=headers,
+        json={"url": "http://gov-subsidy-uz.xyz/claim"},
+    )
+    ok("auth_scan", auth_scan.status_code == 200)
+    ev = client.get("/v1/threat-events", headers=headers)
+    ok("threat_events", ev.status_code == 200 and len(ev.json()) >= 1)
+    nf = client.get("/v1/notifications", headers=headers)
+    ok("notifications", nf.status_code == 200 and len(nf.json()) >= 1)
+
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")
     return 1 if failed else 0

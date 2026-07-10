@@ -116,3 +116,37 @@ class MessageReportRow:
     scam_family: str | None
     meta: dict[str, Any]
     created_at: datetime
+
+
+@dataclass
+class ThreatEventRow:
+    id: UUID
+    user_id: UUID
+    category: str
+    severity: str
+    subject_hash: str
+    mitre_tags: list[str]
+    meta: dict[str, Any]
+    detected_at: datetime
+
+
+@dataclass
+class NotificationRow:
+    id: UUID
+    user_id: UUID
+    level: str
+    body_key: str
+    body_params: dict[str, Any]
+    subject_hash: str | None
+    related_event_id: UUID | None
+    read_at: datetime | None
+    created_at: datetime
+
+
+@dataclass
+class ReportRow:
+    id: UUID
+    user_id: UUID
+    status: str
+    payload: dict[str, Any]
+    created_at: datetime

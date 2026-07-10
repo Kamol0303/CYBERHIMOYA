@@ -487,3 +487,51 @@ def test_file_yara_stub(client: TestClient):
     assert r.status_code == 200
     body = r.json()
     assert any(m["rule"] == "stub_apk_lure" for m in body["yara_matches"])
+
+
+def test_threat_events_and_notifications(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "threat@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    assert client.post(
+        "/v1/scan/url", headers=headers, json={"url": "http://pay-click-uz.tk/x"}
+    ).status_code == 200
+    events = client.get("/v1/threat-events", headers=headers)
+    assert events.status_code == 200
+    assert len(events.json()) >= 1
+    assert events.json()[0]["severity"] in {"warning", "critical"}
+    notifs = client.get("/v1/notifications", headers=headers)
+    assert notifs.status_code == 200
+    assert len(notifs.json()) >= 1
+    nid = notifs.json()[0]["id"]
+    marked = client.post(f"/v1/notifications/{nid}/read", headers=headers)
+    assert marked.status_code == 200
+    assert marked.json()["read_at"] is not None
+
+
+def test_report_export(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "report@example.com", "password": "securepass1"},
+    )
+    headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+    client.post("/v1/scan/url", headers=headers, json={"url": "https://example.com/"})
+    r = client.post(
+        "/v1/reports",
+        headers=headers,
+        json={
+            "from": "2020-01-01T00:00:00Z",
+            "to": "2030-01-01T00:00:00Z",
+            "types": ["scan", "threat_event"],
+            "format": "json",
+            "redact_pii": True,
+        },
+    )
+    assert r.status_code == 201
+    body = r.json()
+    assert body["status"] == "ready"
+    assert "sections" in body["payload"]
+    got = client.get(f"/v1/reports/{body['report_id']}", headers=headers)
+    assert got.status_code == 200

@@ -128,6 +128,16 @@ def report_suspicious_message(
         "message.reported",
         {"report_id": str(report_id), "score": result["score"], "source": source},
     )
+    from app.services.threat_events import emit_threat_event
+
+    emit_threat_event(
+        user_id=user_id,
+        category="message",
+        score=result["score"],
+        subject_hash=result["text_hash"],
+        mitre_tags=result["mitre_tags"],
+        meta={"scam_family": result["scam_family"], "report_id": str(report_id)},
+    )
     return {
         "report_id": report_id,
         "score": result["score"],
