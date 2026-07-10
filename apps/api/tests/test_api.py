@@ -304,3 +304,43 @@ def test_security_headers(client: TestClient):
     r = client.get("/health")
     assert r.headers.get("X-CGA-Defensive-Only") == "1"
     assert r.headers.get("X-Content-Type-Options") == "nosniff"
+
+
+def test_cors_web_origin_preflight(client: TestClient):
+    origin = "http://localhost:5173"
+    r = client.options(
+        "/v1/scan/url",
+        headers={
+            "Origin": origin,
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+    assert r.status_code in {200, 204}
+    assert r.headers.get("access-control-allow-origin") == origin
+
+
+def test_cors_chrome_extension_preflight(client: TestClient):
+    # Unpacked extension IDs are 32 lowercase letters (a-p typically).
+    origin = "chrome-extension://abcdefghijklmnopqrstuvwxyzabcdef"
+    r = client.options(
+        "/v1/scan/url",
+        headers={
+            "Origin": origin,
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+    assert r.status_code in {200, 204}
+    assert r.headers.get("access-control-allow-origin") == origin
+
+
+def test_parse_cors_origins_chrome_wildcard():
+    from app.cors_util import parse_cors_origins
+
+    exact, regex = parse_cors_origins(
+        "http://localhost:5173,chrome-extension://*,http://127.0.0.1:5173"
+    )
+    assert exact == ["http://localhost:5173", "http://127.0.0.1:5173"]
+    assert regex is not None
+    assert "chrome-extension://" in regex

@@ -10,4 +10,7 @@ Defensive guest URL scan for the active tab. No page rewriting, no credential ca
 
 Set `API_BASE` in `popup.js` if API is remote.
 
+**CORS:** API default `CGA_CORS_ORIGINS` includes `chrome-extension://*` (expanded to
+`allow_origin_regex`). For production, pin the published extension ID instead of the wildcard.
+
 **Out of scope V1:** content-script blocking, enterprise policy push.

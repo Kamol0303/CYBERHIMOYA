@@ -9,7 +9,7 @@
 | Gate | Result |
 |------|--------|
 | Defensive lint | PASS |
-| API pytest | 21 passed |
+| API pytest | 24 passed |
 | Smoke `scripts/smoke_v1.py` | 11/11 |
 | Web `npm test` + `npm run build` | PASS |
 

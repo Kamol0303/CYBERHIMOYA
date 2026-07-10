@@ -80,4 +80,5 @@ Keyingi: PR merge → `main`, Legal privacy/AQ-039, store screenshotlar.
 4. [`docs/cyber-guardian-ai/operations/04-aq039-allowlist-runbook.md`](docs/cyber-guardian-ai/operations/04-aq039-allowlist-runbook.md)  
 5. [`docs/cyber-guardian-ai/operations/aq039-allowlist.env.template`](docs/cyber-guardian-ai/operations/aq039-allowlist.env.template)  
 6. [`docs/cyber-guardian-ai/operations/05-v1-release-checklist.md`](docs/cyber-guardian-ai/operations/05-v1-release-checklist.md)  
-7. [`SECURITY.md`](SECURITY.md) · [`docs/privacy-policy-draft.md`](docs/privacy-policy-draft.md)  
+7. [`docs/cyber-guardian-ai/operations/06-merge-ready-status.md`](docs/cyber-guardian-ai/operations/06-merge-ready-status.md)  
+8. [`SECURITY.md`](SECURITY.md) · [`docs/privacy-policy-draft.md`](docs/privacy-policy-draft.md)  

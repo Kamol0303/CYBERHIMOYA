@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app import __version__
 from app.config import settings
+from app.cors_util import parse_cors_origins
 from app.models.schemas import HealthResponse
 from app.middleware_security import SecurityHeadersMiddleware
 from app.routers import auth, consents, emergency, feed, ops, scan, scans
@@ -35,11 +36,14 @@ app = FastAPI(
     license_info={"name": "Proprietary — defensive use only"},
 )
 
-origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
+# chrome-extension://* in CGA_CORS_ORIGINS becomes allow_origin_regex (Starlette
+# does not treat * inside allow_origins as a wildcard).
+cors_origins, cors_origin_regex = parse_cors_origins(settings.cors_origins)
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins or ["*"],
+    allow_origins=cors_origins if cors_origins else (["*"] if not cors_origin_regex else []),
+    allow_origin_regex=cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

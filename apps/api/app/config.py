@@ -11,7 +11,11 @@ class Settings(BaseSettings):
     refresh_token_ttl_seconds: int = 60 * 60 * 24 * 14
     guest_rate_limit_per_hour: int = 20
     feed_version: str = "20260710.2"
-    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    cors_origins: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:8080,http://127.0.0.1:8080,"
+        "chrome-extension://*"
+    )
     # sqlite:///./data/cga.db | sqlite:///:memory: | postgresql://user:pass@host:5432/cga
     database_url: str = "sqlite:///./data/cga.db"
     sqlite_fallback_path: str = "data/cga.db"
