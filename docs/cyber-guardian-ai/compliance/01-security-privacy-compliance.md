@@ -133,6 +133,18 @@ Namuna manbalar (integratsiya sharti ochiq): ochiq URL reputation ro‘yxatlari,
 
 ---
 
+## 10.5 Emergency Reporting siyosati
+
+1. Faqat oldindan **yozma opt-in** rozilik.  
+2. Faqat **Critical** + ≥3 modul korrelyatsiyasi + yuqori threshold.  
+3. Yuborishdan oldin **double confirmation** (imkon bo‘lsa).  
+4. Faqat allowlisted IIV/UZCERT kanallari (AQ-039).  
+5. Anonymized evidence; raw PII/SMS/parol yo‘q.  
+6. Kabinet + AuditLog.  
+7. Android SIM SMS; Windows email/API.
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
+
 ## 10.6 Web maxfiyligi
 
 - Mehmon skan: IP asosida rate limit; uzoq muddatli profil yaratilmaydi.  

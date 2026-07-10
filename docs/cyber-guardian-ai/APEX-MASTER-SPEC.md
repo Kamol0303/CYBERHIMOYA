@@ -1,7 +1,7 @@
 # Cyber Guardian AI — APEX MASTER SPECIFICATION
 ## IEEE 830 SRS + SDD (Yagona sprint-planning hujjati)
 
-**Versiya:** 5.2.0-defensive-strict  
+**Versiya:** 5.3.0-emergency-reporting  
 **Sana:** 2026-07-10  
 **Holat:** Professional jamoa sprint-planning uchun tayyor  
 **Til:** O‘zbek (texnik atamalar EN)  
@@ -13,6 +13,9 @@
 
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 
@@ -30,6 +33,9 @@
 
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 
@@ -54,6 +60,9 @@ Faqat Blue Team / mudofaa. Profiling = passive observation + korrelyatsiya. Evid
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
+
 ---
 
 # 2. Missiya va muammo konteksti
@@ -62,10 +71,17 @@ Faqat Blue Team / mudofaa. Profiling = passive observation + korrelyatsiya. Evid
 O‘zbekistonda zararli APK, Telegram/QR fishing, voice scam va boshqa SE hujumlari o‘smoqda; oddiy foydalanuvchi texnik himoyasiz.
 
 ## 2.2 Missiya
-**Cyber Guardian AI** — foydalanuvchilarni har tomonlama himoya qilish bilan birga, kiberhujum tayyorlayotgan yoki amalga oshirayotgan har qanday threat actorni erta bosqichda aniqlaydigan, kuzatadigan, profiling qiladigan va ularning harakatlarini **to‘liq bloklashga yordam beradigan** eng kuchli mudofaa va proaktiv threat hunting platformasi.
+**Cyber Guardian AI** — foydalanuvchilarni har tomonlama himoya qilish bilan birga, kiberhujum tayyorlayotgan yoki amalga oshirayotgan har qanday threat actorni erta bosqichda aniqlaydigan, kuzatadigan, profiling qiladigan va ularning harakatlarini **to‘liq bloklashga yordam beradigan**, shuningdek **juda yuqori xavf (Critical) darajasidagi tasdiqlangan hujum** aniqlanganda foydalanuvchining **oldindan yozma roziligi** asosida Ichki Ishlar Vazirligi yoki UZCERT ga **avtomatik xabar** yuborish imkoniyatiga ega bo‘lgan eng kuchli mudofaa tizimi.
 
 ## 2.3 Muhim tamoyil (eng qat’iy)
-Platforma **faqat mudofaa (defensive)** funksiyalarini o‘z ichiga oladi. Hech qanday holatda hujum, ekspluatatsiya, zararli ta’sir, C2, payload yoki boshqa tizimga **faol aralashuv** imkoniyati bo‘lmaydi. Har bir modul faqat **aniqlash, monitoring, intellekt yig‘ish va avtomatlashtirilgan mudofaa choralari** bilan cheklanadi.
+Platforma **faqat mudofaa** funksiyalarini bajaradi. Hech qanday holatda hujum, ekspluatatsiya, C2, payload yoki boshqa tizimga faol aralashuv yo‘q.
+
+**Avtomatik xabar yuborish** faqat:
+1. eng yuqori severity (**Critical**);
+2. foydalanuvchi **oldindan yozma rozilik** bergan;
+3. **tasdiqlangan** haqiqiy hujum (ko‘p-modul korrelyatsiya + yuqori threshold);
+4. imkon bo‘lsa **ikki martalik tasdiqlash**;
+5. faqat **anonymized** dalillar.
 
 ## 2.4 Asosiy FR/NFR
 
@@ -75,15 +91,20 @@ Platforma **faqat mudofaa (defensive)** funksiyalarini o‘z ichiga oladi. Hech 
 | FR-M02 | Passive actor profiling (confidence + explainability) |
 | FR-M03 | Automated defensive response: lokal bloklash / izolyatsiya / alert |
 | FR-M04 | Rasmiy organlarga mas’uliyatli xabar (intel pack) |
-| FR-M05 | Passive hunting only — no active probing of third-party networks |
+| FR-M05 | Passive hunting only — no active probing |
+| FR-M06 | Emergency reporting: Critical + prior consent + double confirm + anonymized only |
 | NFR-M01 | TLS 1.3, AES-256 PII, consent-gated monitoring |
 | NFR-M02 | CI blocks any offensive/active-intrusion capability |
 | NFR-M03 | All monitoring APIs read-only toward external systems |
+| NFR-M04 | Emergency SMS/API only to allowlisted official endpoints (AQ-039) |
 
 ### Threat Hunting & Actor Disruption Strategy
-Aniqlash → passive korrelyatsiya → lokal bloklash/izolyatsiya → foydalanuvchi + rasmiy organlarga xabar. Faol hujum yo‘q.
+Aniqlash → passive korrelyatsiya → lokal bloklash/izolyatsiya → (Critical+consent) emergency report → foydalanuvchi kabinetida log. Faol hujum yo‘q.
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 
@@ -104,6 +125,9 @@ Android — scam/APK signal; Windows — EDR/XDR hunting; Web — attribution da
 
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 
@@ -142,29 +166,45 @@ Android — scam/APK signal; Windows — EDR/XDR hunting; Web — attribution da
 | 27 | Suspicious Infrastructure Passive Detection | ✅ | ✅ | ✅ | Faqat monitoring va ogohlantirish |
 | 28 | Deep Memory & Behavioral Forensics | ❌ | ✅ | ❌ | Read-only analysis |
 | 29 | Graph-based Defensive Relationship Analysis | ❌ | ✅ | ✅ | Actor — IOC — Campaign graph |
-| 30 | Persona/Group OSINT Tracking | ❌ | ✅ | ✅ | Legal OSINT; AQ-030 |
-| 31 | Hunting Pipeline | ⚠️ | ⚠️ | ✅ | BE real-time + scheduled |
-| 32 | Knowledge Graph / TAKB | ❌ | ❌ | ✅ | Analyst Web |
-| 33 | Intelligence Fusion | ❌ | ❌ | ✅ | Multi-source |
-| 34 | Defensive Playbook Orchestrator | ⚠️ | ✅ | ✅ | Automated response — no offense |
-| 35 | Rootkit / Injection / LOTL Detection | ⚠️ | ✅ | ⚠️ | Detection only |
-| 36 | IOC Sweeping (cross-platform) | ✅ | ✅ | ✅ | Signed delta |
-| 37 | Take-down Intelligence (authority pack) | ⚠️ | ⚠️ | ✅ | Organlarga; o‘zimiz take-down yo‘q |
-| 38 | Deep Memory Behavioral Forensics | ❌ | ✅ | ⚠️ | Evidence Vault |
-| 39 | Multi-lang SE (uz/ru/en + slang) | ✅ | ✅ | ✅ | Bias monitor |
-| 40 | Zero-Day Behavior Anomaly | ⚠️ | ✅ | ⚠️ | Soft warn |
-| 41 | TTP Mapping (UZ custom base) | ⚠️ | ✅ | ✅ | MITRE + uz_ttp |
-| 42 | Live Panel signature packs | ✅ | ✅ | ✅ | Detect≠build |
+| 30 | Emergency Law Enforcement Alert | ✅ | ⚠️ | ❌ | Faqat Android (SIM SMS). Oldindan rozilik + ikki martalik tasdiqlash. Faqat Critical. |
+| 31 | Automated Incident Reporting to UZCERT / Ichki Ishlar | ✅ | ✅ | ✅ | Rozilik + anonymized evidence. Shaxsiy ma’lumot avtomatik yuborilmaydi. |
+| 32 | Persona/Group OSINT Tracking | ❌ | ✅ | ✅ | Legal OSINT; AQ-030 |
+| 33 | Hunting Pipeline | ⚠️ | ⚠️ | ✅ | BE real-time + scheduled |
+| 34 | Knowledge Graph / TAKB | ❌ | ❌ | ✅ | Analyst Web |
+| 35 | Intelligence Fusion | ❌ | ❌ | ✅ | Multi-source |
+| 36 | Defensive Playbook Orchestrator | ⚠️ | ✅ | ✅ | Automated response — no offense |
+| 37 | Rootkit / Injection / LOTL Detection | ⚠️ | ✅ | ⚠️ | Detection only |
+| 38 | IOC Sweeping (cross-platform) | ✅ | ✅ | ✅ | Signed delta |
+| 39 | Take-down Intelligence (authority pack) | ⚠️ | ⚠️ | ✅ | Organlarga; o‘zimiz take-down yo‘q |
+| 40 | Deep Memory Behavioral Forensics | ❌ | ✅ | ⚠️ | Evidence Vault |
+| 41 | Multi-lang SE (uz/ru/en + slang) | ✅ | ✅ | ✅ | Bias monitor |
+| 42 | Zero-Day Behavior Anomaly | ⚠️ | ✅ | ⚠️ | Soft warn |
+| 43 | TTP Mapping (UZ custom base) | ⚠️ | ✅ | ✅ | MITRE + uz_ttp |
+| 44 | Live Panel signature packs | ✅ | ✅ | ✅ | Detect≠build |
 
 **FR-MX01** Har skan natijasida ixtiyoriy: `intent_tags`, `campaign_id`, `actor_hint`, `kill_chain_stage`, `recommended_actions[]` (defensive).
 
-**FR-MX02** #24–29 — passive/defensive hunting qatlami; #30–42 — chuqurlashtirish. Active probing yo‘q.
+**FR-MX02** #24–29 — passive hunting; **#30–31 — emergency reporting** (consent+Critical only); #32+ — chuqurlashtirish.
+
+| ID | Emergency FR |
+|----|----------------|
+| FR-EM01 | `ConsentRecord` type=`emergency_law_enforcement` — onboarding + settings, qayta tasdiqlanadigan |
+| FR-EM02 | Critical trigger: ≥3 mustaqil modul + yuqori confidence threshold |
+| FR-EM03 | Double confirmation UI (qurilma ishlatilsa); offline/locked — siyosat AQ-040 |
+| FR-EM04 | Android: Telephony SMS faqat allowlisted rasmiy raqamlarga |
+| FR-EM05 | Windows: email yoki rasmiy API (allowlisted) |
+| FR-EM06 | Payload: anonymized user ref + short evidence code/link; raw PII/SMS/parol yo‘q |
+| FR-EM07 | Barcha yuborishlar foydalanuvchi kabinetida + AuditLog |
+
 
 ### Threat Hunting & Actor Disruption Strategy
 #24–29 orqali actor/kampaniya/infra/graph; disruption #34 playbook + #37 authority intel orqali.
 
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 
@@ -291,6 +331,9 @@ Oqim oxiri — Automated Response (himoya) + authority intel; offensive sink yo�
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
+
 ---
 
 # 6. Diagrammalar
@@ -396,6 +439,9 @@ Diagrammalar faqat himoya oqimini ko‘rsatadi; attacker TTP “how-to” yo‘q
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
+
 ---
 
 # 7. API va ma’lumotlar bazasi
@@ -423,6 +469,10 @@ Diagrammalar faqat himoya oqimini ko‘rsatadi; attacker TTP “how-to” yo‘q
 | `POST /v1/playbooks/{id}/run` | Defensive run |
 | `POST /v1/evidence` | Vault |
 | `POST /v1/authority/takedown-intel` | Intel pack |
+| `POST /v1/emergency/consent` | Emergency consent grant/revoke |
+| `POST /v1/emergency/confirm` | Double-confirm Critical dispatch |
+| `POST /v1/emergency/dispatch` | Server-side structured report to UZCERT/IIV API |
+| `GET /v1/emergency/logs` | User cabinet emergency logs |
 | `POST /v1/breach-check` | Breach |
 | `GET/POST /v1/consents` | Consent |
 | `DELETE /v1/me` | Erasure |
@@ -497,6 +547,9 @@ API da `recommended_actions` faqat defensive enum; offensive qiymatlar validatsi
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
+
 ---
 
 # 8. AI / Detection modullari
@@ -525,11 +578,15 @@ Majburiy kuchli modullar (passive detection + defensive response only):
 5. **Deep Memory & Behavioral Forensics (Windows)** — read-only  
 6. **Graph-based Threat Relationship Engine**  
 7. **Predictive Defensive Early Warning**  
-8. **Automated Defensive Playbook Engine** (bloklash, izolyatsiya, alert)  
+8. **Automated Defensive Playbook Engine** (bloklash, izolyatsiya, alert)
+9. **Emergency Critical Threat Response Engine** (Critical + consent → IIV/UZCERT)  
 
 Qo‘shimcha (to‘liq to‘plam): Multi-Vector Reputation, QR/Visual, Deepfake, Rootkit/Injection/LOTL **detection**, YARA/Sigma, Attribution & Fingerprinting, Campaign Tracking, TTP/MITRE — barchasi xuddi shu chegara ichida. Batafsil: `sdd/04c`.
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 
@@ -717,6 +774,20 @@ Qo‘shimcha (to‘liq to‘plam): Multi-Vector Reputation, QR/Visual, Deepfake,
 
 
 
+
+### Emergency Critical Threat Response Engine
+- **Kirish ma’lumoti:** Barcha modullardan yuqori confidence bilan kelgan Critical severity signallari.
+- **Feature extraction & Enrichment:** Multiple indicators correlation (behavior + actor profiling + TTP match); consent flag; endpoint allowlist.
+- **Model/Heuristika turi:** Rule-based + ML ensemble (false positive minimallashtirish).
+- **Chiqish:** Critical alert + detailed evidence package (anonymized) + foydalanuvchiga tasdiqlash so‘rovi + optional dispatch status.
+- **False positive kamaytirish va evasion bypass:** Kamida **3 ta mustaqil modul** tasdiqlashi + juda yuqori threshold; single-signal hech qachon emergency yubormaydi.
+- **Ma’lumot manbalari:** Barcha ichki mudofaa modullari; rasmiy endpoint konfiguratsiyasi (AQ-039).
+- **On-device / Edge / Cloud:** Hybrid — korrelyatsiya cloud/on-device policy; SMS on-device (Android); structured report cloud→UZCERT API.
+- **Yangilanish chastotasi:** Real-time signals; policy packs signed.
+- **Kill-chain:** Defensive response / reporting only.
+- **Hujumga qarshi choralar:** faqat lokal bloklash, monitoring va rasmiy organlarga xabar berish.
+- **Hujum holatida choralar:** Foydalanuvchi oldindan bergan rozilik bo‘lsa — Ichki Ishlar / UZCERT ga avtomatik SMS + structured report («Menga kiberhujum qilinmoqda, quyidagi dalillar…»). Xabarda faqat zaruriy **anonymized** ma’lumotlar.
+
 ### Automated Defensive Playbook Engine
 - **Kirish ma’lumoti:** Score, actor/campaign hint, kill_chain_stage, policy.
 - **Feature extraction & Enrichment:** Action eligibility, consent, device capability.
@@ -764,6 +835,13 @@ Faqat defensive action ro‘yxati; run + audit.
 
 ### Settings / Privacy
 Consent, modules, erasure, language, large text.
+Alohida: **Emergency Law Enforcement Alert** roziligi (yozma, qayta tasdiqlash, o‘chirish mumkin).
+
+### Emergency Confirmation (Critical)
+1) Critical banner + nima aniqlandi (tushunarli).  
+2) Double confirmation: «Rasmiy organlarga anonymized xabar yuborilsinmi?»  
+3) Yuborilgach: kabinetda log + bekor qilish yo‘q (allaqachon ketgan) / keyingi safar uchun consent o‘chirish.
+
 
 ## 9.3 Ogohlantirish UX
 Qat’iy, aniq, CTA; dark pattern/timer/qo‘rqitish yo‘q. Overlay taqiqlangan.
@@ -774,6 +852,9 @@ Foydalanuvchi: himoya CTA. SOC: intel + playbook. Hech kimga «hujum qil» UI yo
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
+
 ---
 
 # 10. Xavfsizlik, maxfiylik, muvofiqlik
@@ -783,41 +864,55 @@ Foydalanuvchi: himoya CTA. SOC: intel + playbook. Hech kimga «hujum qil» UI yo
 | Qoida | Majburiy |
 |-------|----------|
 | No active attack | Platforma hech qachon faol hujum qila olmaydi |
-| Read-only monitoring | Barcha tashqi/monitoring oqimlari read-only / passive |
-| Response scope | Faqat **bloklash**, **ogohlantirish**, **lokal izolyatsiya**, **rasmiy organlarga mas’uliyatli xabar** |
-| Forbidden | C2, payload, exploit, active probing, hack-back, boshqa tizimga faol aralashuv |
+| Read-only monitoring | Barcha monitoring read-only / passive |
+| Response scope | Lokal bloklash, ogohlantirish, izolyatsiya |
+| Emergency report | Faqat Critical + prior written consent + double confirm + anonymized |
+| Forbidden | C2, payload, exploit, active probing, hack-back, roziliksiz organlarga xabar |
 
-## 10.2 Android ruxsatlar
-- Minimal ruxsat + ko‘rinadigan asos.
-- SMS **on-device**; raw cloudga yo‘q.
-- Yashirin overlay yo‘q; tizim notification.
-- Accessibility default MVP off (AQ-014).
-- Play Restricted declaration + demo video.
+## 10.2 Android ruxsatlar va rozilik (qat’iy)
+- Minimal ruxsat + har bir ruxsat uchun aniq asos.
+- SMS tahlili on-device; raw SMS cloudga **yo‘q**.
+- `SEND_SMS` (yoki ekvivalent) **faqat** emergency consent yoqilganda so‘raladi; asos: rasmiy raqamlarga Critical alert.
+- Yashirin overlay yo‘q.
+- Onboardingda emergency consent **alohida ekran**, majburiy emas (opt-in); rad etilsa modul o‘chiq.
+- Play Restricted declaration + demo video (SMS send use-case aniq ko‘rsatiladi).
 
-## 10.3 Maxfiylik (qat’iy)
+## 10.3 Maxfiylik (yanada qat’iy)
 - O‘zR PII qonuni + GDPR-uslub: consent, minimize, erasure, purpose limit.
-- Hunting/monitoring faqat **rozilik** + anonim/pseudonym meta.
-- TLS 1.3; AES-256 at-rest.
-- Ma’lumot sotish / uchinchi tomon marketing — **mutlaqo yo‘q**.
+- Emergency xabarda: **to‘liq ism, telefon, email, SMS matni, parol, aniq joylashuv** default **yuborilmaydi**.
+- Faqat: pseudonymous user ref / anonim kod, threat category, timestamp, short evidence reference.
+- Ma’lumot sotish — mutlaqo yo‘q.
+- Foydalanuvchi emergency consentni istalgan vaqt o‘chira oladi (kelgusi yuborishlar to‘xtaydi).
 
 ## 10.4 Responsible Disclosure (qat’iy)
-Actor/tahdid intel — **faqat** UZCERT, Milliy Kiberxavfsizlik Markazi yoki tegishli organlar. Ommaviy doxing yo‘q. Ichki audit majburiy.
+SOC/analyst intel paketlari — UZCERT / Milliy markaz. Emergency user-alert — faqat allowlisted IIV/UZCERT kanallari (AQ-039).
 
-## 10.5 Ethical Hunting
-Explainability majburiy; bias monitoring; immutable audit; CI offensive lint.
+## 10.5 Emergency Reporting siyosati (majburiy)
+
+1. Funksiya faqat foydalanuvchi **oldindan yozma rozilik** bergan holatda ishlaydi.  
+2. Rozilik: onboarding + sozlamalarda alohida, aniq, qayta-qayta tasdiqlanadigan; opt-in.  
+3. Yuborishdan oldin **ikki martalik (double confirmation)** (qurilma ishlatish mumkin bo‘lsa).  
+4. **Namuna xabar:**  
+   «Salom, men [Foydalanuvchi ID yoki anonim raqam]. Menga kiberhujum qilinmoqda. Critical threat aniqlandi. Dalillar: [qisqa anonymized link yoki kod]. Iltimos, tekshiring.»  
+5. Faqat Ichki Ishlar yoki UZCERT **rasmiy** raqam/API endpointlariga.  
+6. Barcha yuborilgan xabarlar foydalanuvchi **shaxsiy kabinetida** log qilinadi + AuditLog.  
+7. FP xavfi yuqori → threshold **juda yuqori**; ≥3 modul korrelyatsiyasi.  
+8. Web mehmon rejimida emergency **yo‘q**.
 
 | ID | Talab |
 |----|-------|
-| FR-SEC01 | ConsentRecord har monitoring moduli |
+| FR-SEC01 | ConsentRecord har monitoring/emergency moduli |
 | FR-SEC02 | Authority-only detailed actor export |
+| FR-EM01…07 | §4 emergency FR jadvali |
 | NFR-SEC01 | Immutable audit ≥365k |
 | NFR-SEC02 | CI blocks offensive/active-probe actions |
-| NFR-SEC03 | External network interactions: deny-by-default except TI feed pull + user-initiated scan |
+| NFR-SEC04 | Emergency dispatch deny if consent missing or endpoint not allowlisted |
 
 ### Threat Hunting & Actor Disruption Strategy
-Hal qilish yo‘li: lokal mudofaa + rasmiy xabar. Faol hujum arxitekturada mavjud emas.
+Critical tasdiqlangan hujum → lokal mudofaa + (consent) rasmiy organlarga anonymized xabar. Faol hujum yo‘q.
 
-> Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 
@@ -840,12 +935,31 @@ Chuqur behavior modeling = mudofaa intellekti; tashqi tarmoqqa faol ta’sir yo�
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
+
 ---
 
 # 12. Operatsion talablar
 
 | Tizim | Talab |
 |-------|-------|
+| Notification | info/warn/critical; i18n keys; no overlay |
+| Offline | A/W full cache; Web last results |
+| Auto-update | Delta IOC/rules/models + signature verify |
+| Audit | Immutable; playbook/hunt/disclosure/**emergency dispatch** |
+| Playbooks | Defensive enum only; policy+audit |
+| Observability | Metrics/logs/traces PII-free |
+| **Emergency Alert Mechanism** | **Android:** SIM orqali SMS (Telephony API), faqat rozilik + allowlisted raqam. **Windows:** email yoki rasmiy API. **Web:** structured report UI (mehmon yo‘q). |
+
+**FR-OPS01** Sync imzo fail → discard.  
+**FR-OPS02** Playbook run → AuditLog + optional Evidence ref.  
+**FR-OPS03** Emergency dispatch → cabinet log + AuditLog + idempotency key (duplicate SMS yo‘q).  
+**FR-OPS04** Official endpoints config imzolangan remote config (AQ-039).
+
+### Threat Hunting & Actor Disruption Strategy
+Emergency = mudofaa xabari; on-call runbook (AQ-009). Faol hujum yo‘q.
+|-------|
 | Notification | info/warn/critical; i18n keys; no overlay |
 | Offline | A/W full cache; Web last results |
 | Auto-update | Delta IOC/rules/models + signature verify |
@@ -861,6 +975,9 @@ Playbook execution = avtomatik himoya; on-call runbook (AQ-009).
 
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 
@@ -892,6 +1009,9 @@ Red team sim — detektor chidamliligi; exploit tarqatish taqiqlangan.
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
 
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
+
 ---
 
 # 14. Yo‘l xaritasi
@@ -910,6 +1030,9 @@ Red team sim — detektor chidamliligi; exploit tarqatish taqiqlangan.
 Har versiya faqat aniqlash + mudofaa choralari kuchayadi.
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 
@@ -948,6 +1071,9 @@ Asosiy bloklovchilar: auth ID (AQ-002), cloud residency (AQ-005), Neo4j/vector (
 
 
 > Ushbu modul/funksiya hech qanday holatda hujum yoki faol ekspluatatsiya imkoniyatini yaratmaydi — faqat aniqlash va mudofaa choralari bilan cheklanadi.
+
+
+> Barcha funksiyalar, shu jumladan emergency reporting ham faqat mudofaa maqsadida, foydalanuvchi roziligi bilan va qonun doirasida ishlaydi. Hech qanday faol hujum imkoniyati mavjud emas.
 
 ---
 

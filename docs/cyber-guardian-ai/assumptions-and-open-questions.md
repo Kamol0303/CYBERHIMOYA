@@ -62,6 +62,9 @@
 | AQ-036 | Regional Edge PoP kerakmi (MVP da yo‘q)? | SDD-08 | Infra |
 | AQ-037 | Vector DB tanlovi (pgvector / milvus / other)? | SDD-08 | Eng |
 | AQ-038 | V5 autonomous defense: human-in-the-loop majburiy darajasi? | Roadmap V5 | Ethics |
+| AQ-039 | IIV / UZCERT rasmiy SMS raqamlari va API endpointlari (allowlist manbasi)? | FR-EM04/05 | Legal + Product |
+| AQ-040 | Qurilma qulflangan/offline Critical da double-confirm o‘rniga nima (kechiktirish / faqat lokal alert)? | FR-EM03 | Product + Privacy |
+| AQ-041 | Emergency SMS uchun operator/SMS gateway litsenziyasi kerakmi? | FR-EM04 | Legal |
 
 ---
 
