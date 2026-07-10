@@ -1,6 +1,6 @@
 # Cyber Guardian AI — Hujjatlar indeksi
 
-**Joriy nashr:** Apex Master **v5.2.0-defensive-strict** (passive hunting, read-only monitoring, lokal mudofaa response)  
+**Joriy nashr:** Apex Master **v5.3.0-emergency-reporting** (passive hunting, read-only monitoring, lokal mudofaa response)  
 **Sprint-planning KIRISH NUQTASI:** [`APEX-MASTER-SPEC.md`](APEX-MASTER-SPEC.md)
 
 Ushbu fayl — master spetsifikatsiyaga yo‘l ko‘rsatgich.

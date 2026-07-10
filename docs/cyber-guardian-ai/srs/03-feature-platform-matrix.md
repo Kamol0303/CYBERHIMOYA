@@ -46,21 +46,23 @@ N/A Platformaga tegishli emas
 | 27 | Suspicious Infrastructure Passive Detection | ✅ | ✅ | ✅ | Faqat monitoring va ogohlantirish |
 | 28 | Deep Memory & Behavioral Forensics | ❌ | ✅ | ❌ | Read-only analysis |
 | 29 | Graph-based Defensive Relationship Analysis | ❌ | ✅ | ✅ | Actor — IOC — Campaign graph |
-| 30 | Threat Actor Persona & Group Tracking | ❌ | ✅ | ✅ | Qonuniy OSINT; dark web — AQ-030 |
-| 31 | Threat Hunting Pipeline | ⚠️ | ⚠️ | ✅ | Real-time + scheduled (BE) |
-| 32 | Actor Knowledge Graph / TAKB | ❌ | ❌ | ✅ | Neo4j yoki ekvivalent |
-| 33 | Intelligence Fusion Engine | ❌ | ❌ | ✅ | OSINT + feeds + telemetry |
-| 34 | Automated Playbook Engine (defensive) | ⚠️ | ✅ | ✅ | Blok/karantin/xabar; hack-back yo‘q |
-| 35 | Attacker Intent / LOLBin-Injection Detection | ⚠️ | ✅ | ⚠️ | Windows IOA; exploit qo‘llanma yo‘q |
-| 36 | Predictive Threat Actor Behavior Modeling | ⚠️ | ⚠️ | ✅ | ML forecast; client hint |
-| 37 | Automated Infrastructure Take-down Intelligence | ⚠️ | ⚠️ | ✅ | Organlarga IOC paket; o‘zimiz take-down yo‘q |
-| 38 | Deep Memory & Behavioral Forensics | ❌ | ✅ | ⚠️ | W agent; Web case UI |
-| 39 | Graph-based Relationship Analysis | ⚠️ | ⚠️ | ✅ | actor–tool–victimPattern–campaign |
-| 40 | Multi-Language Scam & SE (uz/ru/en + slang) | ✅ | ✅ | ✅ | + ixtiyoriy RU/CN pattern lib |
-| 41 | Live Phishing Kit & Scam Panel Hunting | ✅ | ✅ | ✅ | Detection only |
-| 42 | Zero-Day Behavior Anomaly Detection | ⚠️ | ✅ | ⚠️ | Signature’siz; W kuchli |
+| 30 | Emergency Law Enforcement Alert | ✅ | ⚠️ | ❌ | Android SIM SMS; prior consent + double confirm; Critical only |
+| 31 | Automated Incident Reporting to UZCERT / Ichki Ishlar | ✅ | ✅ | ✅ | Consent + anonymized evidence; no raw PII auto-send |
+| 32 | Threat Actor Persona & Group Tracking | ❌ | ✅ | ✅ | Qonuniy OSINT; dark web — AQ-030 |
+| 33 | Threat Hunting Pipeline | ⚠️ | ⚠️ | ✅ | Real-time + scheduled (BE) |
+| 34 | Actor Knowledge Graph / TAKB | ❌ | ❌ | ✅ | Neo4j yoki ekvivalent |
+| 35 | Intelligence Fusion Engine | ❌ | ❌ | ✅ | OSINT + feeds + telemetry |
+| 36 | Automated Playbook Engine (defensive) | ⚠️ | ✅ | ✅ | Blok/karantin/xabar; hack-back yo‘q |
+| 37 | Attacker Intent / LOLBin-Injection Detection | ⚠️ | ✅ | ⚠️ | Windows IOA; exploit qo‘llanma yo‘q |
+| 38 | Predictive Threat Actor Behavior Modeling | ⚠️ | ⚠️ | ✅ | ML forecast; client hint |
+| 39 | Automated Infrastructure Take-down Intelligence | ⚠️ | ⚠️ | ✅ | Organlarga IOC paket; o‘zimiz take-down yo‘q |
+| 40 | Deep Memory & Behavioral Forensics | ❌ | ✅ | ⚠️ | W agent; Web case UI |
+| 41 | Graph-based Relationship Analysis | ⚠️ | ⚠️ | ✅ | actor–tool–victimPattern–campaign |
+| 42 | Multi-Language Scam & SE (uz/ru/en + slang) | ✅ | ✅ | ✅ | + ixtiyoriy RU/CN pattern lib |
+| 43 | Live Phishing Kit & Scam Panel Hunting | ✅ | ✅ | ✅ | Detection only |
+| 44 | Zero-Day Behavior Anomaly Detection | ⚠️ | ✅ | ⚠️ | Signature’siz; W kuchli |
 
-> **#24–29** — passive/defensive only (v5.2). Master: `APEX-MASTER-SPEC.md`.
+> **#24–29** passive hunting; **#30–31 emergency reporting** (v5.3). Master: `APEX-MASTER-SPEC.md`.
 
 ---
 
