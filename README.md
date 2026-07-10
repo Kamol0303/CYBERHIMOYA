@@ -25,4 +25,5 @@ Ish oqimi: **bitta** branch/PR (mahsulotlar bo‘yicha parallel branchlar ochilm
 
 Android ilova · Windows Desktop (EDR + Threat Hunting) · Web (tekshiruv + intel/actor dashboard)
 
-**Edition:** Threat Hunter — batafsil `docs/cyber-guardian-ai/` (SRS 07 + SDD 06).
+**Edition:** Killer (v3) — elite mudofaa + threat hunting. Indeks: `docs/cyber-guardian-ai/README.md`.  
+Faqat defensive + intelligence; exploit/weaponization yo‘q.

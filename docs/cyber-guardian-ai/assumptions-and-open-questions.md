@@ -50,6 +50,12 @@
 | AQ-024 | Rasmiy CGA Telegram bot (forward→tekshiruv) qilinadimi? | FR-045 | Product |
 | AQ-025 | TAKB actor alias nomlash konvensiyasi (UZ-SCAM-###)? | FR-201 | TI Lead |
 | AQ-026 | Hunting telemetry default: opt-in yoki opt-out? | FR-209 | Privacy |
+| AQ-027 | Actor Knowledge Graph: Neo4j vs managed alternative? | FR-300 | Infra |
+| AQ-028 | LLM TTP summarization vendor / self-host? | NFR-205 | AI + Privacy |
+| AQ-029 | Passive anomaly: qaysi EDR callback/provider? | FR-306 | Windows Eng |
+| AQ-030 | Dark web OSINT: litsenziyalangan provayder bormi yoki faqat clearnet? | FR-308 | Legal + TI |
+| AQ-031 | V4 national early-warning: qaysi davlat API/shartnoma? | FR-310 | Legal + Product |
+| AQ-032 | Playbook `isolate_device`: majburiy agent izolyatsiya yoki faqat tavsiya? | FR-302 | Product + Privacy |
 
 ---
 

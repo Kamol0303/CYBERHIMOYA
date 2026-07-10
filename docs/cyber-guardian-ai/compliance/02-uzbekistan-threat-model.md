@@ -119,6 +119,18 @@ Har bir teg `reasons[].code`, `scam_family` va MITRE/kampaniya map ga bog‘lana
 
 Threat feed: mahalliy (UZCERT, Kiberxavfsizlik markazi) + xalqaro ochiq TI (ToS).
 
-### Threat Hunting va Actor Detection (majburiy)
+## 11.9 Killer mahalliylashtirish — ustuvor hunting nishonlari
 
-Mahalliy actorlar **infratuzilma va xatti-harakat** bo‘yicha klasterlanadi; shaxsni noqonuniy aniqlash/doxing maqsad qilinmaydi. Rasmiy xabar — FR-210.
+| Ustuvor | Aniqlash (himoya) | OSINT izoh |
+|---------|-------------------|------------|
+| Lokal scam groups (Telegram, WhatsApp) | Bot/script + campaign link | Ommaviy kanallar/forward |
+| Zararli APK distributorlari | Cert/similarity/YARA | — |
+| Mahalliy phishing kit mualliflari | Panel fingerprint + infra | Kit yaratish emas — aniqlash |
+| Bank troyan kampaniyalari | APK oila + TI | — |
+| QR-fishing va voice scam aktorlari | QR + deepfake (consent) | — |
+
+**Qo‘shimcha:** Mahalliy forumlar, Telegram kanallari va ochiq manbalardan real-time OSINT monitoring (Fusion Engine). Dark web — faqat qonuniy/litsenziyalangan kanal (AQ-030).
+
+### Threat Hunting & Actor Detection (majburiy)
+
+Persona/group tracking — ochiq manba asosida taxallus/cluster; noqonuniy yashirin kirish yo‘q.

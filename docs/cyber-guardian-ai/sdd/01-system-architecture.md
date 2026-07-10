@@ -67,7 +67,14 @@ flowchart TB
   HUNT --> TAKB
   HUNT --> SCORE
   TAKB --> RPT
+  FUS --> HUNT
+  HUNT --> GRAPH
+  GRAPH --> PB
+  SCORE --> PB
+  PB --> NOTIF
+  GRAPH --> RPT
   TI --> FEEDS
+  FUS --> FEEDS
   SCAN --> OBJ
   SCAN --> SCORE
   SCORE --> TI
@@ -82,11 +89,11 @@ flowchart TB
   HUNT --> PG
 ```
 
-**Izoh:** Web «to‘liq monitoring» qilmaydi — skan, ta’lim, hisobot, extension, **threat intel/actor dashboard**. Windows agent chuqur OS signalini hunting pipeline ga beradi. Batafsil: `sdd/06-threat-hunting-architecture.md`.
+**Izoh:** Killer kengaytma — Fusion, Knowledge Graph, defensive Playbooks. Batafsil: `sdd/06`, `sdd/07`.
 
-### Threat Hunting va Actor Detection (majburiy)
+### Threat Hunting & Actor Detection (majburiy)
 
-Oqim: foydalanuvchi signali → local scan → cloud correlation → possible actor attribution → ogohlantirish.
+Oqim: signal → fusion → hunt → graph → score/intent → **defensive** playbook → ogohlantirish/blok/CERT.
 
 ### 5.1.2 Modul bog‘liqliklari
 

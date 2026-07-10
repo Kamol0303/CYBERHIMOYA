@@ -1,40 +1,36 @@
-# Qabul mezonlari va sifat tekshiruvi
+# Qabul mezonlari — Killer Edition
 
-**Hujjat:** Cyber Guardian AI  
-**Savol:** Ushbu spetsifikatsiya asosida jamoa darhol sprint-planning boshlay oladimi?
+**Savol:** Ushbu spetsifikatsiya asosida jamoa darhol ishga tushishi mumkinmi?
 
 ---
 
-## Tekshiruv jadvali
+## Tekshiruv
 
 | # | Mezon | Holat |
 |---|-------|-------|
-| 1 | Har bir bo‘lim alohida, chuqur; `...` to‘ldirilmagan joylar yo‘q | ✅ |
-| 2 | Talablar `FR-xxx` / `NFR-xxx` formatida | ✅ |
-| 3 | Diagrammalar ishlaydigan Mermaid kodida | ✅ |
-| 4 | Funksiya × platforma matritsasi asoslangan | ✅ |
-| 5 | 15+ AI/detection moduli shablon bo‘yicha | ✅ |
-| 6 | API request/response sxemalari | ✅ |
-| 7 | ER + asosiy jadvallar + retention | ✅ |
-| 8 | Android ruxsatlar / Play / maxfiylik | ✅ |
-| 9 | O‘zbekiston tahdid modeli + i18n | ✅ |
-| 10 | Ops, QA/DevOps, roadmap | ✅ |
-| 11 | Taxminlar va ochiq savollar alohida | ✅ |
-| 12 | Faqat defensive funksiyalar | ✅ |
-| 13 | Universal scam + bot/pul + deepfake + kampaniya/actor (himoya) | ✅ `srs/06-…` |
-| 14 | Threat Hunter Edition: Pipeline, TAKB, FR-200…, Intent/APK/Ancestry | ✅ `srs/07`, `sdd/06` |
-| 15 | Har asosiy bo‘limda Threat Hunting qismi | ✅ |
+| 1 | IEEE 830 uslubida bo‘limlar to‘liq | ✅ |
+| 2 | FR/NFR raqamlangan (shu jumladan FR-200…, FR-300…) | ✅ |
+| 3 | Mermaid diagrammalar | ✅ |
+| 4 | Matritsa #24–30 Killer + #31–35 kengaytma | ✅ |
+| 5 | Killer AI modullar shablon bo‘yicha (`sdd/04b`) | ✅ |
+| 6 | Knowledge Graph + Fusion + Defensive Playbooks (`sdd/07`) | ✅ |
+| 7 | Etika: UZCERT/Milliy markaz; sotish yo‘q | ✅ |
+| 8 | UZ mahalliy hunting + OSINT chegarasi | ✅ |
+| 9 | Roadmap V1–V4 | ✅ |
+| 10 | Har asosiy bo‘limda Threat Hunting & Actor Detection | ✅ |
+| 11 | Exploit/weaponization/hujum vositasi yo‘q | ✅ |
+| 12 | Ochiq savollar alohida (AQ) | ✅ |
 
 ---
 
-## Javob
+## Baholash javobi
 
-**Ha — jamoa sprint-planningni boshlay oladi** (Threat Hunter Edition), quyidagi shartlar bilan:
+**Ha — jamoa darhol ishga tushishi mumkin**, quyidagicha:
 
-1. **V1** epiklari: asosiy himoya + basic actor IOC (`operations/03-roadmap.md`).  
-2. **V2** board alohida: Hunting Pipeline, TAKB, Intent, APK similarity.  
-3. **AQ** lar groomingda (ayniqsa AQ-021…024, residency, auth).  
-4. Faqat mudofaa/aniqlash/kuzatish; hack-back yo‘q.  
+1. **V1 sprintlari** hoziroq boardga: core protection + IOC sweep + basic hunting.  
+2. **V2–V4** epiklari backlogda (`operations/03-roadmap.md`); V4 faqat davlat kelishuvi (AQ-031) dan keyin.  
+3. Bloklovchi AQ lar (graph DB tanlovi AQ-027, dark web OSINT AQ-030, playbook izolyatsiya AQ-032) groomingda yopiladi.  
+4. CI da offensive playbook lint (NFR-202) majburiy.  
 5. Bitta branch/PR oqimi.
 
-**Xulosa:** Hujjatlar to‘plami IEEE 830 uslubidagi SRS + SDD darajasida yetarli aniqlik beradi; qolgan noaniqliklar ongli ravishda `assumptions-and-open-questions.md` da ro‘yxatlangan va «o‘ylab topilgan» emas.
+**Xulosa:** Killer Edition SRS+SDD sprint-planning va V1 implementatsiya uchun yetarli; elite imkoniyatlar V2–V4 da bosqichma-bosqich.

@@ -51,11 +51,15 @@ Ko‘pchilik foydalanuvchi texnik bilimga ega emas; hujum **sodir bo‘lishidan 
 
 ### 1.2.3 Missiya
 
-Foydalanuvchilarni **proaktiv** himoya qiladigan, kibergigiyenani odatga aylantiradigan va **potensial threat actor** larni erta aniqlash, kuzatish va bloklash (himoya siyosati) qobiliyatiga ega kiberxavfsizlik ekotizimi. Oddiy himoyadan tashqari: **threat hunting**, behavior-based attacker profiling va mahalliy tahdid intellekti.
+**Killer missiya:** Cyber Guardian AI — O‘zbekiston foydalanuvchilarini himoya qilish bilan birga, kiberhujum tayyorlayotgan yoki amalga oshirayotgan threat actorlarni erta bosqichda aniqlaydigan, ularning infratuzilmasi, TTP, IOC/IOA larini kuzatadigan va **zararsizlantiradigan** (bloklash, karantin, rasmiy xabar) elite mudofaa va threat hunting platformasi.
 
 ### 1.2.4 Asosiy printsip (butun loyiha)
 
-> Platforma **faqat mudofaa va intellektual aniqlash** funksiyalarini o‘z ichiga oladi. Hech qanday hujum, ekspluatatsiya, zararli kod yoki «qanday buzish» tavsifi bo‘lmaydi. Barcha funksiyalar — **aniqlash, monitoring, ogohlantirish, bloklash va threat actor kuzatish**ga xizmat qiladi.
+> Faqat **defensive + intelligence**. Hech qanday active exploitation, weaponization yoki hujum vositasi bo‘lmaydi. Barcha harakatlar — aniqlash, monitoring, correlation, attribution va bloklashga qaratilgan.
+
+### Threat Hunting & Actor Detection (majburiy)
+
+Markaziy talablar: `srs/07`, `srs/08` (Killer), arxitektura: `sdd/06`, `sdd/07`.
 
 ### 1.2.5 Mahsulot chegaralari
 

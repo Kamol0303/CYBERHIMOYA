@@ -40,20 +40,20 @@ N/A Platformaga tegishli emas
 | 21 | YARA Rule Engine | ✅ | ✅ | ❌ | Web UI orqali backend file-upload skanerida ishlaydi |
 | 22 | Sigma Rule Engine | ❌ | ✅ | N/A | Windows agent + backend threat pipeline |
 | 23 | MITRE ATT&CK Mapping | ✅ | ✅ | ✅ | Alohida engine emas — dashboard tasnifi |
-| 24 | Universal Scam Classifier | ✅ | ✅ | ✅ | Barcha `SCAM_*` oilalar; V1 qisman |
-| 25 | Money-Offer / Scam Bot Detection | ✅ | ✅ | ✅ | Faqat ulashilgan/ommaviy bot; shaxsiy chat yo‘q |
-| 26 | Deepfake Face/Video | ✅ | ✅ | ✅ | Faqat consent + user upload |
-| 27 | Campaign / Actor Attribution | ⚠️ | ⚠️ | ✅ | Client: natija ko‘rsatish; klasterlash — BE/analyst |
-| 28 | Threat Actor Profiling (IOC/IOA+behavior) | ⚠️ | ⚠️ | ✅ | Profil BE; client signal |
-| 29 | Campaign Tracking | ⚠️ | ⚠️ | ✅ | Multi-event bog‘lanish |
-| 30 | Anomaly Detection Network/Process | ⚠️ | ✅ | ⚠️ | Windows kuchli |
-| 31 | Suspicious APK Similarity Search | ✅ | ⚠️ | ✅ | Fuzzy/cert/package |
-| 32 | Process Ancestry Tracking | ❌ | ✅ | ❌ | Windows-only |
-| 33 | Threat Hunting Pipeline | ⚠️ | ⚠️ | ✅ | Orchestration BE |
-| 34 | Threat Actor Knowledge Base | ❌ | ❌ | ✅ | Analyst Web |
-| 35 | Attacker Intent (TTP/IOA) Detection | ⚠️ | ✅ | ⚠️ | ATT&CK map; exploit yo‘q |
+| 24 | Advanced Threat Actor Fingerprinting | ✅ | ✅ | ✅ | Behavior + infrastructure + code similarity |
+| 25 | Campaign Correlation Engine | ✅ | ✅ | ✅ | Ko‘p hodisa bog‘lanishi |
+| 26 | Automated TTP Mapping & Attribution | ⚠️ | ✅ | ✅ | MITRE + custom UZ TTP base |
+| 27 | Suspicious Infrastructure Detection (C2/phishing kit/scam panel) | ✅ | ✅ | ✅ | Domain, IP, ASN, certificate — aniqlash |
+| 28 | Memory & Process Ancestry Analysis | ❌ | ✅ | ❌ | Windows killer feature (detection-only) |
+| 29 | Cross-platform IOC Sweeping | ✅ | ✅ | ✅ | Real-time sweep engine |
+| 30 | Threat Actor Persona & Group Tracking | ❌ | ✅ | ✅ | Qonuniy OSINT; dark web — AQ-030 |
+| 31 | Threat Hunting Pipeline | ⚠️ | ⚠️ | ✅ | Real-time + scheduled (BE) |
+| 32 | Actor Knowledge Graph / TAKB | ❌ | ❌ | ✅ | Neo4j yoki ekvivalent |
+| 33 | Intelligence Fusion Engine | ❌ | ❌ | ✅ | OSINT + feeds + telemetry |
+| 34 | Automated Playbook Engine (defensive) | ⚠️ | ✅ | ✅ | Blok/karantin/xabar; hack-back yo‘q |
+| 35 | Attacker Intent / LOLBin-Injection Detection | ⚠️ | ✅ | ⚠️ | Windows IOA; exploit qo‘llanma yo‘q |
 
-> **Attacker intent detection elementi:** #1–27 natijalarida ixtiyoriy `intent_tags[]` / MITRE + `campaign_id` (V2+).
+> **Killer matritsa #24–30** asosiy; #31–35 arxitektura/EDR kengaytmasi. Batafsil: `srs/08-killer-edition-requirements.md`.
 
 ---
 
@@ -162,49 +162,43 @@ Windows log/ETW hodisalari + backend pipeline. Androidda Sigma ma’nosiz; Webda
 
 Aniqlangan hodisaga tactic/technique teglari qo‘yish — alohida ML engine emas, tasniflash qatlami.
 
-### 24. Universal Scam Classifier — ✅✅✅
+### 24. Advanced Threat Actor Fingerprinting — ✅✅✅
 
-Barcha `SCAM_*` oilalar (ish, lotoreya, invest, bot-pul, deepfake, fishing, …). V1 da URL asosidagi oilalar; V2 da matn/bot. Batafsil: `06-universal-scam-and-attribution.md`.
+Behavior + infrastructure + code/APK similarity → fingerprint. Doxing emas.
 
-### 25. Money-Offer / Scam Bot — ✅✅✅
+### 25. Campaign Correlation Engine — ✅✅✅
 
-Telegram/web bot orqali pul taklifi. Shaxsiy chat o‘qilmaydi; ulashilgan kontent + TI bot ro‘yxati.
+Ko‘p hodisani kampaniyaga bog‘lash (graph).
 
-### 26. Deepfake Face/Video — ✅✅✅
+### 26. Automated TTP Mapping & Attribution — ⚠️✅✅
 
-Faqat foydalanuvchi rozilik bilan yuklagan media. Jonli yashirin yozib olish yo‘q.
+MITRE + `uz_ttp_*`. Androidda cheklangan IOA.
 
-### 27. Campaign / Actor Attribution — ⚠️⚠️✅
+### 27. Suspicious Infrastructure Detection — ✅✅✅
 
-Backend klasterlash; clientga «shu kampaniya» tushuntirishi. Hack-back yo‘q; rasmiy hisobot FR-122.
+Domain/IP/ASN/cert orqali C2/phishing/scam panel **ehtimolini aniqlash** (yaratish emas).
 
-### 28. Threat Actor Profiling — ⚠️⚠️✅
+### 28. Memory & Process Ancestry — ❌✅❌
 
-IOC/IOA + behavior korrelyatsiyasi → actor cluster (TAKB). Client faqat signal/hint.
+Windows EDR: ancestry + memory anomaly indicators. Detection-only.
 
-### 29. Campaign Tracking — ⚠️⚠️✅
+### 29. Cross-platform IOC Sweeping — ✅✅✅
 
-Ko‘p hodisani bitta kampaniyaga bog‘lash (FR-203).
+Imzolangan IOC bo‘yicha real-time/scheduled sweep.
 
-### 30. Anomaly Detection Network/Process — ⚠️✅⚠️
+### 30. Threat Actor Persona & Group Tracking — ❌✅✅
 
-Windows eng kuchli; Android/Web cheklangan. Intent/IOA bilan birga.
+Qonuniy OSINT; Web/Windows analyst. Androidda to‘liq persona UI yo‘q.
 
-### 31. Suspicious APK Similarity — ✅⚠️✅
+### 31–34. Pipeline / Graph / Fusion / Playbooks
 
-Cert/package/fuzzy o‘xshashlik → oila/kampaniya.
+BE markaziy; playbook faqat defensive.
 
-### 32. Process Ancestry Tracking — ❌✅❌
+### 35. Intent / LOLBin-Injection Detection — ⚠️✅⚠️
 
-Faqat Windows EDR agent.
+Windows IOA; «qanday qilish» yo‘q.
 
-### 33–34. Hunting Pipeline / TAKB — ⚠️⚠️✅
-
-Orchestration va bilim bazasi cloudda; Web analyst UI.
-
-### 35. Attacker Intent (TTP/IOA) — ⚠️✅⚠️
-
-ATT&CK teglari orqali niyat **aniqlash**; texnikani o‘rgatish emas.
+> Scam classifier, deepfake, APK similarity — alohida FR/modullarda saqlanadi (`srs/06`, `sdd/04b`).
 
 ---
 

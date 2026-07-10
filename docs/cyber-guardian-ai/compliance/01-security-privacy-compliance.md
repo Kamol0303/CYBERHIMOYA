@@ -138,6 +138,17 @@ Namuna manbalar (integratsiya sharti ochiq): ochiq URL reputation ro‘yxatlari,
 | TAKB | Analyst RBAC + audit; oddiy foydalanuvchiga to‘liq ochilmaydi |
 | Taqiqlangan | Hack-back, ruxsatsiz kuzatuv, exploit saqlash |
 
-### Threat Hunting va Actor Detection (majburiy)
+## 10.8 Killer Edition etika (kuchaytirilgan)
 
-Hunting — himoya intellekti. Topilgan infratuzilma belgilari foydalanuvchini ogohlantirish va UZCERT kanaliga xizmat qiladi, hujum qilish uchun emas.
+| Qoida | Majburiy amal |
+|-------|----------------|
+| Hunting asosi | Faqat foydalanuvchi qurilmasi yoki **rozilik** berilgan ma’lumot |
+| Actor ma’lumoti | **Faqat** UZCERT, Milliy Kiberxavfsizlik Markazi yoki tegishli organlarga responsible disclosure |
+| Sotish | Hech qanday hunting/PII ma’lumot uchinchi shaxslarga sotilmaydi |
+| Playbook | Faqat defensive action; offensive CI da blok |
+| OSINT | Ochiq/qonuniy manbalar; noqonuniy kirish yo‘q |
+| Weaponization | Kod bazasi va hujjatlarda taqiqlangan |
+
+### Threat Hunting & Actor Detection (majburiy)
+
+Elite hunting — himoya intellekti. «Zararsizlantirish» = blok/karantin/ogohlantirish/rasmiy xabar; qarshi hujum emas.
