@@ -32,9 +32,13 @@ class ScanDetailResponse(BaseModel):
 @router.get("", response_model=list[ScanHistoryItem])
 def list_my_scans(
     limit: int = Query(default=20, ge=1, le=100),
+    verdict: str | None = Query(default=None, pattern="^(malicious|suspicious|clean|unknown)$"),
+    scan_type: str | None = Query(default=None, pattern="^(url|qr|file|message)$"),
     user=Depends(get_current_user),
 ) -> list[ScanHistoryItem]:
-    rows = store.list_scans(user_id=user.id, limit=limit)
+    rows = store.list_scans(
+        user_id=user.id, limit=limit, verdict=verdict, scan_type=scan_type
+    )
     items: list[ScanHistoryItem] = []
     for row in rows:
         items.append(

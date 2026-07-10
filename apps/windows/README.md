@@ -7,7 +7,9 @@
 
 - Desktop tray + scan UI (URL / file hash)
 - Process monitoring stub: `Monitoring/ProcessMonitor.cs` (FR-070, detect/warn only)
-- Future: Sigma/YARA packs, registry/USB hooks
+- USB stub: `Monitoring/UsbMonitor.cs` (FR-073)
+- Ransomware honeypot stub: `Monitoring/RansomwareMonitor.cs` (FR-074)
+- Future: Sigma/YARA packs, registry hooks
 - Defensive playbooks: local block / isolate / alert only
 
 ## Suggested stack

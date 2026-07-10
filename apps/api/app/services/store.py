@@ -362,21 +362,44 @@ class SqliteStore:
             )
         return row
 
-    def list_scans(self, user_id: UUID | None = None, limit: int = 20) -> list[ScanRow]:
+    def list_scans(
+        self,
+        user_id: UUID | None = None,
+        limit: int = 20,
+        *,
+        verdict: str | None = None,
+        scan_type: str | None = None,
+    ) -> list[ScanRow]:
+        clauses: list[str] = []
+        params: list[Any] = []
         if user_id:
-            rows = self._conn.execute(
-                """
-                SELECT * FROM scan_results WHERE user_id = ?
-                ORDER BY created_at DESC LIMIT ?
-                """,
-                (str(user_id), limit),
-            ).fetchall()
-        else:
-            rows = self._conn.execute(
-                "SELECT * FROM scan_results ORDER BY created_at DESC LIMIT ?",
-                (limit,),
-            ).fetchall()
+            clauses.append("user_id = ?")
+            params.append(str(user_id))
+        if verdict:
+            clauses.append("verdict = ?")
+            params.append(verdict)
+        if scan_type:
+            clauses.append("scan_type = ?")
+            params.append(scan_type)
+        where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+        params.append(limit)
+        rows = self._conn.execute(
+            f"SELECT * FROM scan_results {where} ORDER BY created_at DESC LIMIT ?",
+            tuple(params),
+        ).fetchall()
         return [self._row_to_scan(r) for r in rows]
+
+    def prune_risk_score_history(self, *, retain_days: int = 180) -> int:
+        """NFR-040 retention for risk_score_history (default 180 days)."""
+        from datetime import timedelta
+
+        cutoff = (utcnow() - timedelta(days=retain_days)).isoformat()
+        cur = self._conn.execute(
+            "DELETE FROM risk_score_history WHERE created_at < ?",
+            (cutoff,),
+        )
+        self._conn.commit()
+        return int(cur.rowcount)
 
     def request_erasure(self, user_id: UUID) -> None:
         user = self.get_user(user_id)

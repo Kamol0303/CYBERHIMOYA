@@ -12,6 +12,7 @@ import {
   fetchMeStats,
   fetchNotifications,
   fetchScans,
+  pruneRiskHistory,
   fetchThreatEvents,
   fetchThreatFeedSync,
   createReport,
@@ -161,6 +162,8 @@ export default function App() {
   const [sigmaRules, setSigmaRules] = useState<
     { id: string; title: string; version: string; mitre_tags: string[] }[]
   >([]);
+  const [scanVerdictFilter, setScanVerdictFilter] = useState("");
+  const [pruneMsg, setPruneMsg] = useState<string | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -1180,6 +1183,47 @@ export default function App() {
 
           <section className="history-block">
             <h2>{t(locale, "history")}</h2>
+            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
+              <select
+                value={scanVerdictFilter}
+                onChange={(e) => setScanVerdictFilter(e.target.value)}
+                aria-label={t(locale, "scanFilter")}
+              >
+                <option value="">{t(locale, "scanFilterAll")}</option>
+                <option value="malicious">malicious</option>
+                <option value="suspicious">suspicious</option>
+                <option value="clean">clean</option>
+              </select>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => {
+                  void fetchScans({
+                    verdict: scanVerdictFilter || undefined,
+                  })
+                    .then((scans) => setHistory(scans))
+                    .catch(() => undefined);
+                }}
+              >
+                {t(locale, "scanFilter")}
+              </button>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => {
+                  void pruneRiskHistory(180)
+                    .then((r) =>
+                      setPruneMsg(
+                        `${t(locale, "pruneDone")}: ${r.deleted_risk_history}`,
+                      ),
+                    )
+                    .catch(() => setPruneMsg(t(locale, "error")));
+                }}
+              >
+                {t(locale, "pruneCta")}
+              </button>
+            </div>
+            {pruneMsg ? <p className="note">{pruneMsg}</p> : null}
             {history.length === 0 ? (
               <p className="note">{t(locale, "noHistory")}</p>
             ) : (

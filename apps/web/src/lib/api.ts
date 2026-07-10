@@ -260,8 +260,24 @@ export async function upsertConsent(
   return postJson("/v1/consents", { consent_type, granted, source: "ui" });
 }
 
-export async function fetchScans(): Promise<ScanHistoryItem[]> {
-  return getJson("/v1/scans");
+export async function fetchScans(opts?: {
+  verdict?: string;
+  scan_type?: string;
+  limit?: number;
+}): Promise<ScanHistoryItem[]> {
+  const params = new URLSearchParams();
+  if (opts?.verdict) params.set("verdict", opts.verdict);
+  if (opts?.scan_type) params.set("scan_type", opts.scan_type);
+  if (opts?.limit) params.set("limit", String(opts.limit));
+  const q = params.toString() ? `?${params}` : "";
+  return getJson(`/v1/scans${q}`);
+}
+
+export async function pruneRiskHistory(retainDays = 180) {
+  return postJson<{ deleted_risk_history: number; retain_days: number }>(
+    `/v1/retention/prune?retain_days=${retainDays}`,
+    {},
+  );
 }
 
 export type ThreatFeedSync = {

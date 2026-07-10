@@ -7,7 +7,8 @@
 
 - Minimal permissions; local-first
 - Guest / signed-in URL + QR scan via API
-- On-device SMS heuristics later (never upload raw SMS)
+- On-device SMS heuristics (`sms/OnDeviceSmsAnalyzer.kt` — raw SMS never uploaded)
+- Wi-Fi analyzer stub (`wifi/WifiAnalyzer.kt`, FR-061 — warn only, no probing)
 - Consent gates for monitoring / emergency reporting
 
 ## Suggested stack
