@@ -40,12 +40,12 @@ N/A Platformaga tegishli emas
 | 21 | YARA Rule Engine | ✅ | ✅ | ❌ | Web UI orqali backend file-upload skanerida ishlaydi |
 | 22 | Sigma Rule Engine | ❌ | ✅ | N/A | Windows agent + backend threat pipeline |
 | 23 | MITRE ATT&CK Mapping | ✅ | ✅ | ✅ | Alohida engine emas — dashboard tasnifi |
-| 24 | Threat Actor Fingerprinting & Profiling | ✅ | ✅ | ✅ | Behavior + infra + code similarity |
-| 25 | Campaign Correlation & Tracking | ✅ | ✅ | ✅ | Multiple incidents linkage |
-| 26 | Predictive Attack Forecasting | ⚠️ | ✅ | ✅ | ML asosida |
-| 27 | Infrastructure Hunting (C2, phishing kit, scam panel) | ✅ | ✅ | ✅ | Domain/IP/ASN — aniqlash |
-| 28 | Memory Forensics & Process Ancestry | ❌ | ✅ | ❌ | Windows killer feature (detection-only) |
-| 29 | Graph-based Actor Relationship Analysis | ❌ | ✅ | ✅ | Knowledge Graph |
+| 24 | Advanced Threat Actor Profiling & Behavior Modeling | ✅ | ✅ | ✅ | Passive observation only |
+| 25 | Multi-Incident Campaign Correlation | ✅ | ✅ | ✅ | Defensive tracking |
+| 26 | Predictive Defense Forecasting | ⚠️ | ✅ | ✅ | Future attack probability (defensive) |
+| 27 | Suspicious Infrastructure Passive Detection | ✅ | ✅ | ✅ | Faqat monitoring va ogohlantirish |
+| 28 | Deep Memory & Behavioral Forensics | ❌ | ✅ | ❌ | Read-only analysis |
+| 29 | Graph-based Defensive Relationship Analysis | ❌ | ✅ | ✅ | Actor — IOC — Campaign graph |
 | 30 | Threat Actor Persona & Group Tracking | ❌ | ✅ | ✅ | Qonuniy OSINT; dark web — AQ-030 |
 | 31 | Threat Hunting Pipeline | ⚠️ | ⚠️ | ✅ | Real-time + scheduled (BE) |
 | 32 | Actor Knowledge Graph / TAKB | ❌ | ❌ | ✅ | Neo4j yoki ekvivalent |
@@ -60,7 +60,7 @@ N/A Platformaga tegishli emas
 | 41 | Live Phishing Kit & Scam Panel Hunting | ✅ | ✅ | ✅ | Detection only |
 | 42 | Zero-Day Behavior Anomaly Detection | ⚠️ | ✅ | ⚠️ | Signature’siz; W kuchli |
 
-> **#24–29** — majburiy hunting qatorlari (v5.1). Master: `APEX-MASTER-SPEC.md` §4.
+> **#24–29** — passive/defensive only (v5.2). Master: `APEX-MASTER-SPEC.md`.
 
 ---
 

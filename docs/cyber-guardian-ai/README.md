@@ -55,4 +55,4 @@ Bitta branch.
 
 ## Jamoa (qisqa)
 
-Hunt Lead (kill chain) · Malware RE · AI/ML (Graph/LLM/predictive) · APT Hunter (infra attribution) · EDR/XDR · TI Fusion & Persona · Forensics · Zero-trust Full-Stack · Privacy/Legal · QA/Adversarial Testing
+Defensive Hunt Lead · Defensive Malware Analyst · AI/ML (predictive defense) · Blue Team Hunter · XDR Specialist · TI & Attribution · Forensics (defensive) · Zero-trust Full-Stack · Privacy & Ethics

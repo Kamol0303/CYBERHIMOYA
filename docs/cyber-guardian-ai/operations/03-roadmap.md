@@ -1,11 +1,10 @@
-# Operations 03 — Roadmap (Master-aligned v5.1)
+# Operations 03 — Roadmap (v5.2 defensive-strict)
 
 | Versiya | Mazmun |
 |---------|--------|
-| **V1 (MVP)** | Asosiy himoya + IOC hunting + basic actor detection |
-| **V2** | Full XDR + Advanced Attribution + Campaign tracking |
-| **V3** | Predictive forecasting + Automated Playbooks + Memory forensics |
-| **V4** | National-level Cyber Sentinel (davlat organlari bilan integratsiya) |
-| **Kelajakda** | Global threat actor database + B2B/SOC monetizatsiya; iOS |
+| **V1** | Kuchli mudofaa + basic hunting (passive) |
+| **V2** | Advanced profiling + predictive defense |
+| **V3** | Full graph analysis + automated defensive playbooks |
+| **V4** | Milliy darajadagi proaktiv mudofaa tizimi |
 
-Batafsil: `APEX-MASTER-SPEC.md` §14. Faqat defensive.
+Hech bir versiyada offensive capability yo‘q. Master: `APEX-MASTER-SPEC.md` §14.
