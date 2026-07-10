@@ -1,6 +1,14 @@
 /* Cyber Guardian AI — minimal shell cache (network-first for /v1/*). */
 const CACHE = "cga-shell-v021";
-const SHELL = ["/", "/index.html", "/manifest.webmanifest", "/icon.svg"];
+const SHELL = [
+  "/",
+  "/index.html",
+  "/manifest.webmanifest",
+  "/icon.svg",
+  "/icon-192.png",
+  "/icon-512.png",
+  "/apple-touch-icon.png",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
