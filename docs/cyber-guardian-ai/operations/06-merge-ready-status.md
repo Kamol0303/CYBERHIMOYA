@@ -1,7 +1,7 @@
 # V1 merge-ready status
 
-**Branch:** `main` + open polish PRs (`CURSOR/v1-post-merge-polish-b1ff`)  
-**API version:** 0.2.1  
+**Branch:** `CURSOR/v1-stage-next-b1ff` (0.3.0)  
+**API version:** 0.3.0  
 **Verified:** 2026-07-10 (agent run)
 
 ## Automated gates
@@ -9,29 +9,18 @@
 | Gate | Result |
 |------|--------|
 | Defensive lint | PASS |
-| API pytest | 29 passed |
-| Smoke `scripts/smoke_v1.py` | 19/19 |
+| API pytest | 33 passed |
+| Smoke `scripts/smoke_v1.py` | 22/22 |
 | Web `npm test` + `npm run build` | PASS |
 | Extension validate | PASS |
 
-## Checklist mapping (`05-v1-release-checklist.md`)
+## 0.3.0 additions
 
-- [x] `make test` equivalent run
-- [x] `/health` → `defensive_only: true`
-- [x] Feed ed25519 + verify path covered in smoke
-- [x] Emergency dry-run enforced (AQ-039 pending)
-- [x] Defensive keyword gate
-- [x] README run instructions present
-- [x] AQ-039 not invented — template/runbook only
-- [x] PR #1–#2 merged to `main`
+- Suspicious message report, breach-check, devices
+- Hunting metadata on scans (`intent_tags`, `campaign_id`)
 
 ## Remaining human actions
 
-1. Merge open polish PR(s) if any
-2. Legal: finalize privacy/terms; resolve AQ-039 allowlist values
-3. Capture real store screenshots; submit Play/MS when ready
-4. Rotate feed keys for production (`CGA_FEED_PRIVATE_KEY_B64`)
-
-## Do not merge blockers
-
-None technical for V1 dry-run scope. Legal AQ-039 is **not** a code merge blocker while dry-run remains default.
+1. Merge this PR to `main`
+2. Legal: privacy/terms + AQ-039 allowlists
+3. Store screenshots; production feed key rotation
