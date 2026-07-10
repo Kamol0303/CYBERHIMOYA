@@ -1,7 +1,26 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { scanUrl, type UrlScanResponse, type Verdict } from "./lib/api";
+import {
+  scanFileHash,
+  scanQr,
+  scanUrl,
+  sha256Hex,
+  type ScanReason,
+  type Verdict,
+} from "./lib/api";
 import { locales, t, type Locale } from "./i18n/messages";
 import "./App.css";
+
+type ScanMode = "url" | "qr" | "file";
+
+type ResultView = {
+  title: string;
+  score: number;
+  verdict: Verdict;
+  recommended_action: string;
+  scam_family: string | null;
+  mitre_tags: string[];
+  reasons: ScanReason[];
+};
 
 function verdictLabel(locale: Locale, verdict: Verdict): string {
   return t(locale, verdict);
@@ -9,10 +28,13 @@ function verdictLabel(locale: Locale, verdict: Verdict): string {
 
 export default function App() {
   const [locale, setLocale] = useState<Locale>("uz");
+  const [mode, setMode] = useState<ScanMode>("url");
   const [url, setUrl] = useState("");
+  const [qrPayload, setQrPayload] = useState("");
+  const [fileLabel, setFileLabel] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<UrlScanResponse | null>(null);
+  const [result, setResult] = useState<ResultView | null>(null);
   const [view, setView] = useState<"scan" | "dashboard">("scan");
 
   useEffect(() => {
@@ -21,12 +43,34 @@ export default function App() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!url.trim()) return;
+    if (mode === "url" && !url.trim()) return;
+    if (mode === "qr" && !qrPayload.trim()) return;
     setLoading(true);
     setError(null);
     try {
-      const data = await scanUrl(url.trim());
-      setResult(data);
+      if (mode === "url") {
+        const data = await scanUrl(url.trim());
+        setResult({
+          title: data.url_normalized,
+          score: data.score,
+          verdict: data.verdict,
+          recommended_action: data.recommended_action,
+          scam_family: data.scam_family,
+          mitre_tags: data.mitre_tags,
+          reasons: data.reasons,
+        });
+      } else if (mode === "qr") {
+        const data = await scanQr(qrPayload.trim());
+        setResult({
+          title: data.url_normalized ?? `${data.qr_type}: ${data.payload_preview}`,
+          score: data.score,
+          verdict: data.verdict,
+          recommended_action: data.recommended_action,
+          scam_family: data.scam_family,
+          mitre_tags: data.mitre_tags,
+          reasons: data.reasons,
+        });
+      }
     } catch {
       setError(t(locale, "error"));
       setResult(null);
@@ -34,6 +78,34 @@ export default function App() {
       setLoading(false);
     }
   }
+
+  async function onFileChange(file: File | null) {
+    if (!file) return;
+    setFileLabel(file.name);
+    setLoading(true);
+    setError(null);
+    try {
+      const hash = await sha256Hex(file);
+      const data = await scanFileHash(hash, file.name);
+      setResult({
+        title: `${file.name} · ${data.sha256.slice(0, 16)}…`,
+        score: data.score,
+        verdict: data.verdict,
+        recommended_action: data.recommended_action,
+        scam_family: data.scam_family,
+        mitre_tags: data.mitre_tags,
+        reasons: data.reasons,
+      });
+    } catch {
+      setError(t(locale, "error"));
+      setResult(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const canSubmit =
+    mode === "url" ? Boolean(url.trim()) : mode === "qr" ? Boolean(qrPayload.trim()) : false;
 
   return (
     <div className="shell">
@@ -76,26 +148,62 @@ export default function App() {
             <p className="brand">{t(locale, "brand")}</p>
             <h1>{t(locale, "tagline")}</h1>
             <p className="support">{t(locale, "support")}</p>
-            <form className="scan-form" onSubmit={onSubmit}>
-              <input
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder={t(locale, "placeholder")}
-                aria-label="URL"
-                autoComplete="url"
-                inputMode="url"
-              />
-              <button type="submit" disabled={loading || !url.trim()}>
-                {loading ? t(locale, "scanning") : t(locale, "cta")}
-              </button>
-            </form>
+
+            <div className="mode-tabs" role="tablist" aria-label="scan mode">
+              {(["url", "qr", "file"] as ScanMode[]).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === m}
+                  className={mode === m ? "mode active" : "mode"}
+                  onClick={() => {
+                    setMode(m);
+                    setResult(null);
+                    setError(null);
+                  }}
+                >
+                  {t(locale, m === "url" ? "modeUrl" : m === "qr" ? "modeQr" : "modeFile")}
+                </button>
+              ))}
+            </div>
+
+            {mode === "file" ? (
+              <div className="scan-form">
+                <label className="file-pick">
+                  <span>{fileLabel || t(locale, "placeholderFile")}</span>
+                  <input
+                    type="file"
+                    onChange={(e) => void onFileChange(e.target.files?.[0] ?? null)}
+                    disabled={loading}
+                  />
+                </label>
+              </div>
+            ) : (
+              <form className="scan-form" onSubmit={onSubmit}>
+                <input
+                  value={mode === "url" ? url : qrPayload}
+                  onChange={(e) =>
+                    mode === "url" ? setUrl(e.target.value) : setQrPayload(e.target.value)
+                  }
+                  placeholder={t(locale, mode === "url" ? "placeholder" : "placeholderQr")}
+                  aria-label={mode === "url" ? "URL" : "QR"}
+                  autoComplete={mode === "url" ? "url" : "off"}
+                  inputMode={mode === "url" ? "url" : "text"}
+                />
+                <button type="submit" disabled={loading || !canSubmit}>
+                  {loading ? t(locale, "scanning") : t(locale, "cta")}
+                </button>
+              </form>
+            )}
+
             <p className="note">{t(locale, "guestNote")}</p>
             <p className="privacy">{t(locale, "privacy")}</p>
             {error ? <p className="error">{error}</p> : null}
             {result ? (
               <section className="result" aria-live="polite">
                 <h2>{t(locale, "result")}</h2>
-                <p className="normalized">{result.url_normalized}</p>
+                <p className="normalized">{result.title}</p>
                 <dl className="meta">
                   <div>
                     <dt>{t(locale, "score")}</dt>

@@ -94,6 +94,46 @@
   flex-wrap: wrap;
 }
 
+.mode-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0 0 1rem;
+}
+
+.mode {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--muted);
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.mode.active {
+  background: var(--bg-deep);
+  border-color: var(--bg-deep);
+  color: var(--foam);
+}
+
+.file-pick {
+  flex: 1 1 16rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.file-pick input {
+  max-width: 12rem;
+}
+
 .scan-form input {
   flex: 1 1 16rem;
   min-width: 0;

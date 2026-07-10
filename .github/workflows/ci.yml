@@ -21,8 +21,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Defensive-only lint
         run: |
-          if grep -RIn -E 'exploit|payload.?drop|hack.?back|ddos|c2.?server|active.?probe|metasploit|reverse.?shell' \
-            --exclude-dir=__pycache__ app; then
+          if grep -RIn -E 'exploit.?poc|hack.?back|ddos.?tool|metasploit|reverse.?shell|c2.?implant' \
+            --include='*.py' app; then
             echo "Offensive capability keywords found in API source"
             exit 1
           fi

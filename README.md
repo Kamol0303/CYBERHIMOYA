@@ -7,8 +7,9 @@ Mudofaa-only xavfsizlik ekotizimi (Android + Windows + Web). **Hujum / exploit /
 | Qatlam | Holat |
 |--------|-------|
 | Spec (APEX v5.3) | `docs/cyber-guardian-ai/` |
-| V1 API | `apps/api` — Auth, Consent, `POST /v1/scan/url`, risk-score, threat-feed sync |
-| V1 Web | `apps/web` — mehmon URL skan, dashboard qobiq, uz/ru/en |
+| V1 API | `apps/api` — Auth, Consent, URL/QR/file scan, risk-score, threat-feed, SQLite |
+| V1 Web | `apps/web` — mehmon URL/QR/file skan, dashboard qobiq, uz/ru/en |
+| Client shells | `apps/android`, `apps/windows` — V1 stub docs |
 
 ## Tezkor ishga tushirish
 

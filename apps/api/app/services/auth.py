@@ -9,7 +9,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 
 from app.config import settings
-from app.services.store import UserRow, store
+from app.services.store import store
+from app.services.store_models import UserRow
 
 ALGORITHM = "HS256"
 bearer = HTTPBearer(auto_error=False)

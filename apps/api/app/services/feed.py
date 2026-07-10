@@ -13,6 +13,12 @@ FEED_ITEMS = [
     {"kind": "domain", "value": d, "severity": "malicious", "family": "seed_ioc"}
     for d in sorted(KNOWN_MALICIOUS_DOMAINS)
 ] + [
+    {
+        "kind": "sha256",
+        "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "severity": "malicious",
+        "family": "fake_bank_apk",
+    },
     {"kind": "domain", "value": "payme.uz", "severity": "trusted", "family": "payment_legit"},
     {"kind": "domain", "value": "click.uz", "severity": "trusted", "family": "payment_legit"},
     {"kind": "domain", "value": "my.gov.uz", "severity": "trusted", "family": "gov_legit"},

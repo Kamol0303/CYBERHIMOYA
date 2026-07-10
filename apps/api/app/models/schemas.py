@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, Field, HttpUrl
+from pydantic import BaseModel, EmailStr, Field
 
 
 class Verdict(str, Enum):
@@ -93,6 +93,49 @@ class UrlScanResponse(BaseModel):
     scanned_at: datetime
 
 
+class QrScanRequest(BaseModel):
+    payload_text: str = Field(min_length=1, max_length=4096)
+    image_sha256: str | None = Field(default=None, pattern="^[a-fA-F0-9]{64}$")
+
+
+class QrScanResponse(BaseModel):
+    scan_id: UUID
+    qr_type: str
+    payload_preview: str
+    url_normalized: str | None = None
+    score: int = Field(ge=0, le=100)
+    confidence: float = Field(ge=0.0, le=1.0)
+    verdict: Verdict
+    reasons: list[Reason]
+    mitre_tags: list[str]
+    scam_family: str | None = None
+    actor_hint: str | None = None
+    recommended_action: str
+    scanned_at: datetime
+
+
+class FileScanRequest(BaseModel):
+    sha256: str = Field(pattern="^[a-fA-F0-9]{64}$")
+    file_name: str | None = Field(default=None, max_length=255)
+    run_yara: bool = False
+
+
+class FileScanResponse(BaseModel):
+    scan_id: UUID
+    sha256: str
+    file_name: str | None = None
+    score: int = Field(ge=0, le=100)
+    confidence: float = Field(ge=0.0, le=1.0)
+    verdict: Verdict
+    ti_hits: list[dict[str, str]] = Field(default_factory=list)
+    yara_matches: list[dict[str, str]] = Field(default_factory=list)
+    reasons: list[Reason]
+    mitre_tags: list[str]
+    scam_family: str | None = None
+    recommended_action: str
+    scanned_at: datetime
+
+
 class RiskScoreRequest(BaseModel):
     features: dict[str, Any]
     subject_type: str = Field(pattern="^(url|file|message|device)$")
@@ -129,3 +172,4 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     defensive_only: bool = True
+    storage: str = "sqlite"

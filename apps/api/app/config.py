@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     guest_rate_limit_per_hour: int = 20
     feed_version: str = "20260710.1"
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    # sqlite:///./data/cga.db | sqlite:///:memory: | postgresql://... (falls back to sqlite file for now)
+    database_url: str = "sqlite:///:memory:"
+    sqlite_fallback_path: str = "data/cga.db"
 
 
 settings = Settings()

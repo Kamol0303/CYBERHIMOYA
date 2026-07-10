@@ -9,13 +9,9 @@ from app.services.store import store
 
 @pytest.fixture(autouse=True)
 def reset_store():
-    store.users.clear()
-    store.users_by_email_hash.clear()
-    store.consents.clear()
-    store.scans.clear()
-    store.audits.clear()
-    store.refresh_tokens.clear()
+    store.reset()
     yield
+    store.reset()
 
 
 @pytest.fixture
@@ -29,6 +25,7 @@ def test_health(client: TestClient):
     body = r.json()
     assert body["status"] == "ok"
     assert body["defensive_only"] is True
+    assert "storage" in body
 
 
 def test_register_login_and_me(client: TestClient):
@@ -96,11 +93,42 @@ def test_scan_fake_payment_family(client: TestClient):
     assert body["scam_family"] == "payment_scam" or body["score"] >= 40
 
 
+def test_scan_qr_url(client: TestClient):
+    r = client.post(
+        "/v1/scan/qr",
+        json={"payload_text": "https://gov-subsidy-uz.xyz/claim"},
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["qr_type"] == "url"
+    assert body["score"] >= 50
+
+
+def test_scan_file_hash_hit(client: TestClient):
+    r = client.post(
+        "/v1/scan/file",
+        json={
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "file_name": "bank-payme.apk",
+        },
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["verdict"] == "malicious"
+    assert body["recommended_action"] == "do_not_open"
+    assert any(h["tag"] == "apk.banker.seed" for h in body["ti_hits"])
+
+
 def test_risk_score(client: TestClient):
     r = client.post(
         "/v1/risk-score",
         json={
-            "features": {"url_score": 70, "ti_hits": 2, "behavior_score": 40, "local_heuristics": ["punycode"]},
+            "features": {
+                "url_score": 70,
+                "ti_hits": 2,
+                "behavior_score": 40,
+                "local_heuristics": ["punycode"],
+            },
             "subject_type": "url",
         },
     )
@@ -115,6 +143,7 @@ def test_threat_feed_sync(client: TestClient):
     assert body["algorithm"].startswith("ed25519")
     assert "signature" in body
     assert body["item_counts"]["domain"] >= 1
+    assert body["item_counts"]["sha256"] >= 1
     assert isinstance(body["items"], list)
 
 
@@ -128,3 +157,17 @@ def test_erasure_foundation(client: TestClient):
     assert r.status_code == 202
     me = client.get("/v1/me", headers={"Authorization": f"Bearer {token}"})
     assert me.status_code == 401
+
+
+def test_persistence_across_operations(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "persist@example.com", "password": "securepass1"},
+    )
+    token = reg.json()["access_token"]
+    client.post(
+        "/v1/scan/url",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"url": "https://example.com"},
+    )
+    assert len(store.list_scans()) >= 1

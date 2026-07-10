@@ -37,7 +37,13 @@ app.mount("/v1", api)
 
 @app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:
-    return HealthResponse(status="ok", version=__version__, defensive_only=True)
+    storage = "sqlite" if settings.database_url.startswith("sqlite") else "sqlite-fallback"
+    return HealthResponse(
+        status="ok",
+        version=__version__,
+        defensive_only=True,
+        storage=storage,
+    )
 
 
 @app.get("/")
