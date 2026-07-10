@@ -1,4 +1,4 @@
-.PHONY: test api-test web-test smoke lint feed feed-keys docker-up api-dev
+.PHONY: test api-test web-test smoke lint feed feed-keys docker-up api-dev extension-validate
 
 api-test:
 	cd apps/api && PYTHONPATH=. pytest -q
@@ -8,6 +8,9 @@ web-test:
 
 lint:
 	bash scripts/defensive-lint.sh
+
+extension-validate:
+	bash scripts/validate_extension.sh
 
 smoke:
 	cd apps/api && PYTHONPATH=. python ../../scripts/smoke_v1.py
@@ -21,7 +24,7 @@ feed-keys:
 api-dev:
 	cd apps/api && PYTHONPATH=. uvicorn app.main:app --reload --port 8000
 
-test: lint api-test web-test smoke
+test: lint extension-validate api-test web-test smoke
 
 docker-up:
 	docker compose up --build

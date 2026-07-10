@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 from fastapi.staticfiles import StaticFiles
 
 from app import __version__
@@ -20,7 +21,36 @@ TAGS_METADATA = [
     {"name": "threat-feed", "description": "Signed IOC delta sync (ed25519)"},
     {"name": "emergency", "description": "Critical reporting — dry-run until AQ-039"},
     {"name": "me", "description": "Account profile / erasure"},
+    {"name": "ops", "description": "Health / metrics"},
 ]
+
+BEARER_SCHEME = {
+    "type": "http",
+    "scheme": "bearer",
+    "bearerFormat": "JWT",
+    "description": "Access token from POST /v1/auth/register or /v1/auth/token",
+}
+
+
+def _attach_bearer_openapi(fastapi_app: FastAPI) -> None:
+    def custom_openapi():  # type: ignore[no-untyped-def]
+        if fastapi_app.openapi_schema:
+            return fastapi_app.openapi_schema
+        schema = get_openapi(
+            title=fastapi_app.title,
+            version=fastapi_app.version,
+            description=fastapi_app.description,
+            routes=fastapi_app.routes,
+            tags=fastapi_app.openapi_tags,
+        )
+        components = schema.setdefault("components", {})
+        schemes = components.setdefault("securitySchemes", {})
+        schemes["HTTPBearer"] = BEARER_SCHEME
+        fastapi_app.openapi_schema = schema
+        return fastapi_app.openapi_schema
+
+    fastapi_app.openapi = custom_openapi  # type: ignore[method-assign]
+
 
 app = FastAPI(
     title=settings.app_name,
@@ -35,6 +65,7 @@ app = FastAPI(
     contact={"name": "Cyber Guardian AI", "url": "https://github.com/Kamol0303/CYBERHIMOYA"},
     license_info={"name": "Proprietary — defensive use only"},
 )
+_attach_bearer_openapi(app)
 
 # chrome-extension://* in CGA_CORS_ORIGINS becomes allow_origin_regex (Starlette
 # does not treat * inside allow_origins as a wildcard).
@@ -54,6 +85,7 @@ api = FastAPI(
     version=__version__,
     openapi_tags=TAGS_METADATA,
 )
+_attach_bearer_openapi(api)
 api.include_router(auth.router)
 api.include_router(auth.me_router)
 api.include_router(consents.router)

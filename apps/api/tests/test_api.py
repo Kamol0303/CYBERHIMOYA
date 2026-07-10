@@ -319,6 +319,17 @@ def test_security_headers(client: TestClient):
     r = client.get("/health")
     assert r.headers.get("X-CGA-Defensive-Only") == "1"
     assert r.headers.get("X-Content-Type-Options") == "nosniff"
+    assert r.headers.get("X-Frame-Options") == "DENY"
+    assert r.headers.get("Referrer-Policy") == "no-referrer"
+    assert "camera=()" in (r.headers.get("Permissions-Policy") or "")
+
+
+def test_openapi_has_bearer(client: TestClient):
+    r = client.get("/v1/openapi.json")
+    assert r.status_code == 200
+    schemes = r.json().get("components", {}).get("securitySchemes", {})
+    assert "HTTPBearer" in schemes
+    assert schemes["HTTPBearer"]["scheme"] == "bearer"
 
 
 def test_cors_web_origin_preflight(client: TestClient):

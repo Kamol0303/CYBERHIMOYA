@@ -229,3 +229,12 @@ class EmergencyAllowlistResponse(BaseModel):
     email_destinations_configured: int
     note: str
     defensive_only: bool = True
+
+
+class MetricsResponse(BaseModel):
+    version: str
+    environment: str
+    defensive_only: bool = True
+    emergency_dry_run: bool
+    scan_rows: int
+    feed_version: str

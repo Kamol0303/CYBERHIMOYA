@@ -8,11 +8,18 @@
 - Docker Compose (api + web)
 - Android/Windows shell docs
 
-### Sprint 1.10 (this update)
+### Sprint 1.10
 - Play Data safety + MS Partner Center drafts
 - Screenshot capture guides
 - Merge-ready status doc (`06-merge-ready-status.md`)
 - Release checklist marked verified for automated gates
+- PR #1 merged to `main`
+
+### Post-merge 0.2.1
+- OpenAPI Bearer + metrics schema
+- PWA shell service worker
+- Extension validate + Docker CI smoke
+- Client shell README accuracy
 
 ## Emergency dry-run
 
@@ -30,8 +37,8 @@ cd apps/api && uvicorn app.main:app --reload
 ## Feed keys
 
 ```bash
-python scripts/generate_feed_keys.py
-python scripts/generate_feed.py
+make feed-keys   # or: python scripts/generate_feed_keys.py
+make feed        # or: python scripts/generate_feed.py
 ```
 
 ## Explicitly out of V1
