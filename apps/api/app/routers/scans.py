@@ -27,6 +27,8 @@ def list_my_scans(
                 mitre_tags=row.mitre_tags,
                 scam_family=row.meta.get("scam_family"),
                 recommended_action=row.meta.get("recommended_action"),
+                intent_tags=list(row.meta.get("intent_tags") or []),
+                campaign_id=row.meta.get("campaign_id"),
                 created_at=row.created_at,
             )
         )

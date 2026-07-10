@@ -404,3 +404,63 @@ def test_parse_cors_origins_chrome_wildcard():
     assert exact == ["http://localhost:5173", "http://127.0.0.1:5173"]
     assert regex is not None
     assert "chrome-extension://" in regex
+
+
+def test_suspicious_message_job_scam(client: TestClient):
+    r = client.post(
+        "/v1/messages/suspicious",
+        json={
+            "text": "Kuniga 500$ ish — yozing @example_bot",
+            "source": "paste",
+            "entities": {"urls": [], "bot_username": "example_bot"},
+        },
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["score"] >= 50
+    assert body["scam_family"] == "telegram_job_scam"
+    assert body["campaign_id"]
+    assert "preview" in body
+
+
+def test_breach_check_seed_and_clean(client: TestClient):
+    hit = client.post("/v1/breach-check", json={"email": "breach@example.com"})
+    assert hit.status_code == 200
+    assert hit.json()["found"] is True
+    assert hit.json()["breach_count"] >= 1
+    assert "change_password" in hit.json()["recommendations"]
+    clean = client.post("/v1/breach-check", json={"email": "nobody-clean@example.com"})
+    assert clean.status_code == 200
+    assert clean.json()["found"] is False
+
+
+def test_devices_register_list_delete(client: TestClient):
+    reg = client.post(
+        "/v1/auth/register",
+        json={"email": "device@example.com", "password": "securepass1"},
+    )
+    token = reg.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    created = client.post(
+        "/v1/devices/register",
+        headers=headers,
+        json={"platform": "web", "app_version": "0.3.0", "fingerprint": "fp-test-1"},
+    )
+    assert created.status_code == 200
+    listed = client.get("/v1/devices", headers=headers)
+    assert listed.status_code == 200
+    assert len(listed.json()) >= 1
+    device_id = created.json()["id"]
+    assert client.delete(f"/v1/devices/{device_id}", headers=headers).status_code == 204
+    assert client.get("/v1/devices", headers=headers).json() == []
+
+
+def test_scan_url_hunting_metadata(client: TestClient):
+    r1 = client.post("/v1/scan/url", json={"url": "http://pay-click-uz.tk/login"})
+    r2 = client.post("/v1/scan/url", json={"url": "http://pay-click-uz.tk/login"})
+    assert r1.status_code == 200 and r2.status_code == 200
+    b1, b2 = r1.json(), r2.json()
+    assert b1["intent_tags"]
+    assert b1["campaign_id"]
+    assert b1["campaign_id"] == b2["campaign_id"]
+    assert b1["kill_chain_stage"] == "delivery"

@@ -1,0 +1,29 @@
+{
+  "entries": [
+    {
+      "email": "breach@example.com",
+      "breaches": [
+        {
+          "name": "ExampleForumLeak",
+          "year": 2022,
+          "data_classes": ["Email", "Password"]
+        },
+        {
+          "name": "ShopDemo2023",
+          "year": 2023,
+          "data_classes": ["Email", "Username"]
+        }
+      ]
+    },
+    {
+      "email": "smoke@example.com",
+      "breaches": [
+        {
+          "name": "LegacyMailDump",
+          "year": 2021,
+          "data_classes": ["Email"]
+        }
+      ]
+    }
+  ]
+}

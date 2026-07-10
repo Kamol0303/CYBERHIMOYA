@@ -111,6 +111,28 @@ class SqliteStore:
               meta TEXT NOT NULL,
               created_at TEXT NOT NULL
             );
+            CREATE TABLE IF NOT EXISTS devices (
+              id TEXT PRIMARY KEY,
+              user_id TEXT NOT NULL REFERENCES users(id),
+              platform TEXT NOT NULL,
+              app_version TEXT NOT NULL,
+              device_label TEXT,
+              fingerprint TEXT NOT NULL,
+              created_at TEXT NOT NULL,
+              last_seen_at TEXT NOT NULL,
+              UNIQUE(user_id, platform, fingerprint)
+            );
+            CREATE TABLE IF NOT EXISTS message_reports (
+              id TEXT PRIMARY KEY,
+              user_id TEXT REFERENCES users(id),
+              source TEXT NOT NULL,
+              text_hash TEXT NOT NULL,
+              preview TEXT NOT NULL,
+              score INTEGER NOT NULL,
+              scam_family TEXT,
+              meta TEXT NOT NULL,
+              created_at TEXT NOT NULL
+            );
             """
         )
         self._conn.commit()
@@ -119,6 +141,8 @@ class SqliteStore:
         for table in (
             "refresh_tokens",
             "emergency_logs",
+            "message_reports",
+            "devices",
             "audit_logs",
             "scan_results",
             "consent_records",
@@ -379,6 +403,131 @@ class SqliteStore:
             if row.consent_type == "emergency_law_enforcement" and row.granted:
                 return True
         return False
+
+    def upsert_device(
+        self,
+        user_id: UUID,
+        platform: str,
+        app_version: str,
+        fingerprint: str,
+        device_label: str | None = None,
+    ):
+        from app.services.store_models import DeviceRow
+
+        existing = self._conn.execute(
+            """
+            SELECT * FROM devices
+            WHERE user_id = ? AND platform = ? AND fingerprint = ?
+            """,
+            (str(user_id), platform, fingerprint),
+        ).fetchone()
+        now = utcnow()
+        if existing:
+            self._conn.execute(
+                """
+                UPDATE devices SET app_version = ?, device_label = ?, last_seen_at = ?
+                WHERE id = ?
+                """,
+                (app_version, device_label, now.isoformat(), existing["id"]),
+            )
+            self._conn.commit()
+            row = self._conn.execute(
+                "SELECT * FROM devices WHERE id = ?", (existing["id"],)
+            ).fetchone()
+        else:
+            device_id = str(uuid4())
+            self._conn.execute(
+                """
+                INSERT INTO devices
+                (id, user_id, platform, app_version, device_label, fingerprint, created_at, last_seen_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    device_id,
+                    str(user_id),
+                    platform,
+                    app_version,
+                    device_label,
+                    fingerprint,
+                    now.isoformat(),
+                    now.isoformat(),
+                ),
+            )
+            self._conn.commit()
+            row = self._conn.execute(
+                "SELECT * FROM devices WHERE id = ?", (device_id,)
+            ).fetchone()
+        return DeviceRow(
+            id=UUID(row["id"]),
+            user_id=UUID(row["user_id"]),
+            platform=row["platform"],
+            app_version=row["app_version"],
+            device_label=row["device_label"],
+            fingerprint=row["fingerprint"],
+            created_at=_parse_dt(row["created_at"]),
+            last_seen_at=_parse_dt(row["last_seen_at"]),
+        )
+
+    def list_devices(self, user_id: UUID):
+        from app.services.store_models import DeviceRow
+
+        rows = self._conn.execute(
+            "SELECT * FROM devices WHERE user_id = ? ORDER BY last_seen_at DESC",
+            (str(user_id),),
+        ).fetchall()
+        return [
+            DeviceRow(
+                id=UUID(r["id"]),
+                user_id=UUID(r["user_id"]),
+                platform=r["platform"],
+                app_version=r["app_version"],
+                device_label=r["device_label"],
+                fingerprint=r["fingerprint"],
+                created_at=_parse_dt(r["created_at"]),
+                last_seen_at=_parse_dt(r["last_seen_at"]),
+            )
+            for r in rows
+        ]
+
+    def delete_device(self, user_id: UUID, device_id: UUID) -> bool:
+        cur = self._conn.execute(
+            "DELETE FROM devices WHERE id = ? AND user_id = ?",
+            (str(device_id), str(user_id)),
+        )
+        self._conn.commit()
+        return cur.rowcount > 0
+
+    def add_message_report(
+        self,
+        *,
+        report_id: UUID,
+        user_id: UUID | None,
+        source: str,
+        text_hash: str,
+        preview: str,
+        score: int,
+        scam_family: str | None,
+        meta: dict[str, Any],
+    ):
+        self._conn.execute(
+            """
+            INSERT INTO message_reports
+            (id, user_id, source, text_hash, preview, score, scam_family, meta, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                str(report_id),
+                str(user_id) if user_id else None,
+                source,
+                text_hash,
+                preview,
+                score,
+                scam_family,
+                json.dumps(meta),
+                utcnow().isoformat(),
+            ),
+        )
+        self._conn.commit()
 
     # refresh token map compatibility
     @property

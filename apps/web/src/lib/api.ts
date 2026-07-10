@@ -16,6 +16,9 @@ export type UrlScanResponse = {
   scam_family: string | null;
   actor_hint: string | null;
   recommended_action: string;
+  intent_tags?: string[];
+  campaign_id?: string | null;
+  kill_chain_stage?: string | null;
   scanned_at: string;
 };
 
@@ -32,6 +35,9 @@ export type QrScanResponse = {
   scam_family: string | null;
   actor_hint: string | null;
   recommended_action: string;
+  intent_tags?: string[];
+  campaign_id?: string | null;
+  kill_chain_stage?: string | null;
   scanned_at: string;
 };
 
@@ -48,6 +54,9 @@ export type FileScanResponse = {
   mitre_tags: string[];
   scam_family: string | null;
   recommended_action: string;
+  intent_tags?: string[];
+  campaign_id?: string | null;
+  kill_chain_stage?: string | null;
   scanned_at: string;
 };
 
@@ -290,6 +299,68 @@ export async function scanFileHash(
   fileName?: string,
 ): Promise<FileScanResponse> {
   return postJson("/v1/scan/file", { sha256, file_name: fileName ?? null, run_yara: false });
+}
+
+export async function reportSuspiciousMessage(
+  text: string,
+  source: "telegram_share" | "paste" | "sms_meta" = "paste",
+  entities?: { urls?: string[]; bot_username?: string | null },
+) {
+  return postJson<{
+    report_id: string;
+    score: number;
+    verdict: Verdict;
+    scam_family: string | null;
+    recommended_action: string;
+    intent_tags: string[];
+    campaign_id: string | null;
+    preview: string;
+    reasons: ScanReason[];
+  }>("/v1/messages/suspicious", {
+    text,
+    source,
+    entities: entities ?? { urls: [], bot_username: null },
+  });
+}
+
+export async function breachCheck(email: string) {
+  return postJson<{
+    found: boolean;
+    breach_count: number;
+    breaches: { name: string; year: number; data_classes: string[] }[];
+    recommendations: string[];
+    email_hash_prefix: string;
+  }>("/v1/breach-check", { email }, false);
+}
+
+export async function registerDevice(platform: "web" | "android" | "windows" | "extension" = "web") {
+  const fingerprint =
+    localStorage.getItem("cga_device_fp") ||
+    (() => {
+      const fp = `web-${crypto.randomUUID()}`;
+      localStorage.setItem("cga_device_fp", fp);
+      return fp;
+    })();
+  return postJson("/v1/devices/register", {
+    platform,
+    app_version: "0.3.0",
+    device_label: "Browser",
+    fingerprint,
+  });
+}
+
+export async function fetchDevices() {
+  return getJson<
+    {
+      id: string;
+      platform: string;
+      app_version: string;
+      device_label: string | null;
+      fingerprint: string;
+      created_at: string;
+      last_seen_at: string;
+    }[]
+  >("/v1/devices");
 }
 
 export async function sha256Hex(file: File): Promise<string> {

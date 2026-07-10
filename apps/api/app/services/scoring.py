@@ -15,6 +15,7 @@ from app.models.schemas import (
 )
 from app.services.store import store
 from app.services.store_models import ScanRow, utcnow
+from app.services.hunting import attach_hunting
 
 # Seed IOC / heuristic lists — defensive reputation only (no active probing).
 KNOWN_MALICIOUS_DOMAINS = {
@@ -140,7 +141,7 @@ def score_url(url: str) -> dict[str, Any]:
     if verdict == Verdict.clean and not reasons:
         reasons.append(Reason(code="NO_TI_HIT", message_key="reason.no_ti_hit"))
 
-    return {
+    payload = {
         "url_normalized": normalized,
         "score": score,
         "confidence": confidence,
@@ -152,6 +153,7 @@ def score_url(url: str) -> dict[str, Any]:
         "recommended_action": action,
         "subject_hash": _subject_hash(normalized),
     }
+    return attach_hunting(payload, subject_key=domain)
 
 
 def classify_qr_payload(payload_text: str) -> str:
@@ -182,6 +184,9 @@ def scan_url(url: str, user_id: UUID | None = None) -> UrlScanResponse:
                 "scam_family": result["scam_family"],
                 "actor_hint": result["actor_hint"],
                 "recommended_action": result["recommended_action"],
+                "intent_tags": result.get("intent_tags", []),
+                "campaign_id": result.get("campaign_id"),
+                "kill_chain_stage": result.get("kill_chain_stage"),
             },
             created_at=utcnow(),
         )
@@ -197,6 +202,9 @@ def scan_url(url: str, user_id: UUID | None = None) -> UrlScanResponse:
         scam_family=result["scam_family"],
         actor_hint=result["actor_hint"],
         recommended_action=result["recommended_action"],
+        intent_tags=result.get("intent_tags", []),
+        campaign_id=result.get("campaign_id"),
+        kill_chain_stage=result.get("kill_chain_stage"),
         scanned_at=utcnow(),
     )
 
@@ -221,6 +229,9 @@ def scan_qr(payload_text: str, user_id: UUID | None = None) -> QrScanResponse:
                     "scam_family": result["scam_family"],
                     "actor_hint": result["actor_hint"],
                     "recommended_action": result["recommended_action"],
+                    "intent_tags": result.get("intent_tags", []),
+                    "campaign_id": result.get("campaign_id"),
+                    "kill_chain_stage": result.get("kill_chain_stage"),
                 },
                 created_at=utcnow(),
             )
@@ -238,6 +249,9 @@ def scan_qr(payload_text: str, user_id: UUID | None = None) -> QrScanResponse:
             scam_family=result["scam_family"],
             actor_hint=result["actor_hint"],
             recommended_action=result["recommended_action"],
+            intent_tags=result.get("intent_tags", []),
+            campaign_id=result.get("campaign_id"),
+            kill_chain_stage=result.get("kill_chain_stage"),
             scanned_at=utcnow(),
         )
 
@@ -318,6 +332,15 @@ def scan_file_hash(
     if verdict == Verdict.malicious:
         action = "do_not_open"
 
+    hunting = attach_hunting(
+        {
+            "score": score,
+            "scam_family": scam_family,
+            "reasons": reasons,
+            "mitre_tags": sorted(set(mitre)),
+        },
+        subject_key=digest[:16],
+    )
     scan_id = uuid4()
     store.add_scan(
         ScanRow(
@@ -334,6 +357,9 @@ def scan_file_hash(
                 "scam_family": scam_family,
                 "recommended_action": action,
                 "ti_hits": ti_hits,
+                "intent_tags": hunting["intent_tags"],
+                "campaign_id": hunting["campaign_id"],
+                "kill_chain_stage": hunting["kill_chain_stage"],
             },
             created_at=utcnow(),
         )
@@ -350,7 +376,11 @@ def scan_file_hash(
         reasons=reasons,
         mitre_tags=sorted(set(mitre)),
         scam_family=scam_family,
+        actor_hint="uz_apk_seed" if scam_family else None,
         recommended_action=action,
+        intent_tags=hunting["intent_tags"],
+        campaign_id=hunting["campaign_id"],
+        kill_chain_stage=hunting["kill_chain_stage"],
         scanned_at=utcnow(),
     )
 

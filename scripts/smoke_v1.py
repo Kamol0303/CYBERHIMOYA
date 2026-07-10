@@ -121,6 +121,23 @@ def main() -> int:
         settings.guest_rate_limit_per_hour = prev_limit
         guest_limiter.reset()
 
+    r = client.post(
+        "/v1/messages/suspicious",
+        json={"text": "Kuniga 500$ ish @job_bot", "source": "paste"},
+    )
+    ok("message_suspicious", r.status_code == 200 and r.json().get("score", 0) >= 50)
+
+    r = client.post("/v1/breach-check", json={"email": "smoke@example.com"})
+    ok("breach_seed", r.status_code == 200 and r.json().get("found") is True)
+
+    r = client.post("/v1/scan/url", json={"url": "http://pay-click-uz.tk/x"})
+    ok(
+        "hunting_meta",
+        r.status_code == 200
+        and bool(r.json().get("intent_tags"))
+        and bool(r.json().get("campaign_id")),
+    )
+
     failed = [n for n, c in checks if not c]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} passed")
     return 1 if failed else 0

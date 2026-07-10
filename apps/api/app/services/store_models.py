@@ -91,3 +91,28 @@ class EmergencyLogRow:
     dry_run: bool
     meta: dict[str, Any]
     created_at: datetime
+
+
+@dataclass
+class DeviceRow:
+    id: UUID
+    user_id: UUID
+    platform: str
+    app_version: str
+    device_label: str | None
+    fingerprint: str
+    created_at: datetime
+    last_seen_at: datetime
+
+
+@dataclass
+class MessageReportRow:
+    id: UUID
+    user_id: UUID | None
+    source: str
+    text_hash: str
+    preview: str
+    score: int
+    scam_family: str | None
+    meta: dict[str, Any]
+    created_at: datetime
